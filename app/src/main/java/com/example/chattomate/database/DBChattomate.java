@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBChattomate extends SQLiteOpenHelper {
-
     private static final String DATABASE_NAME   = "chattomate.db";
     private final String SLIDER_TABLE_NAME      = "tableChattomate";
     private final String IMAGE_SLIDER           = "imageSlider";
@@ -62,13 +61,12 @@ public class DBChattomate extends SQLiteOpenHelper {
                 USER_EMAIL_NAME         + " TEXT )";
     }
 
-    // nếu bang user infor chưa tồn tại, khi insert dữ liệu vào thì sẽ gọi hàm này
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(createTableSlider());
         db.execSQL(createTableUser());
         db.execSQL(createTableEmail());
-        //Toast.makeText(context, "Create table successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Create table successfully", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -81,16 +79,15 @@ public class DBChattomate extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void deleteDataTable() {
-        SQLiteDatabase db = this.getWritableDatabase();
-    }
+//    public void deleteDataTable() {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//    }
 
     // Insert data in database
     public void insertDataSlider(byte[] image, String sliderTitle, String textContent) {
-        SQLiteDatabase db = getWritableDatabase();
         String sql = "INSERT INTO " + SLIDER_TABLE_NAME + " VALUES( ?, ?, ? )";
         // vì là lưu hình ảnh nên phải sử dụng SQLiteStatement
-        SQLiteStatement statement = db.compileStatement(sql);
+        SQLiteStatement statement = this.getWritableDatabase().compileStatement(sql);
         // khi mà byte dữ liệu xong rồi thì xóa đi
         statement.clearBindings();
         // vị trí thử 0 để lưu id ko thể chọn đc
@@ -123,13 +120,13 @@ public class DBChattomate extends SQLiteOpenHelper {
     /* -------------------------------code username table---------------------------------- */
     // insert du lieu nhap vao
     public boolean insertUser(UserName userName) {
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(USER_FIRST_NAME, userName.getFirstName());
         values.put(USER_LAST_NAME, userName.getLastName());
         values.put(USER_NAME, userName.getUserName());
         values.put(USER_PASSWORD, userName.getPassword());
-        long result = db.insert(USER_TABLE_NAME, null, values);
+        long result = this.getWritableDatabase().insert(USER_TABLE_NAME, null, values);
+        this.getWritableDatabase().insert(USER_TABLE_NAME, null, values);
         if(result == -1)
             return false;
         return true;
@@ -138,9 +135,8 @@ public class DBChattomate extends SQLiteOpenHelper {
     // kiểm tra xem username đã tồn tại hay chưa, nếu > 0 thì đã tồn tại và trả về true
     @SuppressLint("Recycle")
     public boolean checkUsernameExists(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + USER_TABLE_NAME + " WHERE " + USER_NAME + "=?";
-        Cursor cursor = db.rawQuery(sql, new String[] {username});
+        Cursor cursor = this.getReadableDatabase().rawQuery(sql, new String[] {username});
         // nếu mà tồn tại thì nó sẽ trả về true
         return cursor.getCount() > 0;
     }
@@ -150,9 +146,8 @@ public class DBChattomate extends SQLiteOpenHelper {
      */
     @SuppressLint("Recycle")
     public boolean checkUserLogin(String username, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + USER_TABLE_NAME + " WHERE " + USER_NAME + "=? and " + USER_PASSWORD + "=?";
-        Cursor cursor = db.rawQuery(sql, new String[] {username, password});
+        Cursor cursor = this.getReadableDatabase().rawQuery(sql, new String[] {username, password});
         // nếu mà tồn tại user thì trả về true
         return cursor.getCount() > 0;
     }
@@ -160,11 +155,11 @@ public class DBChattomate extends SQLiteOpenHelper {
     /* -------------------------------code user email table---------------------------------- */
     // insert du lieu nhap vao
     public boolean insertUserEmail(UserGoogle userGoogle) {
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(USER_EMAIL, userGoogle.getUserEmail());
         values.put(USER_EMAIL_NAME, userGoogle.getName());
-        long result = db.insert(USER_TABLE_EMAIL, null, values);
+        long result = this.getWritableDatabase().insert(USER_TABLE_EMAIL, null, values);
+        this.getWritableDatabase().insert(USER_TABLE_EMAIL, null, values);
         if(result == -1)
             return false;
         return true;
@@ -172,12 +167,10 @@ public class DBChattomate extends SQLiteOpenHelper {
 
     @SuppressLint("Recycle")
     public boolean checkEmailLogin(String email) {
-        SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + USER_TABLE_EMAIL + " WHERE " + USER_EMAIL + "=?";
-        Cursor cursor = db.rawQuery(sql, new String[] {email});
+        Cursor cursor = this.getReadableDatabase().rawQuery(sql, new String[] {email});
         // nếu mà tồn tại user thì trả về true
         return cursor.getCount() > 0;
-
     }
 
     /*
@@ -185,9 +178,8 @@ public class DBChattomate extends SQLiteOpenHelper {
      */
     @SuppressLint("Recycle")
     public boolean checkUserForgotPassword(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
         String sql = "SELECT * FROM " + USER_TABLE_NAME + " WHERE " + USER_NAME + "=?"; //and " + USER_SECRET_QUESTION + "=? and " + USER_ANSWER + "=?";
-        Cursor cursor = db.rawQuery(sql, new String[] {username});
+        Cursor cursor = this.getReadableDatabase().rawQuery(sql, new String[] {username});
         return cursor.getCount() > 0;
     }
 
@@ -196,10 +188,10 @@ public class DBChattomate extends SQLiteOpenHelper {
      */
     @SuppressLint("Recycle")
     public List<UserName> getDataUser(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase dbRead = this.getReadableDatabase();
         List<UserName> listUserName = new ArrayList<UserName>();
         String sql = "SELECT * FROM " + USER_TABLE_NAME + " WHERE " + USER_NAME + "=?";
-        Cursor cursor = db.rawQuery(sql, new String[] {username});
+        Cursor cursor = dbRead.rawQuery(sql, new String[] {username});
         UserName userName = new UserName();
         // đưa con trỏ về vị trí đầu
         cursor.moveToFirst();
@@ -209,7 +201,7 @@ public class DBChattomate extends SQLiteOpenHelper {
         userName.setPassword(cursor.getString(3));
         listUserName.add(userName);
         cursor.close();
-        db.close();
+        dbRead.close();
         return listUserName;
     }
 
@@ -219,10 +211,10 @@ public class DBChattomate extends SQLiteOpenHelper {
      */
     @SuppressLint("Recycle")
     public List<UserGoogle> getDataUserGoogle(String userEmail) {
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase dbRead = this.getReadableDatabase();
         List<UserGoogle> userGoogles = new ArrayList<>();
         String sql = "SELECT * FROM " + USER_TABLE_EMAIL + " WHERE " + USER_EMAIL + "=?";
-        Cursor cursor = db.rawQuery(sql, new String[] {userEmail});
+        Cursor cursor = dbRead.rawQuery(sql, new String[] {userEmail});
         UserGoogle userGoogle = new UserGoogle();
         // đưa con trỏ về vị trí đầu
         cursor.moveToFirst();
@@ -230,7 +222,7 @@ public class DBChattomate extends SQLiteOpenHelper {
         userGoogle.setName(cursor.getString(1));
         userGoogles.add(userGoogle);
         cursor.close();
-        db.close();
+        dbRead.close();
         return userGoogles;
     }
 
@@ -238,10 +230,9 @@ public class DBChattomate extends SQLiteOpenHelper {
      * Cập nhật lại mật khẩu, nếu > 0 thì đúng và trả về true
      */
     public boolean updatePassword(String username, String password) {
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(USER_PASSWORD, password);
-        long result = db.update(USER_TABLE_NAME, values, USER_NAME + "=?", new String[]{ username });
+        long result = this.getWritableDatabase().update(USER_TABLE_NAME, values, USER_NAME + "=?", new String[]{ username });
         if(result == -1) {
             return false;
         }

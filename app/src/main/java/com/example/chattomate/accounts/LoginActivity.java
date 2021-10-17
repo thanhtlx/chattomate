@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
             } else {
                 if(db.insertUserEmail(userGoogle)) {
-                    startActivity(new Intent(this, MainActivity.class));
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }
             }
 //            if(resultCode == RESULT_OK) {

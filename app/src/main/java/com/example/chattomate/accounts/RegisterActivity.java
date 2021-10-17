@@ -78,7 +78,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
 
         } else if(view.getId() == R.id.toggle_cf_display_password) {
-            if(displayCfPassWord.isChecked()) { // ẩn mật khẩu
+            if(!displayCfPassWord.isChecked()) { // ẩn mật khẩu
                 editUserCfPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 editUserCfPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
             } else { // hiển thị mật khẩu
