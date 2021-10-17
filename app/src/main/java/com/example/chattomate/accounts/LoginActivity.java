@@ -15,12 +15,11 @@ import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.chattomate.database.DBChattomate;
+import com.example.chattomate.database.DBUser;
 import com.example.chattomate.MainActivity;
 import com.example.chattomate.R;
-import com.example.chattomate.database.EncryptDecrypt;
-import com.example.chattomate.users.UserGoogle;
-import com.example.chattomate.users.UserName;
+import com.example.chattomate.models.UserGoogle;
+import com.example.chattomate.models.UserName;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -38,7 +37,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private Button buttonLogin;
     private SignInButton btnLoginGG;
     private ToggleButton displayPassword;
-    private DBChattomate db;
+    private DBUser db;
     private List<UserName> listUserName;
     private List<UserGoogle> userGoogles;
 
@@ -51,7 +50,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
 
-        db = new DBChattomate(this);
+        db = new DBUser(this);
         init();
 
         // nhận dữ liệu gửi sang khi đăng kí hoac doi matkhau thành công

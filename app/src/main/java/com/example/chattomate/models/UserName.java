@@ -1,4 +1,4 @@
-package com.example.chattomate.users;
+package com.example.chattomate.models;
 
 import java.io.Serializable;
 

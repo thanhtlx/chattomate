@@ -14,10 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.example.chattomate.database.DBChattomate;
+import com.example.chattomate.database.DBUser;
 import com.example.chattomate.R;
 import com.example.chattomate.database.EncryptDecrypt;
-import com.example.chattomate.users.UserName;
+import com.example.chattomate.models.UserName;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText editFirstName, editLastName;
@@ -25,7 +25,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private Button buttonRegister;
     private ToggleButton displayPassWord, displayCfPassWord;
 
-    private DBChattomate db;
+    private DBUser db;
     private String hashInPutPassword = "";
 
     @Override
@@ -34,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.register_activity);
         init();
 
-        db = new DBChattomate(this);
+        db = new DBUser(this);
         buttonRegister.setOnClickListener(this);
         displayPassWord.setOnClickListener(this);
         displayCfPassWord.setOnClickListener(this);

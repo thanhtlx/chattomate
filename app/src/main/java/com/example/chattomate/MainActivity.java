@@ -7,8 +7,8 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.chattomate.accounts.LoginActivity;
-import com.example.chattomate.users.UserGoogle;
-import com.example.chattomate.users.UserName;
+import com.example.chattomate.models.UserGoogle;
+import com.example.chattomate.models.UserName;
 
 public class MainActivity extends AppCompatActivity {
     private TextView hello;

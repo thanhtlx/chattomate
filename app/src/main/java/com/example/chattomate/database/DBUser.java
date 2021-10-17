@@ -9,12 +9,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.widget.Toast;
 
-import com.example.chattomate.users.*;
+import com.example.chattomate.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBChattomate extends SQLiteOpenHelper {
+public class DBUser extends SQLiteOpenHelper {
     private static final String DATABASE_NAME   = "chattomate.db";
     private final String SLIDER_TABLE_NAME      = "tableChattomate";
     private final String IMAGE_SLIDER           = "imageSlider";
@@ -34,7 +34,7 @@ public class DBChattomate extends SQLiteOpenHelper {
     private final String USER_EMAIL_NAME        = "emailName";
 
     private Context context;
-    public DBChattomate(Context context) {
+    public DBUser(Context context) {
         super(context, DATABASE_NAME, null, 1);
         this.context = context;
     }
