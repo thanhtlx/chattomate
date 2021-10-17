@@ -115,7 +115,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             showToast(getResources().getString(R.string.error_confirm_password));
         } else { // ok. khi thỏa mãn hết thì lưu
             showToast("Đăng ký thành công!");
-            userName = new UserName(firstName, lastName, username, hashInPutPassword);
+            userName = new UserName(firstName, lastName, username, password);
         }
 
         return userName;
@@ -131,7 +131,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             // nếu mà input truyền vào là mk thì hash mk đó
             if (input.equals(editUserPassword.getText().toString())) {
                 try {
-                    hashInPutPassword = EncryptDecrypt.encrypt(input);
+                    //hashInPutPassword = EncryptDecrypt.encrypt(input);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

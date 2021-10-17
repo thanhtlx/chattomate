@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             showToast(getResources().getString(R.string.error_login_empty));
         } else {
             // check trong database xem có username và mật khẩu trùng ko
-            boolean flag = db.checkUserLogin(username, hashPassword);
+            boolean flag = db.checkUserLogin(username, userPassword);
             if(flag) {
                 // nếu mà tồn tại thì sẽ đăng nhập thành công
                 listUserName = db.getDataUser(username);
@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             // nếu mà input truyền vào là mk thì hash mk đó
             if (input.equals(userPassword.getText().toString())) {
                 try {
-                    hashPassword = EncryptDecrypt.encrypt(input);
+                    //hashPassword = EncryptDecrypt.encrypt(input);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
