@@ -13,16 +13,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GroupDB {
-    private static GroupDB.GroupDBHelper mDbHelper = null;
-    private static GroupDB instance = null;
+public class DBGroup {
+    private static DBGroup.GroupDBHelper mDbHelper = null;
+    private static DBGroup instance = null;
 
-    private GroupDB() { }
+    private DBGroup() { }
 
-    public static GroupDB getInstance(Context context) {
+    public static DBGroup getInstance(Context context) {
         if (instance == null) {
-            instance = new GroupDB();
-            mDbHelper = new GroupDB.GroupDBHelper(context);
+            instance = new DBGroup();
+            mDbHelper = new DBGroup.GroupDBHelper(context);
         }
         return instance;
     }
@@ -56,7 +56,7 @@ public class GroupDB {
 
     public Group getGroup(String id){
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + GroupDB.FeedEntry.TABLE_NAME + " where " + FeedEntry.COLUMN_GROUP_ID +" = " + id, null);
+        Cursor cursor = db.rawQuery("select * from " + DBGroup.FeedEntry.TABLE_NAME + " where " + FeedEntry.COLUMN_GROUP_ID +" = " + id, null);
         Group newGroup = new Group();
         while (cursor.moveToNext()) {
             String idGroup = cursor.getString(0);
@@ -78,7 +78,7 @@ public class GroupDB {
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
         try {
-            Cursor cursor = db.rawQuery("select * from " + GroupDB.FeedEntry.TABLE_NAME, null);
+            Cursor cursor = db.rawQuery("select * from " + DBGroup.FeedEntry.TABLE_NAME, null);
             while (cursor.moveToNext()) {
                 String idGroup = cursor.getString(0);
                 String nameGroup = cursor.getString(1);
@@ -131,12 +131,12 @@ public class GroupDB {
                     FeedEntry.COLUMN_GROUP_ID + TEXT_TYPE + COMMA_SEP +
                     FeedEntry.COLUMN_GROUP_NAME + TEXT_TYPE + COMMA_SEP +
                     FeedEntry.COLUMN_GROUP_ADMIN + TEXT_TYPE + COMMA_SEP +
-                    GroupDB.FeedEntry.COLUMN_GROUP_MEMBER + TEXT_TYPE + COMMA_SEP +
-                    "PRIMARY KEY (" + GroupDB.FeedEntry.COLUMN_GROUP_ID + COMMA_SEP +
-                    GroupDB.FeedEntry.COLUMN_GROUP_MEMBER + "))";
+                    DBGroup.FeedEntry.COLUMN_GROUP_MEMBER + TEXT_TYPE + COMMA_SEP +
+                    "PRIMARY KEY (" + DBGroup.FeedEntry.COLUMN_GROUP_ID + COMMA_SEP +
+                    DBGroup.FeedEntry.COLUMN_GROUP_MEMBER + "))";
 
     private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + GroupDB.FeedEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + DBGroup.FeedEntry.TABLE_NAME;
 
 
     private static class GroupDBHelper extends SQLiteOpenHelper {
