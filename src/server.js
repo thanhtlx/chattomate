@@ -10,7 +10,7 @@ class Server {
   constructor() {
     dotenv.config();
     this.application = express();
-    this.port = process.env.PORT || 3005;
+    this.port = process.env.PORT || 3000;
     this.server = http.createServer(this.application);
     this.mongodb();
     this.socket();
@@ -30,8 +30,7 @@ class Server {
     this.application.use(express.static("public"));
   }
 
-  socket() {
-  }
+  socket() {}
 
   mongodb() {
     mongoose
