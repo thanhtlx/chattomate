@@ -35,8 +35,8 @@ public class DBGroup {
         values.put(FeedEntry.COLUMN_GROUP_NAME, group.groupInfo.get("name"));
         values.put(FeedEntry.COLUMN_GROUP_ADMIN, group.groupInfo.get("admin"));
 
-        for (String idMenber : group.members) {
-            values.put(FeedEntry.COLUMN_GROUP_MEMBER, idMenber);
+        for (String idMember : group.members) {
+            values.put(FeedEntry.COLUMN_GROUP_MEMBER, idMember);
             // Insert the new row, returning the primary key value of the new row
             db.insert(FeedEntry.TABLE_NAME, null, values);
         }

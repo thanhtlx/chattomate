@@ -40,7 +40,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/edt_user_register"
+        android:id="@+id/inputEmail"
         style="@style/login_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
         android:weightSum="7">
 
         <EditText
-            android:id="@+id/edt_passWd_register"
+            android:id="@+id/inputPass"
             style="@style/login_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
         android:weightSum="7">
 
         <EditText
-            android:id="@+id/edt_confirm_passWd"
+            android:id="@+id/inputCfPass"
             style="@style/login_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -111,5 +111,12 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorLightBlue"
         android:text="@string/txt_btn_register" />
+
+    <TextView
+        android:id="@+id/alreadyHaveAcc"
+        style="@style/login_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/alreadyHaveAcc" />
 
 </LinearLayout>

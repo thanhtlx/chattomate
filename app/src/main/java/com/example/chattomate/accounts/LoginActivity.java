@@ -1,6 +1,6 @@
 package com.example.chattomate.accounts;
 
-import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -13,94 +13,129 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.chattomate.database.DBUser;
 import com.example.chattomate.MainActivity;
 import com.example.chattomate.R;
-import com.example.chattomate.models.UserGoogle;
-import com.example.chattomate.models.UserName;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-    private EditText userLogin, userPassword;
-    private TextView forgotPassword, nextPageRegister, displayRegisterSuccessful;
-    private Button buttonLogin;
+public class LoginActivity extends AppCompatActivity {
+    private EditText inputEmail, inputPass;
+    private Button btnLogin, nextPageRegister;
     private SignInButton btnLoginGG;
-    private ToggleButton displayPassword;
-    private DBUser db;
-    private List<UserName> listUserName;
-    private List<UserGoogle> userGoogles;
-
-    String hashPassword = "";
+    private ToggleButton displayPassWord;
+    private ProgressDialog progressDialog;
+    private TextView forgotPass;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
+    private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private static final int LOGIN_REQUEST_GG = 10;
     public static int LOGIN_CODE = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle saveInstanceState) {
+        super.onCreate(saveInstanceState);
         setContentView(R.layout.login_activity);
 
-        db = new DBUser(this);
-        init();
+        inputEmail = findViewById(R.id.edt_username);
+        inputPass = findViewById(R.id.edt_passwd);
+        displayPassWord =  findViewById(R.id.btn_displaypw);
+        btnLogin = findViewById(R.id.btn_login);
+        forgotPass =  findViewById(R.id.forgot_passwd);
+        nextPageRegister = findViewById(R.id.creat_acc);
+        btnLoginGG = findViewById(R.id.btn_login_gg);
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        progressDialog = new ProgressDialog(this);
 
-        // nhận dữ liệu gửi sang khi đăng kí hoac doi matkhau thành công
-        Intent intent = getIntent();
-        String registerSuccessfully = intent.getStringExtra("registerSuccessfully");
-        String changePassword = intent.getStringExtra("changePassword");
-        if (registerSuccessfully != null) {
-            displayRegisterSuccessful.setVisibility(View.VISIBLE);
-            displayRegisterSuccessful.setText(registerSuccessfully);
-        } else if(changePassword != null) {
-            displayRegisterSuccessful.setVisibility(View.VISIBLE);
-            displayRegisterSuccessful.setText(changePassword);
-        }
+        nextPageRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            }
+        });
 
-        buttonLogin.setOnClickListener(this);
-        btnLoginGG.setOnClickListener(this);
-        displayPassword.setOnClickListener(this);
-        forgotPassword.setOnClickListener(this);
-        nextPageRegister.setOnClickListener(this);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                perForLogin();
+            }
+        });
+
+        displayPassWord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!displayPassWord.isChecked()) { // set mật khẩu ẩn đi
+                    inputPass.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    inputPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                } else { // set mật khẩu hiển thị
+                    inputPass.setInputType(InputType.TYPE_CLASS_TEXT);
+                    inputPass.setTransformationMethod(null);
+                }
+            }
+        });
+
+        btnLoginGG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LOGIN_CODE = 1;
+                GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+                GoogleSignInClient client = GoogleSignIn.getClient(LoginActivity.this, options);
+                Intent intent = client.getSignInIntent();
+                startActivityForResult(intent, LOGIN_REQUEST_GG);
+            }
+        });
+
+        forgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
-    @Override
-    public void onClick(View view) {
-        if(view.getId() == R.id.btn_login) {
-            functionLogin();
+    private void perForLogin() {
+        String email = inputEmail.getText().toString();
+        String password = inputPass.getText().toString();
 
-        } else if(view.getId() == R.id.btn_login_gg) {
-            LOGIN_CODE = 1;
-            GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-            GoogleSignInClient client = GoogleSignIn.getClient(this, options);
-            Intent intent = client.getSignInIntent();
-            //setResult(LoginActivity.RESULT_OK,intent);
-            startActivityForResult(intent, LOGIN_REQUEST_GG);
+        if(!email.matches(emailPattern) || email.isEmpty()) inputEmail.setError("Invalid Email");
+        else if(password.isEmpty() || password.length() < 8) inputPass.setError("Nhập mật khẩu dài ít nhất 8 ký tự");
+        else {
+            progressDialog.setMessage("Please wait while login...");
+            progressDialog.setTitle("Login");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
 
-        } else if(view.getId() == R.id.btn_displaypw) {
-            if (!displayPassword.isChecked()) { // set mật khẩu ẩn đi
-                userPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                userPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
-            } else { // set mật khẩu hiển thị
-                userPassword.setInputType(InputType.TYPE_CLASS_TEXT);
-                userPassword.setTransformationMethod(null);
-            }
-
-        } else if(view.getId() == R.id.forgot_passwd) { // quên mật khẩu
-            //startActivity(new Intent(LoginActivity.this, ForgotPassword.class));
-
-        } else if(view.getId() == R.id.creat_acc) { // chưa có tài khoản => đăng kí
-            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()) {
+                        progressDialog.dismiss();
+                        sendUserToNextActivity();
+                        Toast.makeText(LoginActivity.this,"Login successful",Toast.LENGTH_SHORT).show();
+                    } else {
+                        progressDialog.dismiss();
+                        Toast.makeText(LoginActivity.this,""+task.getException(),Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
+    }
+
+    private void sendUserToNextActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
@@ -109,88 +144,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(requestCode == LOGIN_REQUEST_GG) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             GoogleSignInAccount account = task.getResult();
-            UserGoogle userGoogle = new UserGoogle(account.getEmail(), account.getDisplayName().trim());
             if(account != null) {
                 Log.d("LoginGoogle", "name: " + account.getDisplayName());
                 Log.d("LoginGoogle","id: " + account.getId());
-            }
-            if(db.checkEmailLogin(userGoogle.getUserEmail())) {
-                userGoogles = db.getDataUserGoogle(userGoogle.getUserEmail());
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra("dataUserGG", (Serializable) userGoogles.get(userGoogles.size()-1));
-                startActivity(intent);
-            } else {
-                if(db.insertUserEmail(userGoogle)) {
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                }
-            }
-//            if(resultCode == RESULT_OK) {
-//                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-//                handleSignin(task);
-//            } else {
-//                showToast("Login with Google ko khả dụng.");
-//            }
-        }
-    }
-
-    // click vào login: kiểm tra đầu vào của người dùng
-    private void functionLogin() {
-        String username = userLogin.getText().toString().trim();
-        String userPassword = this.userPassword.getText().toString().trim();
-
-        boolean checkEmptyUsername = checkInputEmpty(username);
-        boolean checkEmptyPassword = checkInputEmpty(userPassword);
-
-        if(checkEmptyUsername || checkEmptyPassword) {
-            showToast(getResources().getString(R.string.error_login_empty));
-        } else {
-            // check trong database xem có username và mật khẩu trùng ko
-            boolean flag = db.checkUserLogin(username, userPassword);
-            if(flag) {
-                // nếu mà tồn tại thì sẽ đăng nhập thành công
-                listUserName = db.getDataUser(username);
-                Intent intent = new Intent(this, MainActivity.class);
-                // muốn gửi dữ liệu đi phải implement class Serializable ở class User
-                // gửi list dữ liệu đi
-                intent.putExtra("dataUsername", (Serializable) listUserName.get(listUserName.size()-1));
-                startActivity(intent);
-            } else {
-                showToast(getResources().getString(R.string.error_login));
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
         }
     }
-
-    // check input empty
-    @SuppressLint("NewApi")
-    private boolean checkInputEmpty(String input) {
-        if(input.isEmpty()) {
-            return true;
-        } else {
-            // nếu mà input truyền vào là mk thì hash mk đó
-            if (input.equals(userPassword.getText().toString())) {
-                try {
-                    //hashPassword = EncryptDecrypt.encrypt(input);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return false;
-        }
-    }
-
-    private void init() {
-        userLogin =  findViewById(R.id.edt_username);
-        userPassword =  findViewById(R.id.edt_passwd);
-        forgotPassword =  findViewById(R.id.forgot_passwd);
-        nextPageRegister = findViewById(R.id.creat_acc);
-        buttonLogin =  findViewById(R.id.btn_login);
-        displayPassword =  findViewById(R.id.btn_displaypw);
-        listUserName = new ArrayList<>();
-        btnLoginGG = findViewById(R.id.btn_login_gg);
-    }
-
-    private void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
 }

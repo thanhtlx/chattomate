@@ -5,4 +5,6 @@ public class Message {
     public String idReceive;
     public String text;
     public long timeStamp;
+    public boolean delete;
+
 }

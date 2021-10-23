@@ -27,5 +27,6 @@
     <string name="edt_register_passwd">Mật khẩu</string>
     <string name="edt_cf_register_paswd">Nhập lại mật khẩu</string>
     <string name="txt_btn_register">Đăng ký</string>
+    <string name="alreadyHaveAcc">Đã có tài khoản?</string>
 
 </resources>

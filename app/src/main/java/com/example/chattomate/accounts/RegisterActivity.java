@@ -1,6 +1,6 @@
 package com.example.chattomate.accounts;
 
-import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -8,147 +8,127 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import com.example.chattomate.database.DBUser;
 import com.example.chattomate.R;
-import com.example.chattomate.database.EncryptDecrypt;
-import com.example.chattomate.models.UserName;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
-    private EditText editFirstName, editLastName;
-    private EditText editUsername, editUserPassword, editUserCfPassword;
-    private Button buttonRegister;
+public class RegisterActivity extends AppCompatActivity {
+    private TextView alreadyHaveAcc;
+    private EditText inputEmail, inputPass, inputCfPass, editFirstName, editLastName;
+    private Button btnRegister;
     private ToggleButton displayPassWord, displayCfPassWord;
-
-    private DBUser db;
-    private String hashInPutPassword = "";
+    private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    private ProgressDialog progressDialog;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle saveInstanceState) {
+        super.onCreate(saveInstanceState);
         setContentView(R.layout.register_activity);
-        init();
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        db = new DBUser(this);
-        buttonRegister.setOnClickListener(this);
-        displayPassWord.setOnClickListener(this);
-        displayCfPassWord.setOnClickListener(this);
-    }
-
-    public void init() {
-        editFirstName = findViewById(R.id.edt_first_name);
+        alreadyHaveAcc = findViewById(R.id.alreadyHaveAcc);
         editLastName = findViewById(R.id.edt_last_name);
-        editUsername = findViewById(R.id.edt_user_register);
-        editUserPassword = findViewById(R.id.edt_passWd_register);
-        editUserCfPassword = findViewById(R.id.edt_confirm_passWd);
-
+        editFirstName = findViewById(R.id.edt_first_name);
+        inputEmail = findViewById(R.id.inputEmail);
+        inputPass = findViewById(R.id.inputPass);
+        inputCfPass = findViewById(R.id.inputCfPass);
         displayPassWord = findViewById(R.id.toggle_display_password);
         displayCfPassWord = findViewById(R.id.toggle_cf_display_password);
-        buttonRegister = findViewById(R.id.btn_register_page);
-    }
+        btnRegister = findViewById(R.id.btn_register_page);
+        progressDialog = new ProgressDialog(this);
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
 
-    // click vào các button gọi đến sự kiện
-    @Override
-    public void onClick(View view) {
-        if(view.getId() == R.id.btn_register_page) {
-            UserName userName = createUser();
-            if(userName != null) {
-                boolean flag = db.insertUser(userName);
-                if(flag) {
-                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                    intent.putExtra("registerSuccessfully", getResources().getString(R.string.register_succesfully));
-                    startActivity(intent);
-                } else {
-                    showToast(getResources().getString(R.string.insert_false));
+        alreadyHaveAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(RegisterActivity.this,LoginActivity.class));
+            }
+        });
+
+        displayPassWord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!displayPassWord.isChecked()) { // ẩn mật khẩu
+                    inputPass.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    inputPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                } else { // hiển thị mật khẩu
+                    inputPass.setInputType(InputType.TYPE_CLASS_TEXT);
+                    inputPass.setTransformationMethod(null);
                 }
             }
+        });
 
-        } else if(view.getId() == R.id.toggle_display_password) {
-            if(!displayPassWord.isChecked()) { // ẩn mật khẩu
-                editUserPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                editUserPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            } else { // hiển thị mật khẩu
-                editUserPassword.setInputType(InputType.TYPE_CLASS_TEXT);
-                editUserPassword.setTransformationMethod(null);
-            }
-
-        } else if(view.getId() == R.id.toggle_cf_display_password) {
-            if(!displayCfPassWord.isChecked()) { // ẩn mật khẩu
-                editUserCfPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                editUserCfPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            } else { // hiển thị mật khẩu
-                editUserCfPassword.setInputType(InputType.TYPE_CLASS_TEXT);
-                editUserCfPassword.setTransformationMethod(null);
-            }
-        }
-    }
-
-    @SuppressLint("NewApi")
-    private UserName createUser() {
-        UserName userName = null;
-        String firstName = editFirstName.getText().toString().trim();
-        String lastName = editLastName.getText().toString().trim();
-        String username = editUsername.getText().toString().trim();
-        String password = editUserPassword.getText().toString().trim();
-        String cfPassword = editUserCfPassword.getText().toString().trim();
-        boolean checkEmptyFirstName = checkInputEmpty(firstName, editFirstName);
-        boolean checkEmptyLastName = checkInputEmpty(lastName, editLastName);
-        boolean checkEmptyEmail = checkInputEmpty(username, editUsername);
-        boolean checkUsername      = db.checkUsernameExists(username);
-        boolean checkEmptyPassword = checkInputEmpty(password, editUserPassword);
-        boolean checkEmptyCfPassword = checkInputEmpty(cfPassword, editUserCfPassword);
-
-        // bất kể 1 trường nào còn trống thì đều báo lỗi
-        if(checkEmptyFirstName || checkEmptyLastName || checkEmptyEmail || checkEmptyPassword || checkEmptyCfPassword) {
-            showToast(getResources().getString(R.string.error_information));
-
-        } else if(checkUsername) { // nếu tồn tại user trong database thì error
-            showToast(getResources().getString(R.string.error_user_exists));
-//        } else if(!checkInputPassword(password)) {
-//            showToast("Mật khẩu phải có ít nhất 1 chữ cái Hoa và 1 chữ số");
-        } else if(!password.equals(cfPassword)) { // nếu 2 mật khẩu ko khớp nhau thì error
-            showToast(getResources().getString(R.string.error_confirm_password));
-        } else { // ok. khi thỏa mãn hết thì lưu
-            showToast("Đăng ký thành công!");
-            userName = new UserName(firstName, lastName, username, password);
-        }
-
-        return userName;
-    }
-
-    // check input empty
-    @SuppressLint("NewApi")
-    private boolean checkInputEmpty(String input, EditText setBackground) {
-        if(input.isEmpty()) {
-            //setBackground.setBackground(getResources().getDrawable(R.drawable.custom_background_error));
-            return true;
-        } else {
-            // nếu mà input truyền vào là mk thì hash mk đó
-            if (input.equals(editUserPassword.getText().toString())) {
-                try {
-                    //hashInPutPassword = EncryptDecrypt.encrypt(input);
-                } catch (Exception e) {
-                    e.printStackTrace();
+        displayCfPassWord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!displayCfPassWord.isChecked()) { // ẩn mật khẩu
+                    inputCfPass.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    inputCfPass.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                } else { // hiển thị mật khẩu
+                    inputCfPass.setInputType(InputType.TYPE_CLASS_TEXT);
+                    inputCfPass.setTransformationMethod(null);
                 }
             }
-            return false;
+        });
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                perForAuth();
+            }
+        });
+    }
+
+    private void perForAuth() {
+        String email = inputEmail.getText().toString();
+        String password = inputPass.getText().toString();
+        String cfPassword = inputCfPass.getText().toString();
+        String firstName = editFirstName.getText().toString();
+        String lastName = editLastName.getText().toString();
+
+        if(firstName.isEmpty())  editFirstName.setError("Không được để trống");
+        else if(lastName.isEmpty()) editLastName.setError("Không được để trống");
+        else if(!email.matches(emailPattern) || email.isEmpty()) inputEmail.setError("Invalid Email");
+        else if(password.isEmpty() || password.length() < 8) inputPass.setError("Nhập mật khẩu dài ít nhất 8 ký tự");
+        else if(!password.equals(cfPassword)) inputCfPass.setError("Password not match both field");
+        else {
+            progressDialog.setMessage("Please wait while registration...");
+            progressDialog.setTitle("Registration");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
+
+            mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()) {
+                        progressDialog.dismiss();
+                        sendUserToNextActivity();
+                        Toast.makeText(RegisterActivity.this,"Registration successful",Toast.LENGTH_SHORT).show();
+                    } else {
+                        progressDialog.dismiss();
+                        Toast.makeText(RegisterActivity.this,""+task.getException(),Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 
-    // check input password
-    public boolean checkInputPassword(String input) {
-        String regex = "^[a-zA-Z0-9]{1}([a-z0-9]*[.#$^+=!*()@%&]{1}[a-z0-9]*){8,20}$";// Lx!ssosdsd
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
-        return matcher.find();
-    }
-
-    private void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    private void sendUserToNextActivity() {
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }
