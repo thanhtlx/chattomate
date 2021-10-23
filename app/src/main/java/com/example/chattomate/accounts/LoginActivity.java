@@ -31,8 +31,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText inputEmail, inputPass;
-    private Button btnLogin, nextPageRegister;
-    private SignInButton btnLoginGG;
+    private Button btnLogin, nextPageRegister, btnLoginGG;
     private ToggleButton displayPassWord;
     private ProgressDialog progressDialog;
     private TextView forgotPass;
@@ -88,11 +87,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLoginGG.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LOGIN_CODE = 1;
-                GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-                GoogleSignInClient client = GoogleSignIn.getClient(LoginActivity.this, options);
-                Intent intent = client.getSignInIntent();
-                startActivityForResult(intent, LOGIN_REQUEST_GG);
+                startActivity(new Intent(LoginActivity.this, LoginGoogleActivity.class));
             }
         });
 
@@ -138,17 +133,4 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == LOGIN_REQUEST_GG) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            GoogleSignInAccount account = task.getResult();
-            if(account != null) {
-                Log.d("LoginGoogle", "name: " + account.getDisplayName());
-                Log.d("LoginGoogle","id: " + account.getId());
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            }
-        }
-    }
 }

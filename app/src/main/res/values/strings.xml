@@ -5,21 +5,9 @@
     <string name="forgot_paswd">Quên mật khẩu?</string>
     <string name="creat_acc">Đăng ký</string>
     <string name="btn_login">Đăng nhập</string>
-    <string name="error_login">Sai tên đăng nhập hoặc mật khẩu!</string>
-    <string name="error_login_empty">Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu</string>
     <string name="display_paswd">Hiện</string>
     <string name="undisplay_paswd">Ẩn</string>
     <string name="login_gg">Đăng nhập với Google</string>
-
-    <!-- Validation data register -->
-    <string name="register_succesfully">Đăng kí thành công!</string>
-    <string name="insert_ok">Đăng kí thành công</string>
-    <string name="insert_false">Đăng kí thất bại</string>
-    <string name="error_confirm_password">Mật Khẩu không khớp với nhau</string>
-    <string name="error_information">Vui lòng nhập đầy đủ thông tin</string>
-    <string name="error_email_password">Nhập tài khoản và mật khẩu</string>
-    <string name="error_user_exists">Tài khoản này đã tồn tại</string>
-    <string name="error_format_email">Định dạng tên đăng nhập không đúng</string>
 
     <string name="register_lastname">Tên</string>
     <string name="register_firstName">Họ</string>

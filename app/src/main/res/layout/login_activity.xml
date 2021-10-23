@@ -81,13 +81,13 @@
             android:text="hoặc"
             android:textAlignment="center" />
 
-        <com.google.android.gms.common.SignInButton
+        <Button
             android:id="@+id/btn_login_gg"
-            style="@style/login_page"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login_gg">
-        </com.google.android.gms.common.SignInButton>
+            android:backgroundTint="@color/colorLightBlue"
+            android:text="@string/login_gg" />
+
 
     </LinearLayout>
 
