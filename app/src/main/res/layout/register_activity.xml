@@ -117,6 +117,7 @@
         style="@style/login_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/alreadyHaveAcc" />
+        android:text="@string/alreadyHaveAcc"
+        android:textColor="@color/colorBlue" />
 
 </LinearLayout>

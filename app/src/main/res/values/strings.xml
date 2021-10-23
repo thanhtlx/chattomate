@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Chattomate</string>
-    <string name="edt_username">Tên đăng nhập</string>
+    <string name="edt_username">Email</string>
     <string name="edt_paswd">Mật khẩu</string>
     <string name="forgot_paswd">Quên mật khẩu?</string>
     <string name="creat_acc">Đăng ký</string>
@@ -11,7 +11,7 @@
 
     <string name="register_lastname">Tên</string>
     <string name="register_firstName">Họ</string>
-    <string name="edt_register_username">Tên đăng nhập</string>
+    <string name="edt_register_username">Email</string>
     <string name="edt_register_passwd">Mật khẩu</string>
     <string name="edt_cf_register_paswd">Nhập lại mật khẩu</string>
     <string name="txt_btn_register">Đăng ký</string>
