@@ -15,6 +15,7 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.chattomate.MainActivity;
 import com.example.chattomate.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,7 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterActivity extends AppCompatActivity {
     private TextView alreadyHaveAcc;
-    private EditText inputEmail, inputPass, inputCfPass, editFirstName, editLastName;
+    private EditText inputEmail, inputPass, inputCfPass;
     private Button btnRegister;
     private ToggleButton displayPassWord, displayCfPassWord;
     private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
@@ -36,11 +37,10 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.register_activity);
+        getSupportActionBar().hide();
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         alreadyHaveAcc = findViewById(R.id.alreadyHaveAcc);
-        editLastName = findViewById(R.id.edt_last_name);
-        editFirstName = findViewById(R.id.edt_first_name);
         inputEmail = findViewById(R.id.inputEmail);
         inputPass = findViewById(R.id.inputPass);
         inputCfPass = findViewById(R.id.inputCfPass);
@@ -96,12 +96,8 @@ public class RegisterActivity extends AppCompatActivity {
         String email = inputEmail.getText().toString();
         String password = inputPass.getText().toString();
         String cfPassword = inputCfPass.getText().toString();
-        String firstName = editFirstName.getText().toString();
-        String lastName = editLastName.getText().toString();
 
-        if(firstName.isEmpty())  editFirstName.setError("Không được để trống");
-        else if(lastName.isEmpty()) editLastName.setError("Không được để trống");
-        else if(!email.matches(emailPattern) || email.isEmpty()) inputEmail.setError("Invalid Email");
+        if(!email.matches(emailPattern) || email.isEmpty()) inputEmail.setError("Invalid Email");
         else if(password.isEmpty() || password.length() < 8) inputPass.setError("Nhập mật khẩu dài ít nhất 8 ký tự");
         else if(!password.equals(cfPassword)) inputCfPass.setError("Password not match both field");
         else {
@@ -119,7 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(RegisterActivity.this,"Registration successful",Toast.LENGTH_SHORT).show();
                     } else {
                         progressDialog.dismiss();
-                        Toast.makeText(RegisterActivity.this,""+task.getException(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this,"Registration is fail",Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -127,8 +123,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendUserToNextActivity() {
-        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        Intent intent = new Intent(RegisterActivity.this, SetupProfileActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
+
+
 }

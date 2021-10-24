@@ -11,34 +11,6 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".accounts.RegisterActivity">
 
-    <LinearLayout
-        style="@style/login_page"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/edt_first_name"
-            style="@style/login_page"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/register_firstName"
-            android:inputType="textPersonName" />
-
-        <EditText
-            android:id="@+id/edt_last_name"
-            style="@style/login_page"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/register_lastname"
-            android:inputType="textPersonName" />
-    </LinearLayout>
-
     <EditText
         android:id="@+id/inputEmail"
         style="@style/login_page"
