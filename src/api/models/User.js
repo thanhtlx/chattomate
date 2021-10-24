@@ -5,7 +5,7 @@ const userSchema = new schema(
   {
     idApi: {
       type: String,
-      required: false,
+      default: "",
     },
     name: {
       type: String,
@@ -14,11 +14,11 @@ const userSchema = new schema(
     avatarUrl: {
       type: String,
       required: false,
+      default: "",
     },
     phone: {
       type: String,
       required: true,
-      default: 0,
     },
     email: {
       type: String,

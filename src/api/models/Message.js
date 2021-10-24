@@ -6,24 +6,28 @@ const userSchema = new schema(
     content: {
       type: String,
       required: false,
+      default: "",
     },
     contentUrl: {
       type: String,
       required: false,
+      default: "",
     },
     duration: {
       type: Number,
       required: false,
+      default: 0,
     },
     type: {
       type: Number,
       required: true,
     },
-    delete: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
+    deleteBy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "users",
+      },
+    ],
     seenBy: [
       {
         type: Schema.Types.ObjectId,
@@ -34,12 +38,13 @@ const userSchema = new schema(
       type: Schema.Types.ObjectId,
       ref: "users",
     },
+    conversations: {},
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
   { strict: false }
 );
 
-const User = mongoose.model("messages", userSchema);
+const Message = mongoose.model("messages", userSchema);
 
-export default User;
+export default Message;

@@ -3,14 +3,16 @@ import message from "./message";
 import user from "./user";
 import auth from "./auth";
 import test from "./test";
-import conversations from "./conversations";
+import friend from "./friend";
+import conversation from "./conversation";
 
 const app = express.Router();
 
 app.use("/test", test);
-app.use("/message", message);
-app.use("/user", user);
+app.use("/messages", message);
+app.use("/users", user);
+app.use("/friends", friend);
 app.use("/auth", auth);
-app.use("/conversations", conversations);
+app.use("/conversations", conversation);
 
 export default app;

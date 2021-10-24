@@ -1,19 +1,19 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 const schema = mongoose.Schema;
 
 const userSchema = new schema(
   {
     nickName: {
       type: String,
-      required: true,
+      required: false,
+      default: "",
     },
-    accepted: {
-      type: Boolean,
+    status: {
+      type: Number, // -1 pending request, 0 friend, 1 send request
       required: true,
-      default:false,
     },
     friend: {
-      type: Schema.Types.ObjectId,
+      type: schema.Types.ObjectId,
       ref: "users",
     },
     createdAt: { type: Date, default: Date.now },
@@ -22,6 +22,6 @@ const userSchema = new schema(
   { strict: false }
 );
 
-const User = mongoose.model("friends", userSchema);
+const Friend = mongoose.model("friends", userSchema);
 
-export default User;
+export default Friend;

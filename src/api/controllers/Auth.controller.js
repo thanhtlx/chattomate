@@ -61,12 +61,7 @@ class AuthController {
       return res.status(404).send({ status: "error", message: "User existed" });
     }
 
-    const user = await UserService.saveUser({
-      name: req.body.name,
-      phone: req.body.phone,
-      email: req.body.email,
-      password: req.body.password,
-    });
+    const user = await UserService.createUser(req.body);
     if (user._id) {
       return res.send({ status: "success", data: user });
     } else {
@@ -79,6 +74,7 @@ class AuthController {
       status: "success",
     });
   }
+  //forget ?
 }
 
 export default AuthController;

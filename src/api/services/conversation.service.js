@@ -1,0 +1,146 @@
+import Conversation from "../models/Conversation";
+import UserConversation from "../models/UserConversation";
+import UserService from "./user.service";
+
+class ConversationService {
+  static async getConversations(id) {
+    console.log(id);
+    const userConversations = await UserConversation.find({
+      user: id,
+    }).populate("conversation");
+
+    const data = [];
+    userConversations.map((conversation) => {
+      data.push(this.getInfoConversation(conversation));
+    });
+
+    return data;
+  }
+  static getInfoConversation(userConversation) {
+    const data = (({ spam, notify }) => ({
+      spam,
+      notify,
+    }))(userConversation);
+    const conversation = userConversation.conversation;
+    const data2 = (({
+      _id,
+      name,
+      backgroundURI,
+      emoji,
+      ghim,
+      admins,
+      members,
+    }) => ({
+      _id,
+      name,
+      backgroundURI,
+      emoji,
+      ghim,
+      admins,
+      members,
+    }))(conversation);
+    return { ...data, ...data2 };
+  }
+
+  static async createConversation(members, admins, name = "") {
+    // check ton tai roi thi thoi
+    const membersID = members.map((member) => member._id);
+    const conversation = await Conversation.create({
+      name: name,
+      admins: admins,
+      members: membersID,
+      isPrivate: membersID.length == 2,
+    });
+    members.forEach(async (member) => {
+      const userConversation = await UserConversation.create({
+        user: member._id,
+        conversation: conversation._id,
+      });
+      member.conversations.push(userConversation);
+      await member.save();
+    });
+    return conversation;
+  }
+
+  static async updateConversation(conversation, data) {
+    if (data.name) {
+      conversation.name = data.name;
+    }
+    if (data.backgroundURI) {
+      conversation.backgroundURI = data.backgroundURI;
+    }
+    if (data.emoji) {
+      conversation.emoji = data.emoji;
+    }
+    if (data.ghim) {
+      conversation.ghim = data.ghim;
+    }
+    await this.saveConversation(conversation);
+    return conversation;
+  }
+
+  static async findID(id) {
+    return await Conversation.findById(id);
+  }
+
+  static async saveConversation(conversation) {
+    return await conversation.save();
+  }
+
+  static async deleteConversation(conversation) {
+    // await UserConversation.deleteMany({ conversation: conversation._id });
+    // await conversation.delete();
+    return true;
+  }
+
+  static async addMembers(conversation, members) {
+    await Promise.all(
+      await members.map(async (member) => {
+        if (member in conversation.members) return;
+
+        let userConversation = await UserConversation.findOne({
+          user: member,
+          conversation: conversation._id,
+        });
+        if (userConversation) {
+          return;
+        } else {
+          userConversation = await UserConversation.create({
+            user: member,
+            conversation: conversation._id,
+          });
+        }
+
+        const user = await UserService.findID(member);
+        user.conversations.push(userConversation._id);
+        await UserService.saveUser(user);
+        conversation.members.push(member);
+        await this.saveConversation(conversation);
+      })
+    );
+    return conversation;
+  }
+
+  static async removeMember(conversation, userID) {
+    // remove from conversation member
+    for (let member of conversation.members) {
+      if (member.toString() == userID) {
+        console.log(conversation.members.indexOf(member));
+        conversation.members.splice(conversation.members.indexOf(member));
+        await this.saveConversation(conversation);
+      }
+    }
+    return conversation;
+  }
+
+  static async checkPrivateConversationExisted(members) {
+    const conversation = await Conversation.findOne({
+      members: members,
+      isPrivate: true,
+    });
+    console.log(conversation);
+    return conversation;
+  }
+}
+
+export default ConversationService;

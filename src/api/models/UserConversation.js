@@ -1,14 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 const schema = mongoose.Schema;
 
 const userSchema = new schema(
   {
     user: {
-      type: Schema.Types.ObjectId,
+      type: schema.Types.ObjectId,
       ref: "users",
     },
     conversation: {
-      type: Schema.Types.ObjectId,
+      type: schema.Types.ObjectId,
       ref: "conversations",
     },
     nickName: {
@@ -25,12 +25,16 @@ const userSchema = new schema(
       required: false,
       default: true,
     },
+    delete: {
+      type: Boolean,
+      default: false,
+    },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
   { strict: false }
 );
 
-const User = mongoose.model("user_conversations", userSchema);
+const UserConversation = mongoose.model("user_conversations", userSchema);
 
-export default User;
+export default UserConversation;
