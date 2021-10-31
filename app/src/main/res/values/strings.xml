@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Chattomate</string>
+    <string name="registration">Đăng ký</string>
+    <string name="login">Đăng nhập</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="email">Email</string>
+    <string name="password">Mật khẩu</string>
+    <string name="cfPassword">Nhập lại mật khẩu</string>
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="new_pasword">Mật khẩu mới</string>
+    <string name="cf_new_password">Nhập lại mật khẩu mới</string>
+    <string name="name">Họ Tên</string>
 </resources>

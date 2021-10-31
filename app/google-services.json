@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "457434027749",
+    "firebase_url": "https://chattomate-d98fd-default-rtdb.firebaseio.com",
+    "project_id": "chattomate-d98fd",
+    "storage_bucket": "chattomate-d98fd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457434027749:android:dc95b3de34821ac0d2e60c",
+        "android_client_info": {
+          "package_name": "com.example.chattomate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "457434027749-1t4r0urkis23dbj63ac41476h2gig1rm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMk2d9TEr_GzaAD51FxTpNx4DoejQ3cPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "457434027749-1t4r0urkis23dbj63ac41476h2gig1rm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
