@@ -6,9 +6,7 @@ const router = express.Router();
 
 router.use(auth);
 
-router.post("/", UserController.updateUser);
-
 // edit password, name, avt , ....
-router.put("/");
+router.put("/", UserController.updateUser);
 
 export default router;

@@ -44,8 +44,6 @@ class FriendController {
         .status(400)
         .send({ status: "error", message: error.details[0].message });
     }
-    //
-
     const sender = req.user._id;
     const receiver = req.body.userId;
     //
@@ -59,8 +57,6 @@ class FriendController {
     if (result) {
       return res.send({ status: "success", data: result });
     }
-    // socket notifiaction
-
     return res
       .status(400)
       .send({ status: "error", message: "friends requested" });
@@ -98,7 +94,6 @@ class FriendController {
       );
     }
 
-    // socket notification
     res.send({ status: "success", data: friendRequest });
   }
 
@@ -140,27 +135,7 @@ class FriendController {
     }
     const friendID = req.params.id;
     // check permistion
-    const user = await UserService.findID(req.user._id);
-    const friend1 = await FriendService.getFriendByID(user._id, friendID);
-    if (!friend1) {
-      return res
-        .status(400)
-        .send({ status: "error", message: "Permission denied!" });
-    }
-    user.friends.splice(user.friends.indexOf(friend1._id), 1);
-
-    const user2 = await UserService.findID(friend1.friend);
-    const friend2 = await FriendService.getFriendByUserID(user2._id, user._id);
-    if (!friend2) {
-      return res
-        .status(400)
-        .send({ status: "error", message: "Permission denied!" });
-    }
-    await FriendService.removeFriend(friend2);
-    user2.friends.splice(user2.friends.indexOf(friend2._id), 2);
-    await UserService.saveUser(user);
-    await UserService.saveUser(user2);
-    const result = await FriendService.removeFriend(friend1);
+    const result = await FriendService.removeFriend(req.user._id, friendID);
     if (result) {
       return res.send({ status: "success", data: result });
     }

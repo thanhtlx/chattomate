@@ -6,14 +6,18 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 
+import * as socketio from "socket.io";
+import mSocket from "./api/socket/socket";
+import jwt from "jsonwebtoken";
+
 class Server {
   constructor() {
     dotenv.config();
     this.application = express();
     this.port = process.env.PORT || 3000;
     this.server = http.createServer(this.application);
-    this.mongodb();
     this.socket();
+    this.mongodb();
     this.plugin();
     this.routes();
   }
@@ -30,7 +34,24 @@ class Server {
     this.application.use(express.static("public"));
   }
 
-  socket() {}
+  socket() {
+    const io = new socketio.Server(this.server);
+    io.use((socket, next) => {
+      if (!socket.handshake.query) {
+        return;
+      }
+      let token = socket.handshake.query.token;
+      try {
+        const verified = jwt.verify(token, process.env.TOKEN_SECRET);
+        socket.handshake.query.id = verified._id;
+        return next();
+      } catch (error) {
+        console.log("Socket error");
+      }
+    });
+    global.io = io;
+    mSocket.init(global.io);
+  }
 
   mongodb() {
     mongoose
