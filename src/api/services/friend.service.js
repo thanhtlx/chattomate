@@ -1,5 +1,7 @@
 import Friend from "../models/Friend";
 import UserService from "./user.service";
+import NotifyService from "./notify.service";
+import * as Config from "../socket/config";
 
 class FriendService {
   static async getAllFriends(id, status = 0) {
@@ -58,6 +60,15 @@ class FriendService {
     sender.friends.push(friendSender._id);
     await receiver.save();
     await sender.save();
+    console.log("?");
+    await NotifyService.notify(
+      Config.CHANNEL_NEW_FRIEND_REQUEST,
+      receiver._id,
+      {
+        message: "muon ket ban voi ban",
+        data: friendSender,
+      }
+    );
     return friendSender;
   }
 
@@ -80,13 +91,42 @@ class FriendService {
     friendSender.status = 0;
     await friendSender.save();
     await friendAccepted.save();
-
+    await NotifyService.notify(
+      Config.CHANNEL_NEW_FRIEND_REQUEST,
+      friendAccepted.friend,
+      {
+        message: "da chap nhan loi moi ket ban ",
+        data: friendAccepted,
+      }
+    );
     return friendAccepted;
   }
 
-  static async removeFriend(friend) {
-    await friend.delete();
-    return friend;
+  static async removeFriend(userID, friendID) {
+    const user = await UserService.findID(userID);
+    const friend1 = await FriendService.getFriendByID(userID, friendID);
+    if (!friend1) {
+      return;
+    }
+    user.friends.splice(user.friends.indexOf(friend1._id), 1);
+
+    const user2 = await UserService.findID(friend1.friend);
+    const friend2 = await FriendService.getFriendByUserID(user2._id, userID);
+    if (!friend2) {
+      return res
+        .status(400)
+        .send({ status: "error", message: "Permission denied!" });
+    }
+    await friend1.delete();
+    await friend2.delete();
+    user2.friends.splice(user2.friends.indexOf(friend2._id), 2);
+    await UserService.saveUser(user);
+    await UserService.saveUser(user2);
+    await NotifyService.notify(Config.CHANNEL_DELETE_FRIEND, user2._id, {
+      message: "xoa ban",
+      data: friend2,
+    });
+    return friend1;
   }
 
   static async findID(id) {

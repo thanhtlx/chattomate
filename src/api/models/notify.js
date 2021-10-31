@@ -4,16 +4,15 @@ const schema = mongoose.Schema;
 
 const userSchema = new schema(
   {
-    nickName: {
+    channel: {
       type: String,
-      required: false,
-      default: "",
-    },
-    status: {
-      type: Number, // -1 pending request, 0 friend, 1 send request
       required: true,
     },
-    friend: {
+    data: {
+      type: Object,
+      required: true,
+    },
+    user: {
       type: schema.Types.ObjectId,
       ref: "users",
     },
@@ -23,6 +22,6 @@ const userSchema = new schema(
   { strict: false }
 );
 
-const Friend = mongoose.model("friends", userSchema);
+const Notify = mongoose.model("Notifiers", userSchema);
 
-export default Friend;
+export default Notify;

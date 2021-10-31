@@ -1,6 +1,8 @@
 import Conversation from "../models/Conversation";
 import UserConversation from "../models/UserConversation";
 import UserService from "./user.service";
+import NotifyService from "./notify.service";
+import * as Config from "../socket/config";
 
 class ConversationService {
   static async getConversations(id) {
@@ -58,6 +60,10 @@ class ConversationService {
       });
       member.conversations.push(userConversation);
       await member.save();
+      await NotifyService.notify(Config.CHANNEL_NEW_CONVERSATION, member._id, {
+        message: "new conversation",
+        data: conversation,
+      });
     });
     return conversation;
   }
@@ -116,6 +122,10 @@ class ConversationService {
         await UserService.saveUser(user);
         conversation.members.push(member);
         await this.saveConversation(conversation);
+        await NotifyService.notify(Config.CHANNEL_NEW_CONVERSATION, user._id, {
+          message: "new conversation",
+          data: conversation,
+        });
       })
     );
     return conversation;
