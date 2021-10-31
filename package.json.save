@@ -5,7 +5,7 @@
   "description": "Chattomate backend",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --experimental-modules --es-module-specifier-resolution=node src/app.js",
+    "start": "nodemon --experimental-modules node: bad option: --es-module-specifier-resolution=node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
