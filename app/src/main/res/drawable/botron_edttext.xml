@@ -14,6 +14,8 @@
         android:color="@color/gray70" >
     </stroke>
 
+    <size android:height="36dp"></size>
+
     <!-- các thuộc tính căn chỉnh-->
     <padding
         android:left="5dp"

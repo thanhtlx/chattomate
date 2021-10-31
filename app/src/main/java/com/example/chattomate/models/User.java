@@ -13,7 +13,7 @@ public class User implements Serializable {
     public ArrayList<Friend> friends;
     public ArrayList<Conversation> conversations;
 
-    public User() {}
+    public User() { }
 
     public User(String name, String avatarUrl, String phone, String email, String password) {
         this.name = name;
@@ -24,6 +24,13 @@ public class User implements Serializable {
     }
 
     public User(String name, String phone, String email) {
+        this.name = name;
+        this.avatarUrl = avatarUrl;
+        this.phone = phone;
+        this.email = email;
+    }
+
+    public User(String name, String avatarUrl, String phone, String email) {
         this.name = name;
         this.avatarUrl = avatarUrl;
         this.phone = phone;

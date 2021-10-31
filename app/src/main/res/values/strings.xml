@@ -9,4 +9,5 @@
     <string name="old_password">Mật khẩu cũ</string>
     <string name="new_pasword">Mật khẩu mới</string>
     <string name="cf_new_password">Nhập lại mật khẩu mới</string>
+    <string name="name">Họ Tên</string>
 </resources>

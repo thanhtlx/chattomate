@@ -22,8 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RegisterActivity extends AppCompatActivity {
-    public static final String TAG = RegisterActivity.class.getSimpleName();
-    private EditText edtPassWord, edtCfPassword, edtEmail;
+    private EditText edtPassWord, edtCfPassword, edtEmail, edtName;
     private Button btnRegister;
     private TextView login;
     private ProgressDialog pDialog;
@@ -31,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     public static final String REGIS_URL = Config.HOST + Config.REGISTER_URL;
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_EMAIL = "email";
+    public static final String KEY_NAME = "name";
     private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
     @Override
@@ -42,6 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
         edtPassWord = (EditText) findViewById(R.id.passwd_regis);
         edtCfPassword = (EditText) findViewById(R.id.cfpasswd_regis);
         edtEmail = (EditText) findViewById(R.id.email_regis);
+        edtName = findViewById(R.id.name_regis);
         btnRegister = (Button) findViewById(R.id.btnRegister);
         login = (TextView) findViewById(R.id.login);
 
@@ -67,11 +68,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void registerUser() {
+        String name = edtName.getText().toString().trim();
         String email = edtEmail.getText().toString().trim();
         String password = edtPassWord.getText().toString().trim();
         String cfPassword = edtCfPassword.getText().toString().trim();
 
-        if(email.isEmpty()) edtEmail.setError("Vui lòng nhập email");
+        if(name.length() < 2) edtName.setError("Invalid Name");
+        else if(email.isEmpty()) edtEmail.setError("Vui lòng nhập email");
         else if(!email.matches(emailPattern)) edtEmail.setError("Định dạng email không đúng");
         else if(password.length() < 8) edtPassWord.setError("Đặt mật khẩu dài ít nhất 8 ký tự");
         else if(!cfPassword.equals(password)) edtCfPassword.setError("Không khớp với mật khẩu trên");
@@ -82,6 +85,8 @@ public class RegisterActivity extends AppCompatActivity {
             try {
                 regisData.put(KEY_EMAIL, email);
                 regisData.put(KEY_PASSWORD, password);
+                regisData.put(KEY_NAME, name);
+                regisData.put("phone", "0000000000");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -108,8 +113,6 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"registration error 2",Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
-
-                    Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_LONG).show();
                     Log.d("debug",result.toString());
                     pDialog.dismiss();
                 }
@@ -118,7 +121,7 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onError(JSONObject result) {
                     //register thất bại
                     pDialog.dismiss();
-                    Toast.makeText(RegisterActivity.this, "Registration Error", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterActivity.this, "Email existed", Toast.LENGTH_LONG).show();
                     Log.d("debug",result.toString());
                 }
             });

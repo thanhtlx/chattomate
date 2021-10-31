@@ -26,9 +26,10 @@
     <EditText
         android:id="@+id/email_regis"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/botron_edttext"
+        android:drawableLeft="@drawable/email_icon"
         android:ems="10"
         android:hint="@string/email"
         android:inputType="textPersonName"
@@ -49,9 +50,10 @@
         <EditText
             android:id="@+id/inputPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:layout_weight="6"
             android:background="@drawable/botron_edttext"
+            android:drawableLeft="@drawable/lock"
             android:ems="10"
             android:hint="@string/password"
             android:inputType="textPassword"

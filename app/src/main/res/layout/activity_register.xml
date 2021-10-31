@@ -25,13 +25,12 @@
         app:srcCompat="@drawable/logo1" />
 
     <EditText
-        android:id="@+id/email_regis"
+        android:id="@+id/name_regis"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_height="36dp"
         android:background="@drawable/botron_edttext"
         android:ems="10"
-        android:hint="@string/email"
+        android:hint="@string/name"
         android:inputType="textPersonName"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -39,12 +38,28 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
     <EditText
+        android:id="@+id/email_regis"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/botron_edttext"
+        android:drawableLeft="@drawable/email_icon"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textPersonName"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_regis" />
+
+    <EditText
         android:id="@+id/passwd_regis"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_marginTop="20dp"
         android:layout_weight="6"
         android:background="@drawable/botron_edttext"
+        android:drawableLeft="@drawable/lock"
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword"
@@ -56,10 +71,11 @@
     <EditText
         android:id="@+id/cfpasswd_regis"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_marginTop="20dp"
         android:layout_weight="6"
         android:background="@drawable/botron_edttext"
+        android:drawableLeft="@drawable/lock"
         android:ems="10"
         android:hint="@string/cfPassword"
         android:inputType="textPassword"
@@ -72,7 +88,7 @@
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/botron_button"
         android:text="@string/registration"
         android:textColor="@color/gray70"
@@ -84,7 +100,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
