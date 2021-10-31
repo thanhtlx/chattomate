@@ -6,7 +6,7 @@ import android.os.Handler;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.chattomate.account.LoginActivity;
+import com.example.chattomate.activities.LoginActivity;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -27,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
         };
 
         Handler handler = new Handler();
-        handler.postDelayed(runnable,2800);
+        handler.postDelayed(runnable,2000);
     }
 
 }

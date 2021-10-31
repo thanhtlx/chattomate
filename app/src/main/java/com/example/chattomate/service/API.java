@@ -3,7 +3,6 @@ package com.example.chattomate.service;
 import android.content.Context;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -12,11 +11,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.chattomate.interfaces.APICallBack;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.Map;
 
 public class API {
@@ -27,10 +23,10 @@ public class API {
     }
 
     public void Call(int method, String url, JSONObject params, Map<String, String> headers, APICallBack callBack) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(method, url, params, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(method, url, params,
+                new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
                 System.out.println(response);
                 callBack.onSuccess(response);
             }
@@ -38,7 +34,7 @@ public class API {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                VolleyLog.d("TAG", "Login error response: " + error.getMessage());
+                VolleyLog.d("TAG", "Error response: " + error.getMessage());
                 try {
                     String responseBody = new String(error.networkResponse.data, "utf-8");
                     JSONObject data = new JSONObject(responseBody);

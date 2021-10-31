@@ -1,51 +1,37 @@
 package com.example.chattomate.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class User implements Serializable {
-    private String idApi;
-    private String name;
-    private String avatar;
-    private String email;
-    private String password;
+    public String idApi;
+    public String name;
+    public String avatarUrl;
+    public String phone;
+    public String email;
+    public String password;
+    public ArrayList<Friend> friends;
+    public ArrayList<Conversation> conversations;
 
     public User() {}
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public User(String name, String avatarUrl, String phone, String email, String password) {
         this.name = name;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
+        this.avatarUrl = avatarUrl;
+        this.phone = phone;
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
     }
 
-    //    public Status status;
-//    public Message message;
+    public User(String name, String phone, String email) {
+        this.name = name;
+        this.avatarUrl = avatarUrl;
+        this.phone = phone;
+        this.email = email;
+    }
 
-
-
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }
