@@ -1,9 +1,8 @@
-import User from "../models/User";
-import bcrypt from "bcryptjs";
+import Message from "../models/Message";
 
-class UserService {
-  static async checkUserExist(email) {
-    return await User.findOne({ email: email });
+class MessageService {
+  static async getAllMessage(conversationID) {
+    return await Message.find({ conversation: conversationID });
   }
 
   static async saveUser(data) {
@@ -23,8 +22,8 @@ class UserService {
   }
 
   static async findID(id) {
-    return await User.findById(id);
+    return await Message.findById(id);
   }
 }
 
-export default UserService;
+export default MessageService;

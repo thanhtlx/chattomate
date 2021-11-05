@@ -1,6 +1,6 @@
 import express from "express";
 import auth from "../middlewares/Auth.middleware";
-import FriendController from "../controllers/Friend.controller";
+import MessageController from "../controllers/Message.controller";
 
 
 const router = express.Router();
@@ -8,17 +8,17 @@ const router = express.Router();
 router.use(auth);
 
 // get alls messages
-router.get("/:conversation_id");
+router.get("/:conversation_id",MessageController.getMessages);
 
 //send message
-router.post("/", (req, res) => {
-  console.log("login");
-});
+router.post("/", MessageController.sendMessage);
 
-// 
-router.put("/");
+//  how to delete 
+router.put("/:messageID",MessageController.deleteMessage);
 
-//delete message 
-router.delete("/");
+//remove message 
+router.delete("/", MessageController.destroyMessage);
+
+
 
 export default router;
