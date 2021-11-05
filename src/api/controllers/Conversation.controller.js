@@ -58,12 +58,16 @@ class ConversationController {
         .status(400)
         .send({ status: "error", message: "User don't exist", data: errors });
     }
-    const conversation = await ConversationService.createConversation(members, [
-      userID,
-    ]);
-    
+    const userCreated = await UserService.findID(userID);
+    const conversation = await ConversationService.createConversation(
+      members,
+      [userID],
+      "Cuộc hội thoại nhóm",
+      userCreated.name + " đã tạo cuộc hội thoại"
+    );
+
     // socket.io
-    // new conversation 
+    // new conversation
     return res.send({ status: "success", data: conversation });
   }
 
@@ -126,7 +130,12 @@ class ConversationController {
         .status(404)
         .send({ status: "error", message: "you don't have admin" });
     }
-    const result = await ConversationService.addMembers(conversation, members);
+    const userAdd = await UserService.findID(userID);
+    const result = await ConversationService.addMembers(
+      conversation,
+      members,
+      userAdd.name + " đã thêm bạn vào một cuộc trò chuyện"
+    );
     return res.send({ status: "success", data: result });
   }
 

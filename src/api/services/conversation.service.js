@@ -44,7 +44,16 @@ class ConversationService {
     return { ...data, ...data2 };
   }
 
-  static async createConversation(members, admins, name = "") {
+  static async createConversation(
+    members,
+    admins,
+    name = "",
+    message = "new conversation"
+  ) {
+    console.log(members);
+    console.log(admins);
+    console.log(name);
+    console.log(message);
     // check ton tai roi thi thoi
     const membersID = members.map((member) => member._id);
     const conversation = await Conversation.create({
@@ -61,7 +70,7 @@ class ConversationService {
       member.conversations.push(userConversation);
       await member.save();
       await NotifyService.notify(Config.CHANNEL_NEW_CONVERSATION, member._id, {
-        message: "new conversation",
+        message: message,
         data: conversation,
       });
     });
@@ -82,6 +91,17 @@ class ConversationService {
       conversation.ghim = data.ghim;
     }
     await this.saveConversation(conversation);
+    const members = conversation.members;
+    for (var member of members) {
+      NotifyService.notify(
+        Config.CHANNEL_CONVERSATION_CHANGE,
+        member.toString(),
+        {
+          message: "conversation change",
+          data: conversation,
+        }
+      );
+    }
     return conversation;
   }
 
@@ -99,7 +119,7 @@ class ConversationService {
     return true;
   }
 
-  static async addMembers(conversation, members) {
+  static async addMembers(conversation, members, message) {
     await Promise.all(
       await members.map(async (member) => {
         if (member in conversation.members) return;
@@ -123,7 +143,7 @@ class ConversationService {
         conversation.members.push(member);
         await this.saveConversation(conversation);
         await NotifyService.notify(Config.CHANNEL_NEW_CONVERSATION, user._id, {
-          message: "new conversation",
+          message: message,
           data: conversation,
         });
       })

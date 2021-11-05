@@ -1,4 +1,4 @@
-import { mongoose } from "mongoose";
+import mongoose from "mongoose";
 
 const schema = mongoose.Schema;
 
@@ -25,21 +25,24 @@ const userSchema = new schema(
     },
     deleteBy: [
       {
-        type: Schema.Types.ObjectId,
+        type: schema.Types.ObjectId,
         ref: "users",
       },
     ],
     seenBy: [
       {
-        type: Schema.Types.ObjectId,
+        type: schema.Types.ObjectId,
         ref: "users",
       },
     ],
     sendBy: {
-      type: Schema.Types.ObjectId,
+      type: schema.Types.ObjectId,
       ref: "users",
     },
-    conversations: {},
+    conversation: {
+      type: schema.Types.ObjectId,
+      ref: "conversations",
+    },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },

@@ -1,19 +1,29 @@
+import NotifyService from "../services/notify.service";
+
 class MySocket {
   static userActice = {};
   init(io) {
     this.io = io;
-    io.on("connection", function (socket) {
+    io.on("connection", async function (socket) {
       // Create a new room
       let userID = socket.handshake.query.id;
       MySocket.userActice[userID] = socket.id;
-      
-      socket.on("typing", (data) => {
-        io.to(data.rid).emmit("typing", data);
+      // notify all friend you online
+      await NotifyService.notifyFriendActiveChange(userID, "online");
+      await NotifyService.notifyAll();
+      socket.on("typing", async (data) => {
+        // data là conversation id
+        await NotifyService.notifyTyping(userID, data.conversationID);
+        // io.to(data.rid).emmit("typing", data);
+        // notify all
       });
       console.log(MySocket.userActice);
 
-      socket.on("disconnect", () => {
+      socket.on("disconnect", async (data) => {
         delete MySocket.userActice[userID];
+        // noti all friend offline
+        console.log("disconnected" + data);
+        await NotifyService.notifyFriendActiveChange(userID, "offline");
       });
     });
   }

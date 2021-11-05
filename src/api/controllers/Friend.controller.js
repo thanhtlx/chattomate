@@ -2,6 +2,7 @@
 import FriendService from "../services/friend.service";
 import UserService from "../services/user.service";
 import ConversationService from "../services/conversation.service";
+import * as Config from "../socket/config";
 import {
   friendRequestValidation,
   changeNicknameValidation,
@@ -88,9 +89,16 @@ class FriendController {
         userFriend._id,
       ]))
     ) {
+      
+
       await ConversationService.createConversation(
         [userAccepted, userFriend],
-        [acceptedID, friendRequest.friend.toString()]
+        [acceptedID, userFriend._id.toString()],
+        "Cuộc trò chuyện riêng tư giữa " +
+          userAccepted.name +
+          " và " +
+          userFriend.name,
+        "Bắt đầu cuộc trò chuyện"
       );
     }
 

@@ -1,9 +1,11 @@
-const registerValidation = (data) => {
+const sendMessageValidation = (data) => {
   const schema = Joi.object({
-    name: Joi.string().min(2).required(),
-    email: Joi.string().min(6).required().email(),
-    phone: Joi.string().min(9).required(),
-    password: Joi.string().min(8).required(),
+    conversation: Joi.string().required(),
+    type: Joi.string().required(),
+    content: Joi.string(),
+    contentUrl: Joi.string(),
+    duration: Joi.string(),
   });
   return schema.validate(data);
 };
+export default sendMessageValidation;

@@ -60,13 +60,13 @@ class FriendService {
     sender.friends.push(friendSender._id);
     await receiver.save();
     await sender.save();
-    console.log("?");
+    friendReceiver.friend = await UserService.findID(friendReceiver.friend);
     await NotifyService.notify(
       Config.CHANNEL_NEW_FRIEND_REQUEST,
       receiver._id,
       {
-        message: "muon ket ban voi ban",
-        data: friendSender,
+        message: sender.name + " muốn kết bạn với bạn",
+        data: friendReceiver,
       }
     );
     return friendSender;
@@ -91,12 +91,13 @@ class FriendService {
     friendSender.status = 0;
     await friendSender.save();
     await friendAccepted.save();
+    friendSender.friend = await UserService.findID(friendSender.friend);
     await NotifyService.notify(
       Config.CHANNEL_NEW_FRIEND_REQUEST,
       friendAccepted.friend,
       {
-        message: "da chap nhan loi moi ket ban ",
-        data: friendAccepted,
+        message: friendSender.friend.name + " đã chấp nhận lời mời kết bạn",
+        data: friendSender,
       }
     );
     return friendAccepted;
