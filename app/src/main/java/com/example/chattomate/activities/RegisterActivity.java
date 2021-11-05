@@ -86,7 +86,6 @@ public class RegisterActivity extends AppCompatActivity {
                 regisData.put(KEY_EMAIL, email);
                 regisData.put(KEY_PASSWORD, password);
                 regisData.put(KEY_NAME, name);
-                regisData.put("phone", "0000000000");
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
     public static final String LOGIN_URL = Config.HOST + Config.LOGIN_URL;
-    public static Map<String, String> AUTH_TOKEN;
+    public static String AUTH_TOKEN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(JSONObject result) {
                     try {
-                        AUTH_TOKEN.put("auth-token",result.getJSONObject("data").getString("token"));
+                        AUTH_TOKEN = result.getJSONObject("data").getString("token");
                         JSONObject jsonObject = result.getJSONObject("data").getJSONObject("user");
                         User user = new User(jsonObject.getString("name"),jsonObject.getString("avatarUrl"),
                                 jsonObject.getString("phone"), email, password);
