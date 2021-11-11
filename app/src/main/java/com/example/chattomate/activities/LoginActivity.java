@@ -25,6 +25,7 @@ import com.example.chattomate.service.API;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
@@ -54,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         register = (TextView) findViewById(R.id.register);
         ggLogin = (ImageView) findViewById(R.id.ggLogin);
         manager = new AppPreferenceManager(getApplicationContext());
-
+        AUTH_TOKEN = new HashMap<>();
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Please wait while login...");
         pDialog.setTitle("Login");
@@ -138,7 +139,9 @@ public class LoginActivity extends AppCompatActivity {
                 public void onError(JSONObject result) {
                     pDialog.dismiss();
                     Toast.makeText(LoginActivity.this, "Sai email hoặc mật khẩu", Toast.LENGTH_LONG).show();
+                    if (result != null)
                     Log.d("debug",result.toString());
+                    else Log.d("debug","null");
                 }
             });
 
