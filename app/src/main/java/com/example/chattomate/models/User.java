@@ -5,13 +5,12 @@ import java.util.ArrayList;
 
 public class User implements Serializable {
     public String idApi;
+    public String _id;
     public String name;
-    public String avatarUrl;
-    public String phone;
+    public String avatarUrl = "";
+    public String phone = "";
     public String email;
     public String password;
-    public ArrayList<Friend> friends;
-    public ArrayList<Conversation> conversations;
 
     public User() { }
 

@@ -7,7 +7,7 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chattomate.activities.LoginActivity;
-import com.example.chattomate.helper.AppPreferenceManager;
+import com.example.chattomate.database.AppPreferenceManager;
 
 public class SplashActivity extends AppCompatActivity {
     @Override

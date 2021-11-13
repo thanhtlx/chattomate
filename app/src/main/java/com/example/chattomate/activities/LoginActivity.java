@@ -17,15 +17,13 @@ import com.android.volley.Request;
 import com.example.chattomate.MainActivity;
 import com.example.chattomate.R;
 import com.example.chattomate.config.Config;
-import com.example.chattomate.helper.AppPreferenceManager;
+import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText edtEmail, edtPassWord;
@@ -126,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } catch (JSONException e) {
-                        Toast.makeText(LoginActivity.this, "login error 1", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, "Sai email hoặc mật khẩu", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
 

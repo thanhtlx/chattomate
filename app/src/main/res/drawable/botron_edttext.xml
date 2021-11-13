@@ -11,16 +11,16 @@
     <!-- đặt thuộc tính màu và độ rộng của đường viền -->
     <stroke
         android:width="1dp"
-        android:color="@color/gray70" >
+        android:color="#66252525" >
     </stroke>
 
-    <size android:height="36dp"></size>
+    <size android:height="40dp"></size>
 
     <!-- các thuộc tính căn chỉnh-->
     <padding
-        android:left="5dp"
-        android:top="5dp"
-        android:right="5dp"
+        android:left="10dp"
+        android:top="10dp"
+        android:right="10dp"
         android:bottom="5dp">
     </padding>
 
