@@ -17,7 +17,7 @@ router.post("/", MessageController.sendMessage);
 router.put("/:messageID",MessageController.deleteMessage);
 
 //remove message 
-router.delete("/", MessageController.destroyMessage);
+router.delete("/:messageID", MessageController.destroyMessage);
 
 
 
