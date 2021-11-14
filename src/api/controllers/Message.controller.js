@@ -7,26 +7,37 @@ class MessageController {
     const userID = req.user._id;
     const conversationID = req.params.conversation_id;
     const messages = await MessageService.getAllMessage(conversationID);
-    return messages.filter((message) => {
-      return !(userID in message.deleteBy);
+    const result = messages.filter((message) => {
+      const deleteBys = message.deleteBy.map((user) => user.toString());
+      return !deleteBys.includes(userID);
     });
+    return res.send({ status: "success", data: result });
   }
 
   static async sendMessage(req, res) {
+    const userID = req.user._id;
+
     const { error } = sendMessageValidation(req.body);
     if (error) {
       return res
         .status(404)
         .send({ status: "error", message: error.details[0].message });
     }
-    if (req.body.file) {
-      // save file to publice gan vao contentURL
+    // coi nhu doan nay minh upload xong roi nhe, roi check may cai khac
+
+    if (req.body.files) {
+      const name = "/public/uploads";
+      const file = req.files.file;
+      const pathfile = __dirname + name + file.name;
+      console.log(pathfile);
+      file.mv(pathfile);
+      req.body.contentUrl = pathfile;
+      delete req.body["files"];
     }
     const data = req.body;
-    data.push({
-      sendBy: userID,
-    });
+    data.sendBy = userID;
     const messaage = await MessageService.createMessage(data);
+    console.log("err");
     if (messaage) {
       return res.send({ status: "success", data: messaage });
     }
@@ -52,7 +63,7 @@ class MessageController {
     }
     return res
       .status(400)
-      .send({ status: "error", message: "permistion deneil" });
+      .send({ status: "error", message: "permission denied!" });
   }
 }
 

@@ -1,3 +1,5 @@
+import Joi from "joi";
+
 const sendMessageValidation = (data) => {
   const schema = Joi.object({
     conversation: Joi.string().required(),

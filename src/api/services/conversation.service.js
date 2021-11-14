@@ -6,7 +6,6 @@ import * as Config from "../socket/config";
 
 class ConversationService {
   static async getConversations(id) {
-    console.log(id);
     const userConversations = await UserConversation.find({
       user: id,
     }).populate("conversation");
@@ -18,6 +17,21 @@ class ConversationService {
 
     return data;
   }
+
+  static async checkNotify(userID, conversationID) {
+    const userConversation = await UserConversation.findOne({
+      user: userID,
+      conversation: conversationID,
+    });
+    if (userConversation) {
+      console.log(userID);
+      console.log(userConversation);
+      console.log(userConversation.notify);
+      return userConversation.notify;
+    }
+    return false;
+  }
+
   static getInfoConversation(userConversation) {
     const data = (({ spam, notify }) => ({
       spam,
@@ -50,10 +64,6 @@ class ConversationService {
     name = "",
     message = "new conversation"
   ) {
-    console.log(members);
-    console.log(admins);
-    console.log(name);
-    console.log(message);
     // check ton tai roi thi thoi
     const membersID = members.map((member) => member._id);
     const conversation = await Conversation.create({

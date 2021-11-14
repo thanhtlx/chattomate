@@ -1,11 +1,9 @@
 import express from "express";
 import http from "http";
 import routes from "./api/routes";
-import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-
 import * as socketio from "socket.io";
 import mSocket from "./api/socket/socket";
 import jwt from "jsonwebtoken";
@@ -14,22 +12,17 @@ class Server {
   constructor() {
     dotenv.config();
     this.application = express();
-    this.port = process.env.PORT || 3000;
+    this.plugin();
+    this.port = process.env.PORT || 8888;
     this.server = http.createServer(this.application);
     this.socket();
     this.mongodb();
-    this.plugin();
     this.routes();
   }
 
   plugin() {
     this.application.use(cors());
-    this.application.use(
-      bodyParser.urlencoded({
-        extended: true,
-      })
-    );
-    this.application.use(bodyParser.json());
+    this.application.use(express.urlencoded());
     this.application.use(express.json());
     this.application.use(express.static("public"));
   }
