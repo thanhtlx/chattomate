@@ -6,7 +6,17 @@ import UserService from "./user.service";
 
 class MessageService {
   static async getAllMessage(conversationID) {
-    return await Message.find({ conversation: conversationID });
+    let result = await Message.find({
+      conversation: conversationID,
+    }).populate("sendBy");
+    if (result == null) return result;
+    result = result.map(
+        function (message) {
+          message.sendBy = UserService.getInfoUser(message.sendBy);
+          return message;
+        }
+    );
+    return result;
   }
 
   static async findID(messageID) {
