@@ -20,6 +20,7 @@ const userSchema = new schema(
     phone: {
       type: String,
       required: false,
+      default: "0",
     },
     email: {
       type: String,

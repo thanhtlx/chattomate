@@ -7,6 +7,7 @@ const sendMessageValidation = (data) => {
     content: Joi.string(),
     contentUrl: Joi.string(),
     duration: Joi.string(),
+    file: Joi.any(),
   });
   return schema.validate(data);
 };
