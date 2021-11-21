@@ -4,6 +4,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,19 +28,16 @@ public class SocketController  extends AppCompatActivity {
     private static Socket socket;
     public static String SERVER_IP = "";
     public static final int SERVER_PORT = 8888;
-    private EditText messageSend;
+    private static String TAG = "DEBUG_SOCKET_";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        messageSend = findViewById(R.id.edtMessage);
-
         initSocket();
     }
 
     public void initSocket() {
-
+        Log.d(TAG,"init socket");
         try {
             SERVER_IP = getLocalIpAddress();
         } catch (UnknownHostException e) {
@@ -58,37 +56,27 @@ public class SocketController  extends AppCompatActivity {
         socket.on(Config.NEW_MASSAGE, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
+                Log.d(TAG,args.toString());
 
             }
         }).on(Config.NEW_FRIEND_REQUEST, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-
+                Log.d(TAG,args.toString());
             }
         }).on(Config.NEW_FRIEND, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-
+                Log.d(TAG,args.toString());
             }
         }).on(Config.NEW_CONVERSATION, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-
+                Log.d(TAG,args.toString());
             }
         });
 
         socket.connect();
-
-    }
-
-    public void sendMessage() {
-        String message = messageSend.getText().toString();
-        if(TextUtils.isEmpty(message)) return;
-        Message newMess = new Message();
-        newMess.content = message;
-
-        messageSend.setText("");
-        socket.emit(Config.NEW_MASSAGE, message);
     }
 
     private String getLocalIpAddress() throws UnknownHostException {

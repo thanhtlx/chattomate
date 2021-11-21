@@ -116,7 +116,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 }
                 API api = new API(this);
                 Map<String, String> token = new HashMap<>();
-                token.put("auth-token", LoginActivity.AUTH_TOKEN);
+                token.put("auth-token", manager.getToken(this));
                 api.Call(Request.Method.PUT, URL, changePwdData, token, new APICallBack() {
                             @Override
                             public void onSuccess(JSONObject result) {
@@ -154,7 +154,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     private boolean checkPwd(String password) {
-        return password.length() > 8;
+        return password.length() < 8;
     }
 
 }

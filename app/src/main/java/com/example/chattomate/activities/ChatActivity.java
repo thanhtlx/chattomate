@@ -76,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
         manager = new AppPreferenceManager(getApplicationContext());
         user = manager.getUser();
         listMess = new ArrayList<>();
-        api = new ServiceAPI(getApplicationContext(), manager);
+        api = new ServiceAPI(this, manager);
 
         adapter = new ChatRoomThreadAdapter(this, listMess, user._id);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -92,15 +92,15 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-//        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                if (intent.getAction().equals(Config.PUSH_NOTIFICATION)) {
+        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+//                if (intent.getAction().equals(Config.ID_NOTIFICATION_NEW_MESSAGE)) {
 //                    // new push message is received
 //                    handlePushNotification(intent);
 //                }
-//            }
-//        };
+            }
+        };
 
     }
 
@@ -144,6 +144,7 @@ public class ChatActivity extends AppCompatActivity {
             api.sendMessage(idConversation, 1, content);
             listMess = manager.getMessage(idConversation);
 
+            listMess.add(new Message(content));
             adapter.notifyDataSetChanged();
             if (adapter.getItemCount() > 1) {
                 // scrolling to bottom of the recycler view

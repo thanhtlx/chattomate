@@ -93,10 +93,12 @@ public class SetupProfileActivity extends AppCompatActivity {
     private void saveData() {
         String cName = name.getText().toString();
         String cPhone = phone.getText().toString();
-        String cAvatarUrl = imageUri.toString();
+        String cAvatarUrl;
+        if(imageUri != null) cAvatarUrl = imageUri.toString();
+        else cAvatarUrl = "";
 
         if(cName.length() < 2) name.setError("Tên quá ngắn");
-        else if(cPhone.length() < 9) phone.setError("Số điện thoại phải có ít nhất 9 chữ số");
+        else if(cPhone.length() < 9 && cPhone.length() > 0) phone.setError("Số điện thoại phải có ít nhất 9 chữ số");
         else {
             progressDialog.show();
 
@@ -111,7 +113,7 @@ public class SetupProfileActivity extends AppCompatActivity {
 
             API api = new API(this);
             Map<String, String> token = new HashMap<>();
-            token.put("auth-token", LoginActivity.AUTH_TOKEN);
+            token.put("auth-token", manager.getToken(this));
 
             api.Call(Request.Method.PUT, URL, setupData, token, new APICallBack() {
                 @Override

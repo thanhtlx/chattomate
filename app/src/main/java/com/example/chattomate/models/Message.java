@@ -13,6 +13,10 @@ public class Message {
     public boolean delete;
     public int type;
 
+    public Message(String content) {
+        this.content = content;
+    }
+
     public Message(String conversation, String _id, String content, String contentUrl, String sendAt, ArrayList<Friend> seenBy, Friend sendBy, boolean delete, int type) {
         this.conversation = conversation;
         this._id = _id;

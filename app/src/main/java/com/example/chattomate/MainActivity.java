@@ -1,6 +1,8 @@
 package com.example.chattomate;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -13,6 +15,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.chattomate.activities.ChangePasswordActivity;
+import com.example.chattomate.activities.SetupProfileActivity;
+import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.fragments.ChatFragment;
 import com.example.chattomate.fragments.FriendsFragment;
 import com.example.chattomate.fragments.UserFragment;
@@ -89,6 +94,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        AppPreferenceManager manager = new AppPreferenceManager(getApplicationContext());
+        Log.d("DEBUG", String.valueOf(manager.tokenVaild()));
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_toolbar, menu);
         return true;
@@ -99,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         switch(item.getItemId()){
             case R.id.add_new_message:
                 //Tạo tin nhắn mới
+                startActivity(new Intent(this, SetupProfileActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }

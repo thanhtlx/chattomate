@@ -24,7 +24,9 @@ public class Config {
     public static long TIME_TO_REFRESH = 10 * 1000;
     public static long TIME_TO_OFFLINE = 2 * 60 * 1000;
 
-    public static final String PUSH_NOTIFICATION = "pushNotification";
+    //    notification
+    public static String CHANNEL_NOTIFICATION_NEW_MESSAGE = "NEW MESSAGE";
+    public static int ID_NOTIFICATION_NEW_MESSAGE = 111;
 
 
 }

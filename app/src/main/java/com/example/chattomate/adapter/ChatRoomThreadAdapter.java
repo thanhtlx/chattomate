@@ -30,8 +30,8 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         public ViewHolder(View view) {
             super(view);
-            message = itemView.findViewById(R.id.message);
-//            timestamp = itemView.findViewById(R.id.timestamp);
+            message = itemView.findViewById(R.id.cMessage);
+            timestamp = itemView.findViewById(R.id.timeStamp);
         }
     }
 

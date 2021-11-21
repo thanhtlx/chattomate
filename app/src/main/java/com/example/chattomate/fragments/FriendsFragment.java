@@ -54,8 +54,8 @@ public class FriendsFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
 
-//        adapter = new ListFriendAdapter(friendsList, getContext());
-//        recyclerView.setAdapter(adapter);
+        adapter = new ListFriendAdapter(friendsList, getContext());
+        recyclerView.setAdapter(adapter);
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink3);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -64,7 +64,7 @@ public class FriendsFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-//                        adapter = new ListFriendAdapter(friendsList, getContext());
+                        adapter = new ListFriendAdapter(friendsList, getContext());
                         recyclerView.setAdapter(adapter);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
@@ -77,7 +77,7 @@ public class FriendsFragment extends Fragment {
     }
 
     public class ListFriendAdapter extends RecyclerView.Adapter {
-        private ArrayList<Friend> friends;
+        private ArrayList<Friend> friends = new ArrayList<>();
         private Context mContext;
 
         public ListFriendAdapter(ArrayList<Friend> _friend, Context mContext) {
@@ -107,6 +107,7 @@ public class FriendsFragment extends Fragment {
 
         @Override
         public int getItemCount() {
+            if(friends == null) return 0;
             return friends.size();
         }
 

@@ -37,7 +37,7 @@ public class ServiceAPI {
         this.context = c;
         this.manager = manager;
         token = new HashMap<>();
-        token.put("auth-token", LoginActivity.AUTH_TOKEN);
+        token.put("auth-token", manager.getToken(c));
     }
 
     /**

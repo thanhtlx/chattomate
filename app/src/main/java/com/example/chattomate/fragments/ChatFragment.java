@@ -51,14 +51,14 @@ public class ChatFragment extends Fragment {
         manager = new AppPreferenceManager(getContext());
         conversations = manager.getConversations();
 
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
-//                LinearLayoutManager.VERTICAL, false);
-//        recyclerView.setLayoutManager(linearLayoutManager);
-//        recyclerView.setHasFixedSize(true);
-//
-////        adapter = new ListConversationAdapter(conversations, getContext());
-//        recyclerView.setAdapter(adapter);
-//
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setHasFixedSize(true);
+
+        adapter = new ListConversationAdapter(conversations, getContext());
+        recyclerView.setAdapter(adapter);
+
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink2, R.color.pink3);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -66,7 +66,7 @@ public class ChatFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-//                        adapter = new ListConversationAdapter(conversations, getContext());
+                        adapter = new ListConversationAdapter(conversations, getContext());
                         recyclerView.setAdapter(adapter);
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
@@ -119,6 +119,7 @@ public class ChatFragment extends Fragment {
 
         @Override
         public int getItemCount() {
+            if(list == null) return 0;
             return list.size();
         }
 

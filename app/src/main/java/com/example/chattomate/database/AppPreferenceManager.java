@@ -1,18 +1,32 @@
 package com.example.chattomate.database;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.example.chattomate.MainActivity;
+import com.example.chattomate.activities.LoginActivity;
+import com.example.chattomate.config.Config;
+import com.example.chattomate.interfaces.APICallBack;
 import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
+import com.example.chattomate.service.API;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class AppPreferenceManager {
     private static String TAG = AppPreferenceManager.class.getSimpleName();
@@ -35,6 +49,9 @@ public class AppPreferenceManager {
     private static final String PENDING_FRIEND  = "pending_friends";
     private static final String ALL_CONVERSATION= "conversations";
     private static final String ALL_MESSAGE     = "messages";
+    private static final String TOKEN = "token";
+    private String TIME_TOKEN = "time token";
+
 
     public AppPreferenceManager(Context context) {
         this._context = context;
@@ -104,8 +121,17 @@ public class AppPreferenceManager {
 
     public void addMessage(Message message) {
         ArrayList<Message> m = getAllMessage();
-        m.add(message);
-        storeMessage(m);
+        boolean check = false;
+        for(Message message1 : m)
+            if(message1._id.equals(message._id)) {
+                check = true;
+                break;
+            }
+
+        if(!check) {
+            m.add(message);
+            storeMessage(m);
+        }
     }
 
     public void deleteAMessage(String id) {
@@ -155,8 +181,12 @@ public class AppPreferenceManager {
 
     public void addFriend(Friend friend) {
         ArrayList<Friend> friends = getFriends();
-        friends.add(friend);
-        storeFriends(friends);
+        Friend f = getFriend(friends, friend.friend._id);
+
+        if(f == null) {
+            friends.add(friend);
+            storeFriends(friends);
+        }
     }
 
     public void deleteFriend(Friend friend) {
@@ -240,8 +270,12 @@ public class AppPreferenceManager {
 
     public void addConversation(Conversation c) {
         ArrayList<Conversation> cv = getConversations();
-        cv.add(c);
-        storeConversation(cv);
+        Conversation conversation = getConversation(c._id);
+
+        if(conversation == null) {
+            cv.add(c);
+            storeConversation(cv);
+        }
     }
 
     // cập nhật cuộc trò chuyện: thêm xóa thành viên hoặc thay đổi tên, background...
@@ -271,9 +305,69 @@ public class AppPreferenceManager {
         storeConversation(cv);
     }
 
+    public void saveToken(String token) {
+        editor.putString(TOKEN, token);
+        editor.commit();
 
+    }
 
+    public String getToken(Context c) {
+        if(!tokenVaild()) {
+            String LOGIN_URL = Config.HOST + Config.LOGIN_URL;
+            JSONObject loginData = new JSONObject();
+            try {
+                loginData.put("email", getUser().email);
+                loginData.put("password", getUser().password);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
+            API api = new API(c);
+            api.Call(Request.Method.POST, LOGIN_URL, loginData, null, new APICallBack() {
+                @Override
+                public void onSuccess(JSONObject result) {
+                    try {
+                        String status = result.getString("status");
+                        if(status.equals("success")) {
+                            String AUTH_TOKEN = result.getJSONObject("data").getString("token");
+                            saveToken(AUTH_TOKEN);
+
+                            Calendar now = Calendar.getInstance();
+                            now.add(Calendar.DATE,1);
+                            saveTimeToken(now);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("debug",result.toString());
+                }
+
+                @Override
+                public void onError(JSONObject result) {
+                    Log.d("debug",result.toString());
+                }
+            });
+        }
+
+        String token = pref.getString(TOKEN, "");
+        return token;
+    }
+
+    public void saveTimeToken(Calendar time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Log.d("DEBUG", String.valueOf(time.getTimeInMillis()));
+        editor.putLong(TIME_TOKEN, time.getTimeInMillis());
+        editor.commit();
+    }
+
+    public Boolean tokenVaild() {
+        long time = pref.getLong(TIME_TOKEN, 0);
+        Log.d("DEBUG", String.valueOf(time));
+        if (time == 0) return false;
+        long now = Calendar.getInstance().getTimeInMillis();
+        return  time > now;
+    }
 
     public void clear() {
         editor.clear().commit();
