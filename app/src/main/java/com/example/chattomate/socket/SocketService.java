@@ -1,18 +1,21 @@
 package com.example.chattomate.socket;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.activities.LoginActivity;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.service.NotificationService;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,11 +29,11 @@ import io.socket.emitter.Emitter;
 import io.socket.engineio.client.transports.WebSocket;
 
 public class SocketService extends Service {
-    private static String TAG = "DEBUG_SOCKET_";
+    private static final String TAG = "DEBUG_SOCKET_";
     private Socket mSocket;
-    private Context context;
-    private AppPreferenceManager manager;
-    private NotificationService notificationService;
+    private final Context context;
+    private final AppPreferenceManager manager;
+    private final NotificationService notificationService;
     private SocketCallBack socketCallBack = new SocketCallBack() {
         @Override
         public void onNewMessage(JSONObject data) {
@@ -70,57 +73,69 @@ public class SocketService extends Service {
 
 
 
-    private Emitter.Listener onNewMessage = new Emitter.Listener() {
+    private final Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));
 //            notification
-            JSONObject data = (JSONObject) args[0];
+            JSONObject jsonObject = ((JSONObject) args[0]);
+            try {
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("conversationID", jsonObject.getString("conversation"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                notificationService.pushNotification(
+                        Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,
+                        Config.ID_NOTIFICATION_NEW_MESSAGE,
+                        jsonObject.getJSONObject("sendBy").getString("name"),
+                        jsonObject.getString("content"),pendingIntent);
+                socketCallBack.onNewMessage(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("DEBUG","error paser json");
+            }
 
-            notificationService.pushNotification(
-                    Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,
-                    Config.ID_NOTIFICATION_NEW_MESSAGE,
-                    "new message");
-            socketCallBack.onNewMessage(data);
+
+
 
         }
     };
-    private Emitter.Listener onNewFriendRequest = new Emitter.Listener() {
+    private final Emitter.Listener onNewFriendRequest = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));
             socketCallBack.onNewFriendRequest((JSONObject) args[0]);
         }
     };
-    private Emitter.Listener onNewConversation = new Emitter.Listener() {
+    private final Emitter.Listener onNewConversation = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));
             socketCallBack.onNewConversation((JSONObject) args[0]);
         }
     };
-    private Emitter.Listener onNewFriend = new Emitter.Listener() {
+    private final Emitter.Listener onNewFriend = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));
             socketCallBack.onNewFriend((JSONObject) args[0]);
         }
     };
-    private Emitter.Listener onConversationChange = new Emitter.Listener() {
+    private final Emitter.Listener onConversationChange = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));
             socketCallBack.onNewConversation((JSONObject) args[0]);
         }
     };
-    private Emitter.Listener onFriendActiveChange = new Emitter.Listener() {
+    private final Emitter.Listener onFriendActiveChange = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));
             socketCallBack.onFriendActiveChange((JSONObject) args[0]);
         }
     };
-    private Emitter.Listener onTyping = new Emitter.Listener() {
+    private final Emitter.Listener onTyping = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));

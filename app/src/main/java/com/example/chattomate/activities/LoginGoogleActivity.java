@@ -17,17 +17,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
+//import com.google.firebase.auth.AuthCredential;
+//import com.google.firebase.auth.AuthResult;
+//import com.google.firebase.auth.FirebaseAuth;
+//import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginGoogleActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 101;
     private GoogleSignInClient mGoogleSignInClient;
-    private FirebaseUser mUser;
-    private FirebaseAuth mAuth;
+//    private FirebaseUser mUser;
+//    private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
 
     @Override
@@ -38,8 +38,8 @@ public class LoginGoogleActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Google Sign In...");
         progressDialog.show();
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
+//        mAuth = FirebaseAuth.getInstance();
+//        mUser = mAuth.getCurrentUser();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -73,29 +73,29 @@ public class LoginGoogleActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            progressDialog.dismiss();
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            progressDialog.dismiss();
-                            Toast.makeText(LoginGoogleActivity.this,"sign in gg fail",Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
-                    }
-                });
+//        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+//        mAuth.signInWithCredential(credential)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            // Sign in success, update UI with the signed-in user's information
+//                            progressDialog.dismiss();
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//                            updateUI(user);
+//                        } else {
+//                            // If sign in fails, display a message to the user.
+//                            progressDialog.dismiss();
+//                            Toast.makeText(LoginGoogleActivity.this,"sign in gg fail",Toast.LENGTH_SHORT).show();
+//                            finish();
+//                        }
+//                    }
+//                });
     }
 
-    private void updateUI(FirebaseUser user) {
-        Intent intent = new Intent(LoginGoogleActivity.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
+//    private void updateUI(FirebaseUser user) {
+//        Intent intent = new Intent(LoginGoogleActivity.this, MainActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
+//    }
 }
