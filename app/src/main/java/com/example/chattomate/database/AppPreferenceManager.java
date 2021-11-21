@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
+import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -23,6 +24,7 @@ public class AppPreferenceManager {
 
     private static final String PREF_NAME       = "chattomate_chat";
     private static final String IS_LOGGED_IN    = "isLoggedIn";
+    private static final String ID              = "_id";
     private static final String PHONE           = "phone";
     private static final String AVATAR_URL      = "avatarUrl";
     private static final String NAME            = "name";
@@ -32,6 +34,7 @@ public class AppPreferenceManager {
     private static final String REQUEST_FRIEND  = "request_friends";
     private static final String PENDING_FRIEND  = "pending_friends";
     private static final String ALL_CONVERSATION= "conversations";
+    private static final String ALL_MESSAGE     = "messages";
 
     public AppPreferenceManager(Context context) {
         this._context = context;
@@ -49,6 +52,7 @@ public class AppPreferenceManager {
     }
 
     public void storeUser(User user) {
+        editor.putString(ID, user._id);
         editor.putString(PHONE, user.phone);
         editor.putString(AVATAR_URL, user.avatarUrl);
         editor.putString(NAME, user.name);
@@ -59,15 +63,73 @@ public class AppPreferenceManager {
 
     public User getUser() {
         if (pref.getString(PHONE, null) != null) {
-            String phone, avatar, name, password, email;
+            String id, phone, avatar, name, password, email;
+            id = pref.getString(ID, null);
             phone = pref.getString(PHONE, null);
             avatar = pref.getString(AVATAR_URL, null);
             name = pref.getString(NAME, null);
             email = pref.getString(EMAIL, null);
             password = pref.getString(PASSWORD, null);
 
-            return new User(name, avatar, phone, email, password);
+            return new User(id, name, avatar, phone, email, password);
         } else return null;
+    }
+
+    public void storeMessage(ArrayList<Message> m) {
+        Gson gson = new Gson();
+        String str = gson.toJson(m);
+        editor.putString(ALL_MESSAGE, str).commit();
+    }
+
+    public ArrayList<Message> getAllMessage() {
+        String str = pref.getString(ALL_MESSAGE, "");
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<Message>>() {}.getType();
+        ArrayList<Message> messages = gson.fromJson(str, type);
+        return messages;
+    }
+
+    public ArrayList<Message> getMessage(String idConversation) {
+        String str = pref.getString(ALL_MESSAGE, "");
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<Message>>() {}.getType();
+        ArrayList<Message> messages = gson.fromJson(str, type);
+
+        ArrayList<Message> result = new ArrayList<>();
+        for (Message m : messages) {
+            if (m.conversation.equals(idConversation)) result.add(m);
+        }
+        return result;
+    }
+
+    public void addMessage(Message message) {
+        ArrayList<Message> m = getAllMessage();
+        m.add(message);
+        storeMessage(m);
+    }
+
+    public void deleteAMessage(String id) {
+        ArrayList<Message> m = getAllMessage();
+        for(Message message : m)
+            if(message._id.equals(id)) {
+                m.remove(message);
+                break;
+            }
+        storeMessage(m);
+    }
+
+    public void deleteConversation(String idConversation) {
+        ArrayList<Message> m = getAllMessage();
+        for(Message message : m) {
+            if(message.conversation.equals(idConversation)) m.remove(message);
+        }
+
+        ArrayList<Conversation> conversations = getConversations();
+        Conversation c = getConversation(idConversation);
+        conversations.remove(c);
+
+        storeMessage(m);
+        storeConversation(conversations);
     }
 
     public void storeFriends(ArrayList<Friend> friends) {

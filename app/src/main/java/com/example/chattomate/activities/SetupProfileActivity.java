@@ -1,8 +1,5 @@
 package com.example.chattomate.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.example.chattomate.R;
@@ -35,6 +37,7 @@ public class SetupProfileActivity extends AppCompatActivity {
     private User user;
     private EditText name, phone;
     private Button save;
+    private Toolbar toolbar;
     private CircleImageView avatar;
     private Uri imageUri;
     private static final int REQUEST_CODE = 101;
@@ -45,8 +48,11 @@ public class SetupProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup_profile);
-        getSupportActionBar().setTitle("Cập nhật thông tin cá nhân");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar = findViewById(R.id.toolbar_setup);
+        setSupportActionBar(toolbar);
+        ActionBar bar = getSupportActionBar();
+        bar.setTitle("Cập nhật thông tin cá nhân");
+        bar.setDisplayHomeAsUpEnabled(true);
 
         manager = new AppPreferenceManager(getApplicationContext());
         user = manager.getUser();
@@ -113,10 +119,10 @@ public class SetupProfileActivity extends AppCompatActivity {
                     try {
                         String status = result.getString("status");
                         if (status.equals("success")) {
-                            manager.editor.putString("name",cName);
-                            manager.editor.putString("phone",cPhone);
-                            manager.editor.putString("avatarUrl", cAvatarUrl);
-                            manager.editor.commit();
+                            user.name = cName;
+                            user.phone = cPhone;
+                            user.avatarUrl = cAvatarUrl;
+                            manager.storeUser(user);
 
                             Toast.makeText(SetupProfileActivity.this, "Đã chỉnh sửa thông tin", Toast.LENGTH_LONG).show();
                             progressDialog.dismiss();

@@ -10,4 +10,5 @@
     <color name="pink3">#FF6200EE</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="message_card">#CC696172</color>
 </resources>

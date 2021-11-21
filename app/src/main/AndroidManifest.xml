@@ -11,9 +11,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Chattomate">
+        android:theme="@style/NoActionBar">
         <activity
-            android:name=".activities.OtherActivity"
+            android:name=".service.ServiceAPI"
             android:exported="false" />
         <activity
             android:name=".activities.ChatActivity"

@@ -1,5 +1,6 @@
-package com.example.chattomate.activities;
+package com.example.chattomate.service;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -7,11 +8,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.example.chattomate.R;
+import com.example.chattomate.activities.LoginActivity;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
 import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
+import com.example.chattomate.models.Message;
 import com.example.chattomate.service.API;
 
 import org.json.JSONArray;
@@ -22,28 +25,212 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OtherActivity extends AppCompatActivity {
-    private Map<String, String> token;
-    private final String URL_FRIEND = Config.HOST + Config.FRIENDS_URL;
-    private final String URL_CONVERSATION = Config.HOST + Config.CONVERSATION_URL;
-
+public class ServiceAPI {
+    private Context context;
     private AppPreferenceManager manager;
+    private Map<String, String> token;
+    private final String URL_FRIEND       = Config.HOST + Config.FRIENDS_URL;
+    private final String URL_CONVERSATION = Config.HOST + Config.CONVERSATION_URL;
+    private final String URL_MESSAGE      = Config.HOST + Config.MESSAGE_URL;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_other);
-        manager = new AppPreferenceManager(getApplicationContext());
-
+    public ServiceAPI(Context c, AppPreferenceManager manager) {
+        this.context = c;
+        this.manager = manager;
         token = new HashMap<>();
         token.put("auth-token", LoginActivity.AUTH_TOKEN);
+    }
+
+    /**
+     * gui tin nhan
+     * @param idConversation id conversation
+     * @param type loai tin nhan
+     */
+    public void sendMessage(String idConversation, int type, String content) {
+        JSONObject sendM = new JSONObject();
+        try {
+            sendM.put("_id", idConversation);
+            sendM.put("type", type);
+            if(type == 1) sendM.put("content", content);
+            else if(type==4 || type==6) sendM.put("contentUrl", content);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        API api = new API(context);
+        api.Call(Request.Method.POST, URL_MESSAGE, sendM, token, new APICallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    String status = result.getString("status");
+                    if(status.equals("success")) {
+                        JSONObject j = result.getJSONObject("data");
+
+                        String id = j.getString("_id");
+                        String content = j.getString("content");
+                        String contentUrl = j.getString("contentUrl");
+                        String sendAt = j.getString("createdAt");
+                        Friend sender = new Friend(manager.getUser()._id, manager.getUser().name, manager.getUser().avatarUrl);
+
+                        manager.addMessage(new Message(idConversation, id, content, contentUrl, sendAt, null, sender, false, type));
+                    } else {
+                        System.out.println("Error");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.d("debug",result.toString());
+            }
+
+            @Override
+            public void onError(JSONObject result) {
+                Log.d("debug",result.toString());
+            }
+        });
+    }
+
+    /**
+     * lay tat ca tin nhan trong cuoc tro chuyen co id la id
+     * @param id id conversation
+     */
+    public void getAllMessage(String id) {
+        JSONObject getMessage = new JSONObject();
+        try {
+            getMessage.put("_id", id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        API api = new API(context);
+        api.Call(Request.Method.GET, URL_MESSAGE+"/:"+id, getMessage, token, new APICallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    String status = result.getString("status");
+                    if(status.equals("success")) {
+                        JSONArray array = result.getJSONArray("data");
+                        ArrayList<Message> messages = new ArrayList<>();
+                        for(int i = 0; i < array.length(); i++) {
+                            JSONObject j = array.getJSONObject(i);
+                            String conversation = j.getString("conversation");
+                            String id = j.getString("_id");
+                            String content = j.getString("content");
+                            String contentUrl = j.getString("contentUrl");
+                            String sendAt = j.getJSONObject("sendBy").getString("createdAt");
+
+                            JSONObject a = j.getJSONObject("sendBy");
+                            Friend sender = new Friend(a.getString("_id"), a.getString("name"), a.getString("avatarUrl"));
+
+                            int type = j.getInt("type");
+                            Boolean deleted = j.getJSONArray("deleteBy").length() > 0;
+
+                            ArrayList<Friend> idSeenBy = new ArrayList<>();
+                            if(j.getJSONArray("seenBy").length() > 0) {
+                                for (int n = 0; n < j.getJSONArray("seenBy").length(); n++) {
+                                    JSONObject b = j.getJSONArray("seenBy").getJSONObject(i);
+                                    idSeenBy.add(new Friend(b.getString("_id"), b.getString("name"), b.getString("avatarUrl")));
+                                }
+                            }
+
+                            messages.add(new Message(conversation, id, content, contentUrl, sendAt, idSeenBy, sender, deleted, type));
+                        }
+
+                        manager.storeMessage(messages);
+                    } else {
+                        System.out.println("Error");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.d("debug",result.toString());
+            }
+
+            @Override
+            public void onError(JSONObject result) {
+                Log.d("debug",result.toString());
+            }
+        });
+
+    }
+
+    /**
+     * xoa 1 tin nhan co id la id
+     * @param id id message
+     */
+    public void deleteAMessage(String id) {
+        JSONObject getMessage = new JSONObject();
+        try {
+            getMessage.put("_id", id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        API api = new API(context);
+        api.Call(Request.Method.PUT, URL_MESSAGE+"/:"+id, getMessage, token, new APICallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    String status = result.getString("status");
+                    if(status.equals("success")) {
+                        manager.deleteAMessage(id);
+                    } else {
+                        System.out.println("Error");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.d("debug",result.toString());
+            }
+
+            @Override
+            public void onError(JSONObject result) {
+                Log.d("debug",result.toString());
+            }
+        });
+
+    }
+
+    /**
+     * xoa cuoc tro chuyen co id la id
+     * @param id id conversation
+     */
+    public void deleteConversation(String id) {
+        JSONObject data = new JSONObject();
+        try {
+            data.put("_id", id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        API api = new API(context);
+        api.Call(Request.Method.DELETE, URL_CONVERSATION+"/:"+id, data, token, new APICallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    String status = result.getString("status");
+                    if(status.equals("success")) {
+                        manager.deleteConversation(id);
+                    } else {
+                        System.out.println("Error");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.d("debug",result.toString());
+            }
+
+            @Override
+            public void onError(JSONObject result) {
+                Log.d("debug",result.toString());
+            }
+        });
+
     }
 
     /**
      * lấy tất cả danh sách bạn bè
      */
     public void getFriends() {
-        API api = new API(this);
+        API api = new API(context);
 
         api.Call(Request.Method.GET, URL_FRIEND, null, token, new APICallBack() {
             @Override
@@ -91,7 +278,7 @@ public class OtherActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.POST, URL_FRIEND, newAddFriend, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -123,7 +310,7 @@ public class OtherActivity extends AppCompatActivity {
      * lấy tất cả lời mời kết bạn mình đã gửi
      */
     public void getAllSendAddFriend() {
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.GET, URL_FRIEND + "/request", null, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -162,7 +349,7 @@ public class OtherActivity extends AppCompatActivity {
      * lấy tất cả lời mời kết bạn gửi tới mình
      */
     public void getAllFriendSendAdd() {
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.GET, URL_FRIEND + "/pending", null, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -211,7 +398,7 @@ public class OtherActivity extends AppCompatActivity {
         }
 
 
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.PUT, url, newAddFriend, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -253,7 +440,7 @@ public class OtherActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.PUT, url, nickName, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -299,7 +486,7 @@ public class OtherActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.DELETE, URL_FRIEND, friend, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -347,7 +534,7 @@ public class OtherActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.POST, URL_CONVERSATION, members, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -381,7 +568,7 @@ public class OtherActivity extends AppCompatActivity {
      * lấy toàn bộ các cuộc trò chuyện
      */
     public void getAllConversation() {
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.GET, URL_CONVERSATION, null, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -442,7 +629,7 @@ public class OtherActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.PUT, URL_CONVERSATION + "/add-members", jsonObject, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -484,7 +671,7 @@ public class OtherActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.PUT, URL_CONVERSATION + "/remove-members", jsonObject, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
@@ -515,7 +702,7 @@ public class OtherActivity extends AppCompatActivity {
      * @param background update
      * @param emoji update
      */
-    public void removeMemberFromConversation(String id, String name, String background, String emoji) {
+    public void updateConversation(String id, String name, String background, String emoji) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("_id", id);
@@ -526,7 +713,7 @@ public class OtherActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        API api = new API(this);
+        API api = new API(context);
         api.Call(Request.Method.PUT, URL_CONVERSATION, jsonObject, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
