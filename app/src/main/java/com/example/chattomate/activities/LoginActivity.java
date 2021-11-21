@@ -25,6 +25,9 @@ import com.example.chattomate.service.API;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class LoginActivity extends AppCompatActivity {
     private EditText edtEmail, edtPassWord;
     private TextView register, forgotPass;
@@ -113,6 +116,12 @@ public class LoginActivity extends AppCompatActivity {
                 public void onSuccess(JSONObject result) {
                     try {
                         AUTH_TOKEN = result.getJSONObject("data").getString("token");
+                        manager.saveToken(AUTH_TOKEN);
+//
+                        Calendar now = Calendar.getInstance();
+//                        now.d
+                        now.add(Calendar.DATE,1);
+                        manager.saveTimeToken(now);
                         JSONObject jsonObject = result.getJSONObject("data").getJSONObject("user");
                         User user = new User(jsonObject.getString("name"),jsonObject.getString("avatarUrl"),
                                 jsonObject.getString("phone"), email, password);
@@ -141,5 +150,10 @@ public class LoginActivity extends AppCompatActivity {
             });
 
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 }

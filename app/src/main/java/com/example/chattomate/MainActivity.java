@@ -1,6 +1,7 @@
 package com.example.chattomate;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.fragments.ChatFragment;
 import com.example.chattomate.fragments.FriendsFragment;
 import com.example.chattomate.fragments.UserFragment;
@@ -99,5 +101,12 @@ public class MainActivity extends AppCompatActivity {
         public int getCount() {
             return 3;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AppPreferenceManager manager = new AppPreferenceManager(getApplicationContext());
+        Log.d("DEBUG", String.valueOf(manager.tokenVaild()));
     }
 }

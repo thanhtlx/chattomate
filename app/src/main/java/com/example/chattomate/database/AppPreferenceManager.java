@@ -11,7 +11,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class AppPreferenceManager {
     private static String TAG = AppPreferenceManager.class.getSimpleName();
@@ -32,11 +35,22 @@ public class AppPreferenceManager {
     private static final String REQUEST_FRIEND  = "request_friends";
     private static final String PENDING_FRIEND  = "pending_friends";
     private static final String ALL_CONVERSATION= "conversations";
+    private static final String TOKEN= "token";
+    private String TIME_TOKEN = "time token";
 
     public AppPreferenceManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
+    }
+
+    public void saveToken(String token) {
+        editor.putString(TOKEN, token);
+        editor.commit();
+    }
+    public String getToken() {
+        String token = pref.getString(TOKEN, "");
+        return token;
     }
 
     public void setLogin(boolean isLoggedIn) {
@@ -210,11 +224,22 @@ public class AppPreferenceManager {
     }
 
 
-
-
-
     public void clear() {
         editor.clear().commit();
     }
 
+    public void saveTimeToken(Calendar time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Log.d("DEBUG", String.valueOf(time.getTimeInMillis()));
+        editor.putLong(TIME_TOKEN, time.getTimeInMillis());
+        editor.commit();
+    }
+
+    public Boolean tokenVaild() {
+        long time = pref.getLong(TIME_TOKEN, 0);
+        Log.d("DEBUG", String.valueOf(time));
+        if (time == 0) return false;
+        long now = Calendar.getInstance().getTimeInMillis();
+        return  time > now;
+    }
 }
