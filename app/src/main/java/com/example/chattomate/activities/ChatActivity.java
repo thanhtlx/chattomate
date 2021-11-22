@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,17 +20,25 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
 import com.example.chattomate.R;
 import com.example.chattomate.adapter.ChatRoomThreadAdapter;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
+import com.example.chattomate.interfaces.APICallBack;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
+import com.example.chattomate.service.API;
 import com.example.chattomate.service.ServiceAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
     Button send;
@@ -112,16 +121,61 @@ public class ChatActivity extends AppCompatActivity {
     //default send text. Others: 1.text, 2.video_call, 3.voice_call, 4.image, 5.voice, 6.file, 7.emoji
     public void sendMessage() {
         String content = txtContent.getText().toString().trim();
-        if (!content.equals("")) {
-            api.sendMessage(idConversation, "1", content);
-            ArrayList<Message> messages = manager.getMessage(idConversation);
-            Message m = messages.get(messages.size()-1);
-            listMess.add(m);
+        if (!content.equals("")) { //send text: type = 1
+            JSONObject sendM = new JSONObject();
+            try {
+                sendM.put("conversation", idConversation);
+                sendM.put("type", "1");
+                sendM.put("content", content);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            API api = new API(this);
+            String URL_MESSAGE      = Config.HOST + Config.MESSAGE_URL;
+            Map<String, String> token = new HashMap<>();
+            token.put("auth-token", manager.getToken(this));
+
+            api.Call(Request.Method.POST, URL_MESSAGE, sendM, token, new APICallBack() {
+                @Override
+                public void onSuccess(JSONObject result) {
+                    try {
+                        String status = result.getString("status");
+                        if(status.equals("success")) {
+                            JSONObject j = result.getJSONObject("data");
+
+                            String id = j.getString("_id");
+                            String content = j.getString("content");
+                            String contentUrl = j.getString("contentUrl");
+                            String sendAt = j.getString("createdAt");
+                            Friend sender = new Friend(manager.getUser()._id, manager.getUser().name, manager.getUser().avatarUrl);
+
+                            Message sen = new Message(idConversation, id, content, contentUrl, sendAt, null, sender, false, "1");
+                            manager.addMessage(sen, idConversation);
+                            Log.d("debugGGGG",manager.getMessage(idConversation).get(
+                                    manager.getMessage(idConversation).size()-1).content);
+                            listMess.add(sen);
+
+                        } else {
+                            System.out.println("Error");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("debug",result.toString());
+                }
+
+                @Override
+                public void onError(JSONObject result) {
+                    Log.d("debug",result.toString());
+                }
+
+            });
 
             adapter.notifyDataSetChanged();
             if (adapter.getItemCount() > 1) {
                 // scrolling to bottom of the recycler view
-                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount()-1);
+                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
             }
 
             txtContent.setText("");

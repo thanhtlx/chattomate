@@ -122,19 +122,21 @@ public class ChatFragment extends Fragment {
                     nameConversation = c.name;
                 }
 
-                String content_message;
+                if(manager.getMessage(c._id) != null) {
+                    Message message = manager.getMessage(c._id).get(manager.getMessage(c._id).size() - 1);
+                    if (message.sendBy._id.equals(manager.getUser()._id)) {
+                        if (message.content.length() > 0)
+                            h.message.setText("Bạn: " + message.content);
+                        else h.message.setText("Bạn đã gửi file đính kèm");
+                    } else {
+                        String name_friend = message.sendBy.name;
+                        if (message.content.length() > 0)
+                            h.message.setText(name_friend + ": " + message.content);
+                        else h.message.setText(name_friend + " đã gửi file đính kèm");
 
-                Message message = manager.getMessage(c._id).get(manager.getMessage(c._id).size()-1);
-                if(message.sendBy._id.equals(manager.getUser()._id)) {
-                    if (message.content.length() > 0) h.message.setText("Bạn: " + message.content);
-                    else h.message.setText("Bạn đã gửi file đính kèm");
-                } else {
-                    String name_friend = message.sendBy.name;
-                    if (message.content.length() > 0) h.message.setText(name_friend + ": " + message.content);
-                    else h.message.setText(name_friend + " đã gửi file đính kèm");
-
+                    }
+                    h.time.setText(message.sendAt);
                 }
-                h.time.setText(message.sendAt);
 
                 h.name.setText(nameConversation);
             }

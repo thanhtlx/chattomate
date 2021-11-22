@@ -47,7 +47,6 @@ public class ServiceAPI {
      * @param type loai tin nhan
      */
     public void sendMessage(String idConversation, String type, String content) {
-        Message senMess = null;
         JSONObject sendM = new JSONObject();
         try {
             sendM.put("conversation", idConversation);
@@ -577,6 +576,8 @@ public class ServiceAPI {
                                     json.getString("name"), json.getString("backgroundURI"),
                                     json.getString("emoji"), friends);
                             conversations.add(cv);
+
+                            getAllMessage(json.getString("_id"));
                         }
                         manager.storeConversation(conversations);
 

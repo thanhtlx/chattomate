@@ -22,7 +22,11 @@ import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.fragments.ChatFragment;
 import com.example.chattomate.fragments.FriendsFragment;
 import com.example.chattomate.fragments.UserFragment;
+import com.example.chattomate.models.Conversation;
+import com.example.chattomate.service.ServiceAPI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     ViewPager viewPager;

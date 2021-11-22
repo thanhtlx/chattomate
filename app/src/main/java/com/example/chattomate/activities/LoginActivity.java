@@ -171,9 +171,6 @@ public class LoginActivity extends AppCompatActivity {
         serviceAPI.getAllFriendSendAdd();
         serviceAPI.getAllSendAddFriend();
 
-        if(manager.getConversations() != null)
-            for (Conversation c : manager.getConversations()) {
-                serviceAPI.getAllMessage(c._id);
-            }
+
     }
 }
