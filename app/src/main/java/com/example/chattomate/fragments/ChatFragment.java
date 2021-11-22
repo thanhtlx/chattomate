@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -22,6 +23,8 @@ import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
+import com.example.chattomate.models.Message;
+import com.example.chattomate.models.User;
 
 import java.util.ArrayList;
 
@@ -45,6 +48,7 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         recyclerView = view.findViewById(R.id.recycleListChatFriend);
         mSwipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout1);
@@ -55,6 +59,7 @@ public class ChatFragment extends Fragment {
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         adapter = new ListConversationAdapter(conversations, getContext());
         recyclerView.setAdapter(adapter);
@@ -81,6 +86,8 @@ public class ChatFragment extends Fragment {
     class ListConversationAdapter extends RecyclerView.Adapter {
         private ArrayList<Conversation> list;
         private Context mContext;
+        String nameConversation;
+        String idFriend;
 
         public ListConversationAdapter(ArrayList<Conversation> conversations, Context mContext) {
             this.list = conversations;
@@ -97,22 +104,52 @@ public class ChatFragment extends Fragment {
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             Conversation c = list.get(position);
             ViewHolder h = (ViewHolder) holder;
+            User user = manager.getUser();
 
-            // tro chuyen 1v1
-            if(c.members.size() == 1) {
-                Friend friend = c.members.get(0);
-                if(!friend.friend.avatarUrl.isEmpty()) h.avatar.setImageURI(Uri.parse(friend.friend.avatarUrl));
-                h.name.setText(friend.friend.name);
+            if(c != null) {
+                if (c.members.size() == 2) { //tro chuyen 1v1
+                    if(!c.members.get(0)._id.equals(user._id)) idFriend = c.members.get(0)._id;
+                    else idFriend = c.members.get(1)._id;
 
-            } else {
-                h.name.setText(c.name);
+                    Friend friend = manager.getFriend(manager.getFriends(), idFriend);
+                    if(friend != null) {
+                        if (friend.avatarUrl.length() > 0)
+                            h.avatar.setImageURI(Uri.parse(friend.avatarUrl));
+                        nameConversation = friend.name;
+                    } else nameConversation = c.name;
+                } else { //tro chuyen nhom
+                    idFriend = "";
+                    nameConversation = c.name;
+                }
+
+                String content_message;
+
+                Message message = manager.getMessage(c._id).get(manager.getMessage(c._id).size()-1);
+                if(message.sendBy._id.equals(manager.getUser()._id)) {
+                    if (message.content.length() > 0) h.message.setText("Bạn: " + message.content);
+                    else h.message.setText("Bạn đã gửi file đính kèm");
+                } else {
+                    String name_friend = message.sendBy.name;
+                    if (message.content.length() > 0) h.message.setText(name_friend + ": " + message.content);
+                    else h.message.setText(name_friend + " đã gửi file đính kèm");
+
+                }
+                h.time.setText(message.sendAt);
+
+                h.name.setText(nameConversation);
             }
 
             ((View) h.name.getParent().getParent().getParent()).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Bundle extras = new Bundle();
+                    extras.putString("idConversation", c._id);
+                    extras.putString("idFriend", idFriend);
+                    extras.putString("nameConversation", nameConversation);
+
                     Intent intent = new Intent(mContext, ChatActivity.class);
-                    intent.putExtra("idConversation", c._id);
+                    intent.putExtras(extras);
+                    startActivity(intent);
                 }
             });
         }

@@ -92,35 +92,23 @@ public class AppPreferenceManager {
         } else return null;
     }
 
-    public void storeMessage(ArrayList<Message> m) {
+    public void storeMessage(ArrayList<Message> m, String idConversation) {
         Gson gson = new Gson();
         String str = gson.toJson(m);
-        editor.putString(ALL_MESSAGE, str).commit();
-    }
-
-    public ArrayList<Message> getAllMessage() {
-        String str = pref.getString(ALL_MESSAGE, "");
-        Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<Message>>() {}.getType();
-        ArrayList<Message> messages = gson.fromJson(str, type);
-        return messages;
+        editor.putString(ALL_MESSAGE+idConversation, str).commit();
     }
 
     public ArrayList<Message> getMessage(String idConversation) {
-        String str = pref.getString(ALL_MESSAGE, "");
+        String str = pref.getString(ALL_MESSAGE+idConversation, "");
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<Message>>() {}.getType();
         ArrayList<Message> messages = gson.fromJson(str, type);
 
-        ArrayList<Message> result = new ArrayList<>();
-        for (Message m : messages) {
-            if (m.conversation.equals(idConversation)) result.add(m);
-        }
-        return result;
+        return messages;
     }
 
-    public void addMessage(Message message) {
-        ArrayList<Message> m = getAllMessage();
+    public void addMessage(Message message, String idConversation) {
+        ArrayList<Message> m = getMessage(idConversation);
         boolean check = false;
         for(Message message1 : m)
             if(message1._id.equals(message._id)) {
@@ -130,31 +118,28 @@ public class AppPreferenceManager {
 
         if(!check) {
             m.add(message);
-            storeMessage(m);
+            storeMessage(m, idConversation);
         }
+
     }
 
-    public void deleteAMessage(String id) {
-        ArrayList<Message> m = getAllMessage();
+    public void deleteAMessage(String id, String idConversation) {
+        ArrayList<Message> m = getMessage(idConversation);
         for(Message message : m)
             if(message._id.equals(id)) {
                 m.remove(message);
                 break;
             }
-        storeMessage(m);
+        storeMessage(m, idConversation);
     }
 
     public void deleteConversation(String idConversation) {
-        ArrayList<Message> m = getAllMessage();
-        for(Message message : m) {
-            if(message.conversation.equals(idConversation)) m.remove(message);
-        }
+        editor.remove(ALL_MESSAGE+idConversation).commit();
 
         ArrayList<Conversation> conversations = getConversations();
         Conversation c = getConversation(idConversation);
         conversations.remove(c);
 
-        storeMessage(m);
         storeConversation(conversations);
     }
 
@@ -174,14 +159,14 @@ public class AppPreferenceManager {
 
     public Friend getFriend(ArrayList<Friend> friends, String id) {
         for(Friend friend : friends) {
-            if(friend.friend._id.equals(id)) return friend;
+            if(friend._id.equals(id)) return friend;
         }
         return null;
     }
 
     public void addFriend(Friend friend) {
         ArrayList<Friend> friends = getFriends();
-        Friend f = getFriend(friends, friend.friend._id);
+        Friend f = getFriend(friends, friend._id);
 
         if(f == null) {
             friends.add(friend);

@@ -97,12 +97,12 @@ public class FriendsFragment extends Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             Friend friend = friends.get(position);
 
-            if (friend.friend.avatarUrl != null) {
-                Uri imageUri = Uri.parse(friend.friend.avatarUrl);
+            if (friend.avatarUrl.length() > 0) {
+                Uri imageUri = Uri.parse(friend.avatarUrl);
                 ((ViewHolder) holder).avatar_friend.setImageURI(imageUri);
             }
 
-            ((ListFriendAdapter.ViewHolder) holder).name_friend.setText(friend.friend.name);
+            ((ListFriendAdapter.ViewHolder) holder).name_friend.setText(friend.name);
         }
 
         @Override

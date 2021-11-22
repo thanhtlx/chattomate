@@ -3,35 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    card_view:cardBackgroundColor="@color/message_card"
+    android:layout_height="70dp"
+    card_view:cardCornerRadius="30dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="411dp"
-            android:layout_height="121dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/message_card" />
-
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar_friend"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginStart="32dp"
-            android:src="@mipmap/ic_launcher_round"
-            app:civ_border_color="#FFFFFF"
-            app:civ_border_width="1dp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-            app:layout_constraintEnd_toEndOf="@+id/imageView3"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/imageView3"
-            app:layout_constraintTop_toTopOf="@+id/imageView3"
-            app:layout_constraintVertical_bias="0.56" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/avatar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/state_active_friend"
@@ -49,37 +41,36 @@
             android:id="@+id/name_friend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="User name"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-            app:layout_constraintEnd_toEndOf="@+id/imageView3"
-            app:layout_constraintHorizontal_bias="0.14"
+            android:layout_marginStart="10dp"
+            android:text="@string/name"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/avatar_friend"
-            app:layout_constraintTop_toTopOf="@+id/imageView3" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/call_voice"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginEnd="4dp"
             android:background="@null"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.358"
-            app:layout_constraintStart_toEndOf="@+id/name_friend"
-            app:layout_constraintTop_toTopOf="@+id/imageView3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/call_video"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/voicecall_icon" />
 
         <ImageButton
             android:id="@+id/call_video"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginEnd="12dp"
             android:background="@null"
             android:minWidth="48dp"
             android:minHeight="48dp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.391"
-            app:layout_constraintStart_toEndOf="@+id/call_voice"
-            app:layout_constraintTop_toTopOf="@+id/imageView3"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.52"
             app:srcCompat="@drawable/videocall_icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

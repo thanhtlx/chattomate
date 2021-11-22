@@ -19,7 +19,7 @@ import java.util.Date;
 
 public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String id;
-    private int SELF = 100;
+    private int SELF = -10;
     private static String today;
 
     private Context mContext;
@@ -63,8 +63,7 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public int getItemViewType(int position) {
         Message message = messageArrayList.get(position);
-        String e = message.sendBy.friend._id;
-        if (e.equals(id)) {
+        if (message.sendBy._id.equals(id)) {
             return SELF;
         }
 
@@ -75,14 +74,16 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         Message message = messageArrayList.get(position);
         ((ViewHolder) holder).message.setText(message.content);
+        ((ViewHolder) holder).timestamp.setText(message.sendAt);
 
-        String timestamp = getTimeStamp(message.sendAt);
+//        String timestamp = getTimeStamp(message.sendAt);
 
-        ((ViewHolder) holder).timestamp.setText(timestamp);
+//        ((ViewHolder) holder).timestamp.setText(timestamp);
     }
 
     @Override
     public int getItemCount() {
+        if(messageArrayList == null) return 0;
         return messageArrayList.size();
     }
 

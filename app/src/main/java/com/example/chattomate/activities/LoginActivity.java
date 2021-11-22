@@ -19,11 +19,16 @@ import com.example.chattomate.R;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.models.Conversation;
+import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
+import com.example.chattomate.service.ServiceAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -34,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog pDialog;
     private ImageView ggLogin;
     private AppPreferenceManager manager;
+    private ServiceAPI serviceAPI;
 
     private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     public static final String KEY_EMAIL = "email";
@@ -130,6 +136,8 @@ public class LoginActivity extends AppCompatActivity {
                             manager.setLogin(true);
                             manager.storeUser(user);
 
+                            getData();
+
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
@@ -154,5 +162,18 @@ public class LoginActivity extends AppCompatActivity {
             });
 
         }
+    }
+
+    public void getData() {
+        serviceAPI = new ServiceAPI(this, manager);
+        serviceAPI.getFriends();
+        serviceAPI.getAllConversation();
+        serviceAPI.getAllFriendSendAdd();
+        serviceAPI.getAllSendAddFriend();
+
+        if(manager.getConversations() != null)
+            for (Conversation c : manager.getConversations()) {
+                serviceAPI.getAllMessage(c._id);
+            }
     }
 }

@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.chattomate.activities.ChangePasswordActivity;
+import com.example.chattomate.activities.LoginActivity;
 import com.example.chattomate.activities.SetupProfileActivity;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.fragments.ChatFragment;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     BottomNavigationView bnt;
     Toolbar toolbar;
     SearchView searchView;
+    AppPreferenceManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        manager = new AppPreferenceManager(getApplicationContext());
         viewPager = findViewById(R.id.view_pager);
         bnt = findViewById(R.id.bottom_navigation);
         searchView = findViewById(R.id.search_view);
@@ -111,7 +114,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         switch(item.getItemId()){
             case R.id.add_new_message:
                 //Tạo tin nhắn mới
-                startActivity(new Intent(this, SetupProfileActivity.class));
+                manager.clear();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
             default:
                 return super.onOptionsItemSelected(item);
         }

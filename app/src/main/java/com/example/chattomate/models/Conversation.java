@@ -12,12 +12,15 @@ public class Conversation {
     public Friend admin;
     public Message ghim;
 
-    public Conversation(String _id, String name, String backgroundUrl, String emoji, boolean isPrivate, ArrayList<Friend> members) {
+    public Conversation(String name) {
+        this.name = name;
+    }
+
+    public Conversation(String _id, String name, String backgroundUrl, String emoji, ArrayList<Friend> members) {
         this._id = _id;
         this.name = name;
         this.backgroundUrl = backgroundUrl;
         this.emoji = emoji;
-        this.isPrivate = isPrivate;
         this.members = members;
     }
 

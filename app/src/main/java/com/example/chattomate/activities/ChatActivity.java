@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import com.example.chattomate.R;
 import com.example.chattomate.adapter.ChatRoomThreadAdapter;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
+import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.ServiceAPI;
@@ -54,6 +56,8 @@ public class ChatActivity extends AppCompatActivity {
     private ServiceAPI api;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private String idConversation;
+    private String idFriend;
+    private String nameConversation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,22 +68,23 @@ public class ChatActivity extends AppCompatActivity {
         txtContent = findViewById(R.id.txt_message);
         recyclerView = findViewById(R.id.recycler_view_chat);
 
-        Intent intent = getIntent();
-        idConversation = intent.getStringExtra("idConversation");
-        String title = intent.getStringExtra("nameConversation");
+        Bundle extras = getIntent().getExtras();
+        idConversation = extras.getString("idConversation");
+        nameConversation = extras.getString("nameConversation");
+        idFriend = extras.getString("idFriend");
 
         Toolbar toolbar = findViewById(R.id.toolbar_chat);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(title);
+        getSupportActionBar().setTitle(nameConversation);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         manager = new AppPreferenceManager(getApplicationContext());
         user = manager.getUser();
-        listMess = new ArrayList<>();
+        listMess = manager.getMessage(idConversation);
         api = new ServiceAPI(this, manager);
 
         adapter = new ChatRoomThreadAdapter(this, listMess, user._id);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -92,63 +97,31 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
+//        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
 //                if (intent.getAction().equals(Config.ID_NOTIFICATION_NEW_MESSAGE)) {
 //                    // new push message is received
 //                    handlePushNotification(intent);
 //                }
-            }
-        };
+//            }
+//        };
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        content();
-        // registering the receiver for new notification
-//        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-//                new IntentFilter(Config.PUSH_NOTIFICATION));
-        //
-    }
-
-    @Override
-    protected void onPause() {
-//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        super.onPause();
-    }
-
-    /**
-     * Handling new push message, will add the message to
-     * recycler view and scroll it to bottom
-     * */
-    private void handlePushNotification(Intent intent) {
-        Message message = (Message) intent.getSerializableExtra("message");
-
-        if (message != null && idConversation != null) {
-            manager.addMessage(message);
-            listMess.add(message);
-            adapter.notifyDataSetChanged();
-            if (adapter.getItemCount() > 1) {
-                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
-            }
-        }
     }
 
     //default send text. Others: 1.text, 2.video_call, 3.voice_call, 4.image, 5.voice, 6.file, 7.emoji
     public void sendMessage() {
         String content = txtContent.getText().toString().trim();
         if (!content.equals("")) {
-            api.sendMessage(idConversation, 1, content);
-            listMess = manager.getMessage(idConversation);
+            api.sendMessage(idConversation, "1", content);
+            ArrayList<Message> messages = manager.getMessage(idConversation);
+            Message m = messages.get(messages.size()-1);
+            listMess.add(m);
 
-            listMess.add(new Message(content));
             adapter.notifyDataSetChanged();
             if (adapter.getItemCount() > 1) {
                 // scrolling to bottom of the recycler view
-                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount()-1);
             }
 
             txtContent.setText("");
@@ -180,5 +153,54 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        content();
+        // registering the receiver for new notification
+//        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
+//                new IntentFilter(Config.PUSH_NOTIFICATION));
+        //
+    }
+
+    @Override
+    protected void onPause() {
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
+        super.onPause();
+    }
+
+//    /**
+//     * Handling new push message, will add the message to
+//     * recycler view and scroll it to bottom
+//     * */
+//    private void handlePushNotification(Intent intent) {
+//        Message message = (Message) intent.getSerializableExtra("message");
+//
+//        if (message != null && idConversation != null) {
+//            manager.addMessage(message, idConversation);
+//            listMess.add(message);
+//            adapter.notifyDataSetChanged();
+//            if (adapter.getItemCount() > 1) {
+//                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+//            }
+//        }
+//    }
+
 
 }

@@ -2,9 +2,9 @@
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:layout_marginBottom="5dp"
     android:layout_marginTop="5dp"
     android:layout_marginStart="15dp"
     android:layout_marginEnd="15dp"
@@ -30,11 +30,11 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="5dp"
             android:layout_weight="5"
             android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_gravity=""
@@ -44,31 +44,36 @@
 
                 <TextView
                     android:id="@+id/txtName"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="4"
                     android:gravity="center_vertical"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:text="@string/conversation"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    card_view:layout_constraintStart_toStartOf="parent"
+                    tools:layout_editor_absoluteY="5dp" />
 
                 <TextView
                     android:id="@+id/txtTime"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.5"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
+                    android:paddingEnd="16dp"
+                    android:text="@string/time"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    card_view:layout_constraintEnd_toEndOf="parent"
+                    tools:layout_editor_absoluteY="5dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/txtMessage"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
                 android:ellipsize="end"
+                android:gravity="center_vertical"
                 android:lines="1"
                 android:paddingBottom="10dp"
+                android:text="@string/start_message"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
     </LinearLayout>
