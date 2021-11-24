@@ -158,9 +158,10 @@ public class AppPreferenceManager {
     }
 
     public Friend getFriend(ArrayList<Friend> friends, String id) {
-        for(Friend friend : friends) {
-            if(friend._id.equals(id)) return friend;
-        }
+        if(friends != null)
+            for (Friend friend : friends) {
+                if (friend._id.equals(id)) return friend;
+            }
         return null;
     }
 

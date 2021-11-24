@@ -39,17 +39,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         manager = new AppPreferenceManager(getApplicationContext());
+
         viewPager = findViewById(R.id.view_pager);
         bnt = findViewById(R.id.bottom_navigation);
         searchView = findViewById(R.id.search_view);
         searchView.setQueryHint("Tìm kiếm");
         searchView.setOnQueryTextListener(this);
-
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager.setAdapter(adapter);

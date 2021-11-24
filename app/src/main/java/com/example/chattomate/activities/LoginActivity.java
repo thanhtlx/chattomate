@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void loginAccount() {
+    public synchronized void loginAccount() {
         String email = edtEmail.getText().toString().trim();
         String password = edtPassWord.getText().toString().trim();
 
@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                         if(status.equals("success")) {
                             AUTH_TOKEN = result.getJSONObject("data").getString("token");
                             manager.saveToken(AUTH_TOKEN);
-//
+
                             Calendar now = Calendar.getInstance();
                             now.add(Calendar.DATE,1);
                             manager.saveTimeToken(now);
@@ -170,7 +170,5 @@ public class LoginActivity extends AppCompatActivity {
         serviceAPI.getAllConversation();
         serviceAPI.getAllFriendSendAdd();
         serviceAPI.getAllSendAddFriend();
-
-
     }
 }

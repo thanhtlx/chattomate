@@ -25,6 +25,7 @@ import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
+import com.example.chattomate.service.ServiceAPI;
 
 import java.util.ArrayList;
 
@@ -36,6 +37,7 @@ public class ChatFragment extends Fragment {
     AppPreferenceManager manager;
     ListConversationAdapter adapter;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    ServiceAPI serviceAPI;
 
     public ChatFragment() {
     }
@@ -64,6 +66,8 @@ public class ChatFragment extends Fragment {
         adapter = new ListConversationAdapter(conversations, getContext());
         recyclerView.setAdapter(adapter);
 
+        recyclerView.invalidate();
+
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink2, R.color.pink3);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -82,6 +86,14 @@ public class ChatFragment extends Fragment {
         // Inflate the layout for this fragment
         return view;
     }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+////        conversations = manager.getConversations();
+//        adapter = new ListConversationAdapter(conversations, getContext());
+//        recyclerView.setAdapter(adapter);
+//    }
 
     class ListConversationAdapter extends RecyclerView.Adapter {
         private ArrayList<Conversation> list;

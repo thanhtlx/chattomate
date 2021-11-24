@@ -90,7 +90,6 @@ public class ServiceAPI {
             public void onError(JSONObject result) {
                 Log.d("debug",result.toString());
             }
-
         });
     }
 

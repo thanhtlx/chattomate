@@ -1,9 +1,6 @@
 package com.example.chattomate.activities;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +12,6 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +28,7 @@ import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
 import com.example.chattomate.service.ServiceAPI;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,11 +59,14 @@ public class ChatActivity extends AppCompatActivity {
     private User user;
     private AppPreferenceManager manager;
     private ChatRoomThreadAdapter adapter;
-    private ServiceAPI api;
+    private ServiceAPI serviceAPI;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private String idConversation;
     private String idFriend;
     private String nameConversation;
+    String URL_MESSAGE      = Config.HOST + Config.MESSAGE_URL;
+    Map<String, String> token = new HashMap<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +90,8 @@ public class ChatActivity extends AppCompatActivity {
         manager = new AppPreferenceManager(getApplicationContext());
         user = manager.getUser();
         listMess = manager.getMessage(idConversation);
-        api = new ServiceAPI(this, manager);
+        serviceAPI = new ServiceAPI(this, manager);
+        token.put("auth-token", manager.getToken(this));
 
         adapter = new ChatRoomThreadAdapter(this, listMess, user._id);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
@@ -132,10 +133,6 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             API api = new API(this);
-            String URL_MESSAGE      = Config.HOST + Config.MESSAGE_URL;
-            Map<String, String> token = new HashMap<>();
-            token.put("auth-token", manager.getToken(this));
-
             api.Call(Request.Method.POST, URL_MESSAGE, sendM, token, new APICallBack() {
                 @Override
                 public void onSuccess(JSONObject result) {
@@ -156,6 +153,15 @@ public class ChatActivity extends AppCompatActivity {
                                     manager.getMessage(idConversation).size()-1).content);
                             listMess.add(sen);
 
+                            adapter.notifyDataSetChanged();
+                            if (adapter.getItemCount() > 1) {
+                                // scrolling to bottom of the recycler view
+                                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+                            }
+
+                            txtContent.setText("");
+                            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
                         } else {
                             System.out.println("Error");
                         }
@@ -172,14 +178,6 @@ public class ChatActivity extends AppCompatActivity {
 
             });
 
-            adapter.notifyDataSetChanged();
-            if (adapter.getItemCount() > 1) {
-                // scrolling to bottom of the recycler view
-                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
-            }
-
-            txtContent.setText("");
-            this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         } else {
 
         }
@@ -187,11 +185,62 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void fetchChat() {
-        api.getAllMessage(idConversation);
-        adapter.notifyDataSetChanged();
-        if (adapter.getItemCount() > 1) {
-            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
-        }
+        API api = new API(this);
+        api.Call(Request.Method.GET, URL_MESSAGE+"/"+idConversation, null, token, new APICallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    String status = result.getString("status");
+                    if(status.equals("success")) {
+                        JSONArray array = result.getJSONArray("data");
+                        ArrayList<Message> messages = new ArrayList<>();
+                        for(int i = 0; i < array.length(); i++) {
+                            JSONObject j = array.getJSONObject(i);
+                            String conversation = j.getString("conversation");
+                            String id = j.getString("_id");
+                            String content = j.getString("content");
+                            String contentUrl = j.getString("contentUrl");
+                            String sendAt = j.getJSONObject("sendBy").getString("createdAt");
+
+                            JSONObject a = j.getJSONObject("sendBy");
+                            Friend sender = new Friend(a.getString("_id"), a.getString("name"), a.getString("avatarUrl"));
+
+                            String type = j.getString("type");
+                            Boolean deleted = j.getJSONArray("deleteBy").length() > 0;
+
+                            ArrayList<Friend> idSeenBy = new ArrayList<>();
+                            if(j.getJSONArray("seenBy").length() > 0) {
+                                for (int n = 0; n < j.getJSONArray("seenBy").length(); n++) {
+                                    JSONObject b = j.getJSONArray("seenBy").getJSONObject(i);
+                                    idSeenBy.add(new Friend(b.getString("_id"), b.getString("name"), b.getString("avatarUrl")));
+                                }
+                            }
+
+                            messages.add(new Message(conversation, id, content, contentUrl, sendAt, idSeenBy, sender, deleted, type));
+                        }
+
+                        manager.storeMessage(messages, idConversation);
+                        listMess.clear();;
+                        listMess.addAll(messages);
+                        adapter.notifyDataSetChanged();
+                        if (adapter.getItemCount() > 1) {
+                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+                        }
+
+                    } else {
+                        System.out.println("Error");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.d("debug",result.toString());
+            }
+
+            @Override
+            public void onError(JSONObject result) {
+                Log.d("debug",result.toString());
+            }
+        });
     }
 
     public void content() {
