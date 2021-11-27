@@ -55,6 +55,7 @@ public class ChatFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycleListChatFriend);
         mSwipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout1);
         manager = new AppPreferenceManager(getContext());
+        serviceAPI = new ServiceAPI(getContext(), manager);
         conversations = manager.getConversations();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),

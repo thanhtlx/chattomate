@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.Request;
 import com.example.chattomate.R;
+import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
+import com.example.chattomate.interfaces.APICallBack;
 import com.example.chattomate.models.Friend;
+import com.example.chattomate.service.API;
+import com.example.chattomate.service.ServiceAPI;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -31,6 +43,8 @@ public class FriendsFragment extends Fragment {
     ArrayList<Friend> friendsList;
     AppPreferenceManager manager;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    ServiceAPI api;
+    Map<String, String> token = new HashMap<>();
 
     public FriendsFragment() {
     }
@@ -47,6 +61,9 @@ public class FriendsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycleListFriend);
         mSwipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         manager = new AppPreferenceManager(getContext());
+        api = new ServiceAPI(getContext(), manager);
+        token.put("auth-token", manager.getToken(getContext()));
+
         friendsList = manager.getFriends();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
@@ -74,6 +91,49 @@ public class FriendsFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        API api = new API(getContext());
+        String URL_FRIEND       = Config.HOST + Config.FRIENDS_URL;
+
+        api.Call(Request.Method.GET, URL_FRIEND, null, token, new APICallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    String status = result.getString("status");
+                    if(status.equals("success")) {
+                        JSONArray friends = result.getJSONArray("data");
+                        ArrayList<Friend> list = new ArrayList<>();
+
+                        for(int i = 0; i < friends.length(); i++) {
+                            JSONObject temp = friends.getJSONObject(i);
+                            JSONObject tmp = temp.getJSONObject("friend");
+                            Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
+                                    tmp.getString("name"), tmp.getString("avatarUrl"));
+                            list.add(friend);
+                        }
+                        manager.storeFriends(list);
+                        friendsList.clear();
+                        friendsList.addAll(list);
+                        adapter.notifyDataSetChanged();
+
+                    } else {
+                        System.out.println("Lỗi lấy danh sách bạn bè");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.d("debug",result.toString());
+            }
+
+            @Override
+            public void onError(JSONObject result) {
+                Log.d("debug",result.toString());
+            }
+        });
     }
 
     public class ListFriendAdapter extends RecyclerView.Adapter {

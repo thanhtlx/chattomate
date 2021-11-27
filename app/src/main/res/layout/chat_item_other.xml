@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="256dp"
     android:layout_height="wrap_content"
@@ -6,24 +7,43 @@
     android:layout_marginTop="10dp"
     android:paddingLeft="16dp">
 
-    <TextView
-        android:id="@+id/cMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="8dp"
-        android:textColor="@color/black"
-        android:textIsSelectable="true"
-        android:textSize="14dp" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/con"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatar_other"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/avatar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/cMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/textview_chat_other"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textIsSelectable="true"
+            android:textSize="14dp"
+            app:layout_constraintBottom_toBottomOf="@+id/avatar_other"
+            app:layout_constraintStart_toEndOf="@+id/avatar_other"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <TextView
         android:id="@+id/timeStamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/cMessage"
+        android:layout_below="@id/con"
         android:layout_alignParentLeft="true"
+        android:layout_marginStart="36dp"
         android:textColor="@color/gray"
         android:textSize="10dp" />
 

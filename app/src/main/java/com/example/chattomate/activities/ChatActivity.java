@@ -4,11 +4,13 @@ import android.content.BroadcastReceiver;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -38,7 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity {
-    Button send;
+    ImageButton send;
     EditText txtContent;
     RecyclerView recyclerView;
 
@@ -258,12 +260,22 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_chat, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId())
         {
             case android.R.id.home:
                 onBackPressed();
-                return true;
+            case R.id.voicecall_icon:
+
+            case R.id.videocall_icon:
+
+            case R.id.options:
 
             default:break;
         }

@@ -101,6 +101,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/inputName" />
 
+            <ImageView
+                android:id="@+id/image_avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/avatarChangepwd"
+                app:layout_constraintEnd_toEndOf="@+id/avatarChangepwd"
+                app:srcCompat="@drawable/image_message_icon" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

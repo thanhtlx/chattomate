@@ -38,6 +38,7 @@ public class AppPreferenceManager {
 
     private static final String PREF_NAME       = "chattomate_chat";
     private static final String IS_LOGGED_IN    = "isLoggedIn";
+    private static final String STATE_ACTIVE    = "state_active";
     private static final String ID              = "_id";
     private static final String PHONE           = "phone";
     private static final String AVATAR_URL      = "avatarUrl";
@@ -66,6 +67,15 @@ public class AppPreferenceManager {
 
     public boolean isLoggedIn(){
         return pref.getBoolean(IS_LOGGED_IN, false);
+    }
+
+    public void setStateActive(boolean b) {
+        editor.putBoolean(STATE_ACTIVE, b).commit();
+        Log.d(TAG, "User state active session modified!");
+    }
+
+    public boolean getStateActive(){
+        return pref.getBoolean(STATE_ACTIVE, false);
     }
 
     public void storeUser(User user) {

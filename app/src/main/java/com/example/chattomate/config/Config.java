@@ -4,7 +4,7 @@ public class Config {
     public static String HOST           = "https://chattomate.cf";
     public static String LOGIN_URL      = "/api/auth/login";
     public static String REGISTER_URL   = "/api/auth/register";
-    public static String UPDATE_PROFILE_URL = "/api/user";
+    public static String UPDATE_PROFILE_URL = "/api/users";
     public static String FRIENDS_URL    = "/api/friends";
     public static String CONVERSATION_URL = "/api/conversations";
     public static String MESSAGE_URL    = "/api/messages";

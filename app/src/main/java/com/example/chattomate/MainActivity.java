@@ -119,9 +119,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         switch(item.getItemId()){
             case R.id.add_new_message:
                 //Tạo tin nhắn mới
-                manager.clear();
-                startActivity(new Intent(this, LoginActivity.class));
-                finish();
+
             default:
                 return super.onOptionsItemSelected(item);
         }

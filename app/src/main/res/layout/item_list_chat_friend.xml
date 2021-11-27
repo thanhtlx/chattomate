@@ -18,14 +18,13 @@
         android:gravity="center">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/icon_avatar"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:src="@mipmap/ic_launcher_round"
-            app:civ_border_color="@color/pink3"/>
+            android:src="@drawable/avatar"
+            card_view:civ_border_color="@color/pink3" />
 
         <LinearLayout
             android:layout_width="0dp"

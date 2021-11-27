@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,7 @@ public class SetupProfileActivity extends AppCompatActivity {
     private EditText name, phone;
     private Button save;
     private Toolbar toolbar;
+    ImageView imageView;
     private CircleImageView avatar;
     private Uri imageUri;
     private static final int REQUEST_CODE = 101;
@@ -65,6 +67,7 @@ public class SetupProfileActivity extends AppCompatActivity {
         name = findViewById(R.id.inputName);
         phone = findViewById(R.id.phone);
         save = findViewById(R.id.btn_save);
+        imageView = findViewById(R.id.image_avatar);
 
         if(user.avatarUrl.length() > 0) {
             imageUri = Uri.parse(user.avatarUrl);

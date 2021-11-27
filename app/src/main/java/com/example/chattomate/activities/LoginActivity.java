@@ -133,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                                     jsonObject.getString("name"),
                                     jsonObject.getString("avatarUrl"), email);
                             user.password = password;
+                            manager.setStateActive(true);
                             manager.setLogin(true);
                             manager.storeUser(user);
 
