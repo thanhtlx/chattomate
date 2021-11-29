@@ -1,33 +1,56 @@
 package com.example.chattomate;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.chattomate.activities.ChangePasswordActivity;
+import com.example.chattomate.activities.LoginActivity;
+import com.example.chattomate.activities.SetupProfileActivity;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.fragments.ChatFragment;
 import com.example.chattomate.fragments.FriendsFragment;
 import com.example.chattomate.fragments.UserFragment;
+import com.example.chattomate.models.Conversation;
+import com.example.chattomate.service.ServiceAPI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Set;
+
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     ViewPager viewPager;
     BottomNavigationView bnt;
+    Toolbar toolbar;
+    SearchView searchView;
+    AppPreferenceManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        toolbar = findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        manager = new AppPreferenceManager(getApplicationContext());
+
         viewPager = findViewById(R.id.view_pager);
         bnt = findViewById(R.id.bottom_navigation);
+        searchView = findViewById(R.id.search_view);
+        searchView.setQueryHint("Tìm kiếm");
+        searchView.setOnQueryTextListener(this);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager.setAdapter(adapter);
@@ -78,6 +101,40 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AppPreferenceManager manager = new AppPreferenceManager(getApplicationContext());
+        Log.d("DEBUG", String.valueOf(manager.tokenVaild()));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case R.id.add_new_message:
+                //Tạo tin nhắn mới
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
+    }
+
     class ViewPagerAdapter extends FragmentStatePagerAdapter {
         public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
             super(fm, behavior);
@@ -101,12 +158,5 @@ public class MainActivity extends AppCompatActivity {
         public int getCount() {
             return 3;
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        AppPreferenceManager manager = new AppPreferenceManager(getApplicationContext());
-        Log.d("DEBUG", String.valueOf(manager.tokenVaild()));
     }
 }

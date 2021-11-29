@@ -19,12 +19,16 @@ import com.example.chattomate.R;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.models.Conversation;
+import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
+import com.example.chattomate.service.ServiceAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -35,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog pDialog;
     private ImageView ggLogin;
     private AppPreferenceManager manager;
+    private ServiceAPI serviceAPI;
 
     private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     public static final String KEY_EMAIL = "email";
@@ -46,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getSupportActionBar().hide();
+        manager = new AppPreferenceManager(getApplicationContext());
 
         edtEmail = (EditText) findViewById(R.id.email_regis);
         edtPassWord = (EditText) findViewById(R.id.inputPassword);
@@ -54,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = (Button) findViewById(R.id.btnLogin);
         register = (TextView) findViewById(R.id.register);
         ggLogin = (ImageView) findViewById(R.id.ggLogin);
-        manager = new AppPreferenceManager(getApplicationContext());
 
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Please wait while login...");
@@ -92,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void loginAccount() {
+    public synchronized void loginAccount() {
         String email = edtEmail.getText().toString().trim();
         String password = edtPassWord.getText().toString().trim();
 
@@ -115,25 +119,34 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(JSONObject result) {
                     try {
-                        AUTH_TOKEN = result.getJSONObject("data").getString("token");
-                        manager.saveToken(AUTH_TOKEN);
-//
-                        Calendar now = Calendar.getInstance();
-//                        now.d
-                        now.add(Calendar.DATE,1);
-                        manager.saveTimeToken(now);
-                        JSONObject jsonObject = result.getJSONObject("data").getJSONObject("user");
-                        User user = new User(jsonObject.getString("name"),jsonObject.getString("avatarUrl"),
-                                jsonObject.getString("phone"), email, password);
-                        manager.setLogin(true);
-                        manager.storeUser(user);
+                        String status = result.getString("status");
+                        if(status.equals("success")) {
+                            AUTH_TOKEN = result.getJSONObject("data").getString("token");
+                            manager.saveToken(AUTH_TOKEN);
 
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
+                            Calendar now = Calendar.getInstance();
+                            now.add(Calendar.DATE,1);
+                            manager.saveTimeToken(now);
+
+                            JSONObject jsonObject = result.getJSONObject("data").getJSONObject("user");
+                            User user = new User(jsonObject.getString("_id"),
+                                    jsonObject.getString("name"),
+                                    jsonObject.getString("avatarUrl"), email);
+                            user.password = password;
+                            manager.setStateActive(true);
+                            manager.setLogin(true);
+                            manager.storeUser(user);
+
+                            getData();
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        } else Toast.makeText(LoginActivity.this,"login error (1)",Toast.LENGTH_LONG).show();
+
                     } catch (JSONException e) {
-                        Toast.makeText(LoginActivity.this, "Sai email hoặc mật khẩu", Toast.LENGTH_LONG).show();
+                        Toast.makeText(LoginActivity.this, "login error (2)", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
 
@@ -145,15 +158,18 @@ public class LoginActivity extends AppCompatActivity {
                 public void onError(JSONObject result) {
                     pDialog.dismiss();
                     Toast.makeText(LoginActivity.this, "Sai email hoặc mật khẩu", Toast.LENGTH_LONG).show();
-                    Log.d("debug",result.toString());
+//                    Log.d("debug",result.toString());
                 }
             });
 
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    public void getData() {
+        serviceAPI = new ServiceAPI(this, manager);
+        serviceAPI.getFriends();
+        serviceAPI.getAllConversation();
+        serviceAPI.getAllFriendSendAdd();
+        serviceAPI.getAllSendAddFriend();
     }
 }

@@ -1,9 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
     tools:context=".activities.ChatActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar_chat"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_chat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_chat"
+        android:layout_above="@+id/la"/>
+
+    <LinearLayout
+        android:id="@+id/la"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="10dp">
+
+        <ImageButton
+            android:id="@+id/send_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@null"
+            app:srcCompat="@drawable/image_message_icon" />
+
+        <ImageButton
+            android:id="@+id/send_voice"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@null"
+            app:srcCompat="@drawable/voice_message_icon" />
+
+        <EditText
+            android:id="@+id/txt_message"
+            android:layout_width="270dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:background="@drawable/shape_bg_search"
+            android:backgroundTint="#E6BBF8"
+            android:hint="Nhập tin nhắn"
+            android:paddingLeft="8dp"
+            android:title="text_message" />
+
+        <ImageButton
+            android:id="@+id/btn_send"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@null"
+            app:srcCompat="@drawable/sending_icon" />
+
+    </LinearLayout>
+
+</RelativeLayout>

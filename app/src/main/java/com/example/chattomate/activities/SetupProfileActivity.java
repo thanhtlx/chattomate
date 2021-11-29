@@ -1,8 +1,5 @@
 package com.example.chattomate.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,7 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.example.chattomate.R;
@@ -35,6 +38,8 @@ public class SetupProfileActivity extends AppCompatActivity {
     private User user;
     private EditText name, phone;
     private Button save;
+    private Toolbar toolbar;
+    ImageView imageView;
     private CircleImageView avatar;
     private Uri imageUri;
     private static final int REQUEST_CODE = 101;
@@ -45,8 +50,11 @@ public class SetupProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup_profile);
-        getSupportActionBar().setTitle("Cập nhật thông tin cá nhân");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar = findViewById(R.id.toolbar_setup);
+        setSupportActionBar(toolbar);
+        ActionBar bar = getSupportActionBar();
+        bar.setTitle("Cập nhật thông tin cá nhân");
+        bar.setDisplayHomeAsUpEnabled(true);
 
         manager = new AppPreferenceManager(getApplicationContext());
         user = manager.getUser();
@@ -59,6 +67,7 @@ public class SetupProfileActivity extends AppCompatActivity {
         name = findViewById(R.id.inputName);
         phone = findViewById(R.id.phone);
         save = findViewById(R.id.btn_save);
+        imageView = findViewById(R.id.image_avatar);
 
         if(user.avatarUrl.length() > 0) {
             imageUri = Uri.parse(user.avatarUrl);
@@ -87,10 +96,12 @@ public class SetupProfileActivity extends AppCompatActivity {
     private void saveData() {
         String cName = name.getText().toString();
         String cPhone = phone.getText().toString();
-        String cAvatarUrl = imageUri.toString();
+        String cAvatarUrl;
+        if(imageUri != null) cAvatarUrl = imageUri.toString();
+        else cAvatarUrl = "";
 
         if(cName.length() < 2) name.setError("Tên quá ngắn");
-        else if(cPhone.length() < 9) phone.setError("Số điện thoại phải có ít nhất 9 chữ số");
+        else if(cPhone.length() < 9 && cPhone.length() > 0) phone.setError("Số điện thoại phải có ít nhất 9 chữ số");
         else {
             progressDialog.show();
 
@@ -105,7 +116,7 @@ public class SetupProfileActivity extends AppCompatActivity {
 
             API api = new API(this);
             Map<String, String> token = new HashMap<>();
-            token.put("auth-token", LoginActivity.AUTH_TOKEN);
+            token.put("auth-token", manager.getToken(this));
 
             api.Call(Request.Method.PUT, URL, setupData, token, new APICallBack() {
                 @Override
@@ -113,10 +124,10 @@ public class SetupProfileActivity extends AppCompatActivity {
                     try {
                         String status = result.getString("status");
                         if (status.equals("success")) {
-                            manager.editor.putString("name",cName);
-                            manager.editor.putString("phone",cPhone);
-                            manager.editor.putString("avatarUrl", cAvatarUrl);
-                            manager.editor.commit();
+                            user.name = cName;
+                            user.phone = cPhone;
+                            user.avatarUrl = cAvatarUrl;
+                            manager.storeUser(user);
 
                             Toast.makeText(SetupProfileActivity.this, "Đã chỉnh sửa thông tin", Toast.LENGTH_LONG).show();
                             progressDialog.dismiss();

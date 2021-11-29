@@ -37,7 +37,6 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        getSupportActionBar().hide();
 
         edtPassWord = (EditText) findViewById(R.id.passwd_regis);
         edtCfPassword = (EditText) findViewById(R.id.cfpasswd_regis);
@@ -104,12 +103,12 @@ public class RegisterActivity extends AppCompatActivity {
                             startActivity(login);
                             finish();
                         } else {
-                            Toast.makeText(getApplicationContext(),"registration error 1",Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(),"registration error (1)",Toast.LENGTH_LONG).show();
                             pDialog.dismiss();
                         }
 
                     } catch (JSONException e) {
-                        Toast.makeText(getApplicationContext(),"registration error 2",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"registration error (2)",Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                     Log.d("debug",result.toString());
@@ -121,7 +120,7 @@ public class RegisterActivity extends AppCompatActivity {
                     //register thất bại
                     pDialog.dismiss();
                     Toast.makeText(RegisterActivity.this, "Email existed", Toast.LENGTH_LONG).show();
-                    Log.d("debug",result.toString());
+//                    Log.d("debug",result.toString());
                 }
             });
 

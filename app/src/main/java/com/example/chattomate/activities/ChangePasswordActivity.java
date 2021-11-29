@@ -1,7 +1,5 @@
 package com.example.chattomate.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.example.chattomate.R;
@@ -34,6 +36,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private Button save_changePw;
     private CircleImageView avatar;
     private TextView name;
+    private Toolbar toolbar;
     ProgressDialog progressDialog;
     AppPreferenceManager manager;
     User user;
@@ -43,8 +46,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        getSupportActionBar().setTitle("Thay đổi mật khẩu");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar = findViewById(R.id.toolbar_changePwd);
+        setSupportActionBar(toolbar);
+        ActionBar bar = getSupportActionBar();
+        bar.setTitle("Thay đổi mật khẩu");
+        bar.setDisplayHomeAsUpEnabled(true);
 
         manager = new AppPreferenceManager(getApplicationContext());
         user = manager.getUser();
@@ -74,6 +80,20 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void changePassword() {
         String old_pw = oldPw.getText().toString();
         String new_pw = newPw.getText().toString();
@@ -96,15 +116,15 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 }
                 API api = new API(this);
                 Map<String, String> token = new HashMap<>();
-                token.put("auth-token", LoginActivity.AUTH_TOKEN);
+                token.put("auth-token", manager.getToken(this));
                 api.Call(Request.Method.PUT, URL, changePwdData, token, new APICallBack() {
                             @Override
                             public void onSuccess(JSONObject result) {
                                 try {
                                     String status = result.getString("status");
                                     if (status.equals("success")) {
-                                        manager.editor.putString("password",new_pw).commit();
-                                        manager.editor.commit();
+                                        user.password = new_pw;
+                                        manager.storeUser(user);
 
                                         Toast.makeText(ChangePasswordActivity.this, "Đổi mật khẩu thành công", Toast.LENGTH_LONG).show();
                                         progressDialog.dismiss();
@@ -134,20 +154,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     private boolean checkPwd(String password) {
-        return password.length() > 8;
+        return password.length() < 8;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId())
-        {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-
-            default:break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

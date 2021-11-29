@@ -22,7 +22,7 @@ public class API {
         this.context = context;
     }
 
-    public void Call(int method, String url, JSONObject params, Map<String, String> headers, APICallBack callBack) {
+    public synchronized void Call(int method, String url, JSONObject params, Map<String, String> headers, APICallBack callBack) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(method, url, params,
                 new Response.Listener<JSONObject>() {
             @Override

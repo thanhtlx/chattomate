@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/chat"
-        android:icon="@drawable/logo"
+        android:icon="@drawable/message"
         android:title="Chat" />
     <item
         android:id="@+id/friend"
