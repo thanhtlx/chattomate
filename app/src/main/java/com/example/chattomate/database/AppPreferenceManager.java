@@ -51,6 +51,7 @@ public class AppPreferenceManager {
     private static final String ALL_CONVERSATION= "conversations";
     private static final String ALL_MESSAGE     = "messages";
     private static final String TOKEN = "token";
+    private static final String FB_TOKEN = "token";
     private String TIME_TOKEN = "time token";
 
 
@@ -363,6 +364,14 @@ public class AppPreferenceManager {
         if (time == 0) return false;
         long now = Calendar.getInstance().getTimeInMillis();
         return  time > now;
+    }
+    public String getFBToken(){
+        String token = pref.getString(FB_TOKEN, "");
+        return  token;
+    }
+    public void setFBToken(String token)  {
+        editor.putString(FB_TOKEN, token);
+        editor.commit();
     }
 
     public void clear() {

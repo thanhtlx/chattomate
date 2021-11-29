@@ -8,6 +8,8 @@ public class Config {
     public static String FRIENDS_URL    = "/api/friends";
     public static String CONVERSATION_URL = "/api/conversations";
     public static String MESSAGE_URL    = "/api/messages";
+    public static String REGISTER_FB_TOKEN_URL    = "/api/users/register-fcm";
+    public static String UN_REGISTER_FB_TOKEN_URL    = "/api/users/un-register-fcm";
 
 
     public static String SOCKET_URL     = "https://chattomate.cf/socket.io/socket.io.js";
