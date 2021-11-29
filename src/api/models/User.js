@@ -42,6 +42,12 @@ const userSchema = new schema(
         ref: "user_conversations",
       },
     ],
+    fcm: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },

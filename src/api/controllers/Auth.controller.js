@@ -17,7 +17,7 @@ class AuthController {
         .send({ status: "error", message: error.details[0].message });
     }
     //   check user exists
-    const user = await UserService.checkUserExist(req.body.email);
+    let user = await UserService.checkUserExist(req.body.email);
     if (!user) {
       return res
         .status(404)
@@ -38,6 +38,10 @@ class AuthController {
       { exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24, _id: user._id },
       process.env.TOKEN_SECRET
     );
+    if (req.body.token && !user.fcm.includes(req.body.token)) {
+      user.fcm.push(req.body.token);
+      user = await UserService.saveUser(user);
+    }
     return res.header("auth-token", token).send({
       status: "success",
       data: {

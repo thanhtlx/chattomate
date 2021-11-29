@@ -5,11 +5,17 @@ import fetch from "node-fetch";
 class UserService {
   static async getInfoFromFriendID(id) {}
 
+  static async getAllUsers() {
+    const users = await User.find();
+    return users.map((user) => this.getInfoUser(user));
+  }
+
   static getInfoUser(user) {
-    const data = (({ _id, name, avatarUrl, idApi }) => ({
+    const data = (({ _id, name, email, avatarUrl, idApi }) => ({
       _id,
       name,
       avatarUrl,
+      email,
       idApi,
     }))(user);
     return data;
