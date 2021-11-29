@@ -6,11 +6,12 @@ import ConversationService from "./conversation.service";
 import UserService from "./user.service";
 
 class NotifyService {
+  // chua test
   static async notifyFriendActiveChange(userID, message) {
     const friends = await FriendService.getAllFriends(userID);
     const friendIDs = friends.map((friend) => friend.friend._id.toString());
     for (var friend of friendIDs) {
-      var clientID = socket.getClientUserId(friend);
+      var clientID = socket.userActice[friend];
       if (clientID) {
         socket.emit(clientID, Config.CHANNEL_FIREND_ACTICE_CHANGE, {
           message: message,
@@ -21,11 +22,12 @@ class NotifyService {
     }
   }
 
+  // chua test
   static async notifyTyping(userID, conversationID) {
     const userTyping = UserService.findID(userID);
     const conversation = await ConversationService.findID(conversationID);
     for (var user of conversation.members) {
-      var clientID = socket.getClientUserId(user.toString());
+      var clientID = socket.userActice[user.toString()];
       if (clientID) {
         socket.emit(clientID, Config.CHANNEL_FIREND_ACTICE_CHANGE, {
           message: message,
@@ -36,17 +38,18 @@ class NotifyService {
     }
   }
 
+  // chua test
   static async getAllFriendOnline(userID) {
     const friends = await FriendService.getAllFriends(userID);
     const res = friends.filter(
-      (friend) => socket.getClientUserId(friend.friend._id.toString()) != null
+      (friend) => friend.friend._id.toString() in socket.userActice
     );
     return res;
   }
 
   static async notify(channel, userID, data) {
     console.log(userID);
-    const clientID = socket.getClientUserId(userID);
+    const clientID = await socket.getClientUserId(userID);
     if (clientID) {
       socket.emit(clientID, channel, data);
       return;
@@ -65,9 +68,8 @@ class NotifyService {
 
   static async notifyAll(userID) {
     const notifiers = await this.getAllNotifiers(userID);
-    console.log(notifiers);
     for (notify of notifiers) {
-      var clientID = socket.getClientUserId(userID);
+      var clientID = await socket.getClientUserId(userID);
       if (clientID) {
         socket.emit(clientID, notify.channel, notify.data);
         notify.delete();
