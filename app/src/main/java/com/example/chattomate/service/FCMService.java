@@ -24,7 +24,6 @@ public class FCMService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull @NotNull RemoteMessage remoteMessage) {
 //        super.onMessageReceived(remoteMessage);
         Log.d("DEBUG","Receiver mesaage");
-//        notify nay test thoi
 
         NotificationService notificationService = new NotificationService(this);
         Intent intent = new Intent(this.getApplicationContext(), ChatActivity.class);

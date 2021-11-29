@@ -153,7 +153,7 @@ public class SocketService extends Service {
     private void initSocket() {
 
         IO.Options opts = new IO.Options();
-        opts.query = "token=" + manager.getToken();
+        opts.query = "token=" + manager.getToken(context);
         opts.transports = new String[]{WebSocket.NAME};
         mSocket = IO.socket(URI.create(Config.HOST), opts);
         Log.d(TAG,"init socket");

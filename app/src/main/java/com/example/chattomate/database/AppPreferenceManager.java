@@ -1,14 +1,26 @@
 package com.example.chattomate.database;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.example.chattomate.MainActivity;
+import com.example.chattomate.activities.LoginActivity;
+import com.example.chattomate.config.Config;
+import com.example.chattomate.interfaces.APICallBack;
 import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
+import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
+import com.example.chattomate.service.API;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -26,6 +38,8 @@ public class AppPreferenceManager {
 
     private static final String PREF_NAME       = "chattomate_chat";
     private static final String IS_LOGGED_IN    = "isLoggedIn";
+    private static final String STATE_ACTIVE    = "state_active";
+    private static final String ID              = "_id";
     private static final String PHONE           = "phone";
     private static final String AVATAR_URL      = "avatarUrl";
     private static final String NAME            = "name";
@@ -35,22 +49,15 @@ public class AppPreferenceManager {
     private static final String REQUEST_FRIEND  = "request_friends";
     private static final String PENDING_FRIEND  = "pending_friends";
     private static final String ALL_CONVERSATION= "conversations";
-    private static final String TOKEN= "token";
+    private static final String ALL_MESSAGE     = "messages";
+    private static final String TOKEN = "token";
     private String TIME_TOKEN = "time token";
+
 
     public AppPreferenceManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = pref.edit();
-    }
-
-    public void saveToken(String token) {
-        editor.putString(TOKEN, token);
-        editor.commit();
-    }
-    public String getToken() {
-        String token = pref.getString(TOKEN, "");
-        return token;
     }
 
     public void setLogin(boolean isLoggedIn) {
@@ -62,7 +69,17 @@ public class AppPreferenceManager {
         return pref.getBoolean(IS_LOGGED_IN, false);
     }
 
+    public void setStateActive(boolean b) {
+        editor.putBoolean(STATE_ACTIVE, b).commit();
+        Log.d(TAG, "User state active session modified!");
+    }
+
+    public boolean getStateActive(){
+        return pref.getBoolean(STATE_ACTIVE, false);
+    }
+
     public void storeUser(User user) {
+        editor.putString(ID, user._id);
         editor.putString(PHONE, user.phone);
         editor.putString(AVATAR_URL, user.avatarUrl);
         editor.putString(NAME, user.name);
@@ -73,15 +90,67 @@ public class AppPreferenceManager {
 
     public User getUser() {
         if (pref.getString(PHONE, null) != null) {
-            String phone, avatar, name, password, email;
+            String id, phone, avatar, name, password, email;
+            id = pref.getString(ID, null);
             phone = pref.getString(PHONE, null);
             avatar = pref.getString(AVATAR_URL, null);
             name = pref.getString(NAME, null);
             email = pref.getString(EMAIL, null);
             password = pref.getString(PASSWORD, null);
 
-            return new User(name, avatar, phone, email, password);
+            return new User(id, name, avatar, phone, email, password);
         } else return null;
+    }
+
+    public void storeMessage(ArrayList<Message> m, String idConversation) {
+        Gson gson = new Gson();
+        String str = gson.toJson(m);
+        editor.putString(ALL_MESSAGE+idConversation, str).commit();
+    }
+
+    public ArrayList<Message> getMessage(String idConversation) {
+        String str = pref.getString(ALL_MESSAGE+idConversation, "");
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<Message>>() {}.getType();
+        ArrayList<Message> messages = gson.fromJson(str, type);
+
+        return messages;
+    }
+
+    public void addMessage(Message message, String idConversation) {
+        ArrayList<Message> m = getMessage(idConversation);
+        boolean check = false;
+        for(Message message1 : m)
+            if(message1._id.equals(message._id)) {
+                check = true;
+                break;
+            }
+
+        if(!check) {
+            m.add(message);
+            storeMessage(m, idConversation);
+        }
+
+    }
+
+    public void deleteAMessage(String id, String idConversation) {
+        ArrayList<Message> m = getMessage(idConversation);
+        for(Message message : m)
+            if(message._id.equals(id)) {
+                m.remove(message);
+                break;
+            }
+        storeMessage(m, idConversation);
+    }
+
+    public void deleteConversation(String idConversation) {
+        editor.remove(ALL_MESSAGE+idConversation).commit();
+
+        ArrayList<Conversation> conversations = getConversations();
+        Conversation c = getConversation(idConversation);
+        conversations.remove(c);
+
+        storeConversation(conversations);
     }
 
     public void storeFriends(ArrayList<Friend> friends) {
@@ -99,16 +168,21 @@ public class AppPreferenceManager {
     }
 
     public Friend getFriend(ArrayList<Friend> friends, String id) {
-        for(Friend friend : friends) {
-            if(friend.friend._id.equals(id)) return friend;
-        }
+        if(friends != null)
+            for (Friend friend : friends) {
+                if (friend._id.equals(id)) return friend;
+            }
         return null;
     }
 
     public void addFriend(Friend friend) {
         ArrayList<Friend> friends = getFriends();
-        friends.add(friend);
-        storeFriends(friends);
+        Friend f = getFriend(friends, friend._id);
+
+        if(f == null) {
+            friends.add(friend);
+            storeFriends(friends);
+        }
     }
 
     public void deleteFriend(Friend friend) {
@@ -192,8 +266,12 @@ public class AppPreferenceManager {
 
     public void addConversation(Conversation c) {
         ArrayList<Conversation> cv = getConversations();
-        cv.add(c);
-        storeConversation(cv);
+        Conversation conversation = getConversation(c._id);
+
+        if(conversation == null) {
+            cv.add(c);
+            storeConversation(cv);
+        }
     }
 
     // cập nhật cuộc trò chuyện: thêm xóa thành viên hoặc thay đổi tên, background...
@@ -223,9 +301,53 @@ public class AppPreferenceManager {
         storeConversation(cv);
     }
 
+    public void saveToken(String token) {
+        editor.putString(TOKEN, token);
+        editor.commit();
 
-    public void clear() {
-        editor.clear().commit();
+    }
+
+    public String getToken(Context c) {
+        if(!tokenVaild()) {
+            String LOGIN_URL = Config.HOST + Config.LOGIN_URL;
+            JSONObject loginData = new JSONObject();
+            try {
+                loginData.put("email", getUser().email);
+                loginData.put("password", getUser().password);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            API api = new API(c);
+            api.Call(Request.Method.POST, LOGIN_URL, loginData, null, new APICallBack() {
+                @Override
+                public void onSuccess(JSONObject result) {
+                    try {
+                        String status = result.getString("status");
+                        if(status.equals("success")) {
+                            String AUTH_TOKEN = result.getJSONObject("data").getString("token");
+                            saveToken(AUTH_TOKEN);
+
+                            Calendar now = Calendar.getInstance();
+                            now.add(Calendar.DATE,1);
+                            saveTimeToken(now);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("debug",result.toString());
+                }
+
+                @Override
+                public void onError(JSONObject result) {
+                    Log.d("debug",result.toString());
+                }
+            });
+        }
+
+        String token = pref.getString(TOKEN, "");
+        return token;
     }
 
     public void saveTimeToken(Calendar time) {
@@ -242,4 +364,9 @@ public class AppPreferenceManager {
         long now = Calendar.getInstance().getTimeInMillis();
         return  time > now;
     }
+
+    public void clear() {
+        editor.clear().commit();
+    }
+
 }

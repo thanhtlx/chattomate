@@ -19,11 +19,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
+import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.adapter.ChatRoomThreadAdapter;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
@@ -292,6 +294,42 @@ public class ChatActivity extends AppCompatActivity {
 //        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
 //                new IntentFilter(Config.PUSH_NOTIFICATION));
         //
+        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
+            @Override
+            public void onNewMessage(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewFriendRequest(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewConversation(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewFriend(JSONObject data) {
+
+            }
+
+            @Override
+            public void onConversationChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onFriendActiveChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onTyping(JSONObject data) {
+
+            }
+        });
     }
 
     @Override

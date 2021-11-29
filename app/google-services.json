@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "647465891603-rpfcpcp47m8ocdrd00cbofo5acgbq6u4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chattomate",
+            "certificate_hash": "c2bd047be35e8466424edf228101db20d468240f"
+          }
+        },
+        {
           "client_id": "647465891603-rc9ntav0a64mnrs3nus2csnqk76vgqe0.apps.googleusercontent.com",
           "client_type": 3
         }

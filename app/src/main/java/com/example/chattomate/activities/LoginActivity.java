@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.example.chattomate.App;
 import com.example.chattomate.MainActivity;
 import com.example.chattomate.R;
 import com.example.chattomate.config.Config;
@@ -143,6 +144,9 @@ public class LoginActivity extends AppCompatActivity {
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                             finish();
+
+                            App.initSocket();
+//                            init socket when login success
                         } else Toast.makeText(LoginActivity.this,"login error (1)",Toast.LENGTH_LONG).show();
 
                     } catch (JSONException e) {
