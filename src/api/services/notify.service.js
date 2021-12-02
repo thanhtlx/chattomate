@@ -11,7 +11,7 @@ class NotifyService {
     const friends = await FriendService.getAllFriends(userID);
     const friendIDs = friends.map((friend) => friend.friend._id.toString());
     for (var friend of friendIDs) {
-      var clientID = socket.userActice[friend];
+      var clientID = socket.getClientID(friend);
       if (clientID) {
         socket.emit(clientID, Config.CHANNEL_FIREND_ACTICE_CHANGE, {
           message: message,
@@ -27,7 +27,7 @@ class NotifyService {
     const userTyping = UserService.findID(userID);
     const conversation = await ConversationService.findID(conversationID);
     for (var user of conversation.members) {
-      var clientID = socket.userActice[user.toString()];
+      var clientID = socket.getClientID(user.toString());
       if (clientID) {
         socket.emit(clientID, Config.CHANNEL_FIREND_ACTICE_CHANGE, {
           message: message,
@@ -42,7 +42,8 @@ class NotifyService {
   static async getAllFriendOnline(userID) {
     const friends = await FriendService.getAllFriends(userID);
     const res = friends.filter(
-      (friend) => friend.friend._id.toString() in socket.userActice
+      (friend) =>
+        friend.friend._id.toString() in socket.getUserActive()
     );
     return res;
   }

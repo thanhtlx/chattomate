@@ -14,9 +14,11 @@ class MySocket {
       await NotifyService.notifyFriendActiveChange(userID, "online");
       await NotifyService.notifyAll();
       socket.on("typing", async (data) => {
+        console.log("typing");
+        console.log(data);
         await NotifyService.notifyTyping(userID, data.conversationID);
       });
-      
+
       // socket.on("incoming-call", async (data) => {
       //   await NotifyService.notifyIncomingCall(userID, data.caller);
       // });
@@ -52,6 +54,16 @@ class MySocket {
     }
 
     //
+  }
+
+  getUserActive() {
+    return MySocket.userActice;
+  }
+
+  getClientID(userID) {
+    if (MySocket.userActice[userID] !== undefined) {
+      return MySocket.userActice[userID];
+    }
   }
 
   emit(id, channel, data) {

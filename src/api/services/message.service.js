@@ -29,13 +29,11 @@ class MessageService {
     const conversationID = message.conversation;
     const conversation = await ConversationService.findID(conversationID);
     if (!conversation) return null;
-    console.log("send by ");      
-    console.log(message.sendBy);
     let dataNotify = Object.assign({}, message)._doc;
     dataNotify.sendBy = UserService.getInfoUser(user);
     for (var member of conversation.members) {
       member = member.toString();
-      if (member === message.sendBy.toString()) continue;
+      if (member == message.sendBy._id.toString()) continue;
       const isNotify = await ConversationService.checkNotify(
         member,
         conversationID
