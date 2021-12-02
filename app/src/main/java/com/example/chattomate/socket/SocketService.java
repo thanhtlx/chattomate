@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.chattomate.MainActivity;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.activities.LoginActivity;
 import com.example.chattomate.config.Config;
@@ -37,27 +38,98 @@ public class SocketService extends Service {
     private SocketCallBack socketCallBack = new SocketCallBack() {
         @Override
         public void onNewMessage(JSONObject data) {
-
+            JSONObject jsonObject = data;
+            try {
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("conversationID", jsonObject.getString("conversation"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                notificationService.pushNotification(
+                        Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,
+                        Config.ID_NOTIFICATION_NEW_MESSAGE,
+                        jsonObject.getJSONObject("sendBy").getString("name"),
+                        jsonObject.getString("content"),pendingIntent);
+                socketCallBack.onNewMessage(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("DEBUG","error paser json");
+            }
         }
 
         @Override
         public void onNewFriendRequest(JSONObject data) {
-
+            try {
+                Intent intent = new Intent(context, MainActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                intent.putExtra("conversationID", jsonObject.getString("conversation"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                notificationService.pushNotification(
+                        Config.CHANNEL_NOTIFICATION_NEW_FRIEND_REQUEST,
+                        Config.ID_NOTIFICATION_NEW_FRIEND_REQUEST,
+                        "new Friend Request",
+                        data.getString( "message"),pendingIntent);
+                socketCallBack.onNewMessage(data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("DEBUG","error paser json");
+            }
         }
 
         @Override
         public void onNewConversation(JSONObject data) {
-
+            try {
+                Intent intent = new Intent(context, MainActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                intent.putExtra("conversationID", jsonObject.getString("conversation"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                notificationService.pushNotification(
+                        Config.CHANNEL_NOTIFICATION_NEW_CONVERSATION,
+                        Config.ID_NOTIFICATION_NEW_CONVERSATION,
+                        "new Conversation",
+                        data.getString( "message"),pendingIntent);
+                socketCallBack.onNewMessage(data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("DEBUG","error paser json");
+            }
         }
 
         @Override
         public void onNewFriend(JSONObject data) {
-
+            try {
+                Intent intent = new Intent(context, MainActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                intent.putExtra("conversationID", jsonObject.getString("conversation"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                notificationService.pushNotification(
+                        Config.CHANNEL_NOTIFICATION_NEW_FRIEND,
+                        Config.ID_NOTIFICATION_NEW_FRIEND,
+                        "new Friend",
+                        data.getString( "message"),pendingIntent);
+                socketCallBack.onNewMessage(data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("DEBUG","error paser json");
+            }
         }
 
         @Override
         public void onConversationChange(JSONObject data) {
-
+            try {
+                Intent intent = new Intent(context, MainActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                intent.putExtra("conversationID", jsonObject.getString("conversation"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                notificationService.pushNotification(
+                        Config.CHANNEL_NOTIFICATION_NEW_CONVERSATION,
+                        Config.ID_NOTIFICATION_NEW_CONVERSATION,
+                        "conversation change",
+                        data.getString( "message"),pendingIntent);
+                socketCallBack.onNewMessage(data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("DEBUG","error paser json");
+            }
         }
 
         @Override
@@ -78,25 +150,6 @@ public class SocketService extends Service {
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));
 //            notification
-            JSONObject jsonObject = ((JSONObject) args[0]);
-            try {
-                Intent intent = new Intent(context, ChatActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("conversationID", jsonObject.getString("conversation"));
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-                notificationService.pushNotification(
-                        Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,
-                        Config.ID_NOTIFICATION_NEW_MESSAGE,
-                        jsonObject.getJSONObject("sendBy").getString("name"),
-                        jsonObject.getString("content"),pendingIntent);
-                socketCallBack.onNewMessage(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.d("DEBUG","error paser json");
-            }
-
-
-
 
         }
     };

@@ -29,6 +29,12 @@ public class Config {
     //    notification
     public static String CHANNEL_NOTIFICATION_NEW_MESSAGE = "NEW MESSAGE";
     public static int ID_NOTIFICATION_NEW_MESSAGE = 111;
+    public static String CHANNEL_NOTIFICATION_NEW_FRIEND_REQUEST = "NEW FRIEND REQUEST";
+    public static int ID_NOTIFICATION_NEW_FRIEND_REQUEST = 112;
+    public static String CHANNEL_NOTIFICATION_NEW_FRIEND = "NEW FRIEND";
+    public static int ID_NOTIFICATION_NEW_FRIEND = 113;
+    public static String CHANNEL_NOTIFICATION_NEW_CONVERSATION = "NEW CONVERSATION";
+    public static int ID_NOTIFICATION_NEW_CONVERSATION = 114;
 
 
 }

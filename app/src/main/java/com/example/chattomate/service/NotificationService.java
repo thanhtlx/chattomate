@@ -25,7 +25,18 @@ public class NotificationService {
     }
 
     private void initChanel() {
-        createNotificationChannel(Config.CHANNEL_NOTIFICATION_NEW_MESSAGE, Config.CHANNEL_NOTIFICATION_NEW_MESSAGE, Config.CHANNEL_NOTIFICATION_NEW_MESSAGE);
+        createNotificationChannel(Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,
+                Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,
+                Config.CHANNEL_NOTIFICATION_NEW_MESSAGE);
+        createNotificationChannel(Config.CHANNEL_NOTIFICATION_NEW_FRIEND,
+                Config.CHANNEL_NOTIFICATION_NEW_FRIEND,
+                Config.CHANNEL_NOTIFICATION_NEW_FRIEND);
+        createNotificationChannel(Config.CHANNEL_NOTIFICATION_NEW_FRIEND_REQUEST,
+                Config.CHANNEL_NOTIFICATION_NEW_FRIEND_REQUEST,
+                Config.CHANNEL_NOTIFICATION_NEW_FRIEND_REQUEST);
+        createNotificationChannel(Config.CHANNEL_NOTIFICATION_NEW_CONVERSATION,
+                Config.CHANNEL_NOTIFICATION_NEW_CONVERSATION,
+                Config.CHANNEL_NOTIFICATION_NEW_CONVERSATION);
     }
 
     public void pushNotification(String CHANNEL_ID,
