@@ -7,7 +7,10 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chattomate.activities.LoginActivity;
+import com.example.chattomate.call.LoginService;
 import com.example.chattomate.database.AppPreferenceManager;
+import com.example.chattomate.models.User;
+import com.quickblox.users.model.QBUser;
 
 public class SplashActivity extends AppCompatActivity {
     @Override
@@ -25,6 +28,7 @@ public class SplashActivity extends AppCompatActivity {
                 Intent intent;
                 if (manager.isLoggedIn()) {
                     intent = new Intent(SplashActivity.this, MainActivity.class);
+                    loginQB(manager.getUser());
                 } else {
                     intent = new Intent(SplashActivity.this, LoginActivity.class);
                 }
@@ -36,6 +40,11 @@ public class SplashActivity extends AppCompatActivity {
 
         Handler handler = new Handler();
         handler.postDelayed(runnable,1500);
+    }
+    private void loginQB(User user) {
+        QBUser qbUser = new QBUser(user.email, App.USER_DEFAULT_PASSWORD);
+        qbUser.setId(132156844);
+        LoginService.start(this, qbUser);
     }
 
 }

@@ -55,6 +55,17 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
     implementation "androidx.cardview:cardview:1.0.0"
 
+//    qblox video chat call
+    implementation "com.quickblox:quickblox-android-sdk-videochat-webrtc:$qbSdkVersion"
+    implementation "com.quickblox:quickblox-android-sdk-messages:$qbSdkVersion"
+    implementation "com.github.johnkil.android-robototextview:robototextview:$robotoTextViewVersion"
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    implementation "com.navercorp.pulltorefresh:library:$pullToRefreshVersion@aar"
+    //noinspection OutdatedLibrary
+    implementation("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar") {
+        transitive = true
+    }
+
     implementation ('io.socket:socket.io-client:2.0.0') {
         exclude group: 'org.json', module: 'json'
     }

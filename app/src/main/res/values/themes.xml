@@ -3,16 +3,16 @@
     <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-<!--        &lt;!&ndash; Primary brand color. &ndash;&gt;-->
-<!--        <item name="colorPrimary">@color/pink2</item>-->
-<!--        <item name="colorPrimaryVariant">@color/pink3</item>-->
-<!--        <item name="colorOnPrimary">@color/white</item>-->
-<!--        <item name="android:textSize">12sp</item>-->
+        <!--        &lt;!&ndash; Primary brand color. &ndash;&gt;-->
+        <!--        <item name="colorPrimary">@color/pink2</item>-->
+        <!--        <item name="colorPrimaryVariant">@color/pink3</item>-->
+        <!--        <item name="colorOnPrimary">@color/white</item>-->
+        <!--        <item name="android:textSize">12sp</item>-->
 
-<!--        &lt;!&ndash; Secondary brand color. &ndash;&gt;-->
-<!--        <item name="colorSecondary">@color/gray</item>-->
-<!--        <item name="colorSecondaryVariant">@color/black80</item>-->
-<!--        <item name="colorOnSecondary">@color/black</item>-->
+        <!--        &lt;!&ndash; Secondary brand color. &ndash;&gt;-->
+        <!--        <item name="colorSecondary">@color/gray</item>-->
+        <!--        <item name="colorSecondaryVariant">@color/black80</item>-->
+        <!--        <item name="colorOnSecondary">@color/black</item>-->
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->

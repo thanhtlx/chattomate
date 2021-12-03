@@ -10,6 +10,7 @@ public class User implements Serializable {
     public String phone = "";
     public String email;
     public String password;
+    public String idAPi;
 
     public User() { }
 
