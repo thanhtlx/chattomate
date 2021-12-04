@@ -35,24 +35,38 @@ dependencies {
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
-    implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'
+    implementation 'com.google.firebase:firebase-auth:21.0.1'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'androidx.annotation:annotation:1.2.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.android.volley:volley:1.2.1'
+    implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-    implementation 'com.google.code.gson:gson:2.8.9'
+
+//    fcm
+    implementation platform('com.google.firebase:firebase-bom:29.0.0')
 
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
     implementation "androidx.cardview:cardview:1.0.0"
 
+//    qblox video chat call
+//    implementation "com.quickblox:quickblox-android-sdk-videochat-webrtc:$qbSdkVersion"
+//    implementation "com.quickblox:quickblox-android-sdk-messages:$qbSdkVersion"
+//    implementation "com.github.johnkil.android-robototextview:robototextview:$robotoTextViewVersion"
+//    implementation "com.github.bumptech.glide:glide:$glideVersion"
+//    implementation "com.navercorp.pulltorefresh:library:$pullToRefreshVersion@aar"
+//    //noinspection OutdatedLibrary
+//    implementation("com.crashlytics.sdk.android:crashlytics:$crashlyticsVersion@aar") {
+//        transitive = true
+//    }
+
     implementation ('io.socket:socket.io-client:2.0.0') {
         exclude group: 'org.json', module: 'json'
     }
-
 }

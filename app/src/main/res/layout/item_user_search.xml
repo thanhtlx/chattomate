@@ -4,33 +4,34 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:layout_marginTop="5dp"
+    android:layout_height="60dp"
     android:layout_marginStart="15dp"
-    android:layout_marginEnd="15dp"
-    card_view:cardBackgroundColor="@color/message_card"
-    card_view:cardCornerRadius="30dp">
+    android:layout_marginEnd="15dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:layout_height="match_parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar_search"
-            android:layout_width="0dp"
+            android:layout_width="40dp"
             android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
             android:src="@drawable/avatar"
-            card_view:civ_border_color="@color/pink3" />
+            card_view:civ_border_color="@color/pink3"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/linearLayout3"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="5"
-            android:orientation="vertical">
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/avatar_search"
+            card_view:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -45,8 +46,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:text="@string/conversation"
+                    android:text="Người dùng"
                     android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/black"
                     card_view:layout_constraintStart_toStartOf="parent"
                     tools:layout_editor_absoluteY="5dp" />
 
@@ -70,8 +72,18 @@
                 android:gravity="center_vertical"
                 android:lines="1"
                 android:paddingBottom="10dp"
-                android:text="@string/start_message"
+                android:text="Email"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
-    </LinearLayout>
+
+        <Button
+            android:id="@+id/add_friend_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:text="@string/add_friend"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -8,7 +8,8 @@ public class Config {
     public static String FRIENDS_URL    = "/api/friends";
     public static String CONVERSATION_URL = "/api/conversations";
     public static String MESSAGE_URL    = "/api/messages";
-
+    public static String REGISTER_FB_TOKEN_URL    = "/api/users/register-fcm";
+    public static String UN_REGISTER_FB_TOKEN_URL    = "/api/users/un-register-fcm";
 
     public static String SOCKET_URL     = "https://chattomate.cf/socket.io/socket.io.js";
 
@@ -27,6 +28,12 @@ public class Config {
     //    notification
     public static String CHANNEL_NOTIFICATION_NEW_MESSAGE = "NEW MESSAGE";
     public static int ID_NOTIFICATION_NEW_MESSAGE = 111;
+    public static String CHANNEL_NOTIFICATION_NEW_FRIEND_REQUEST = "NEW FRIEND REQUEST";
+    public static int ID_NOTIFICATION_NEW_FRIEND_REQUEST = 112;
+    public static String CHANNEL_NOTIFICATION_NEW_FRIEND = "NEW FRIEND";
+    public static int ID_NOTIFICATION_NEW_FRIEND = 113;
+    public static String CHANNEL_NOTIFICATION_NEW_CONVERSATION = "NEW CONVERSATION";
+    public static int ID_NOTIFICATION_NEW_CONVERSATION = 114;
 
 
 }

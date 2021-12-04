@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
+import com.example.chattomate.App;
 import com.example.chattomate.MainActivity;
 import com.example.chattomate.R;
 import com.example.chattomate.config.Config;
@@ -44,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
+    public static final String KEY_FB_TOKEN = "token";
     public static final String LOGIN_URL = Config.HOST + Config.LOGIN_URL;
     public static String AUTH_TOKEN;
 
@@ -110,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 loginData.put(KEY_EMAIL, email);
                 loginData.put(KEY_PASSWORD, password);
+//                loginData.put(KEY_FB_TOKEN,manager.getFBToken());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -143,6 +146,9 @@ public class LoginActivity extends AppCompatActivity {
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                             finish();
+
+                            App.initSocket();
+//                            init socket when login success
                         } else Toast.makeText(LoginActivity.this,"login error (1)",Toast.LENGTH_LONG).show();
 
                     } catch (JSONException e) {
@@ -165,11 +171,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void getData() {
+    public synchronized void getData() {
         serviceAPI = new ServiceAPI(this, manager);
         serviceAPI.getFriends();
         serviceAPI.getAllConversation();
         serviceAPI.getAllFriendSendAdd();
         serviceAPI.getAllSendAddFriend();
+        serviceAPI.getAll();
     }
 }

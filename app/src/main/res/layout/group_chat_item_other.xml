@@ -3,14 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="256dp"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:layout_marginTop="10dp"
+    android:layout_marginBottom="2dp"
+    android:orientation="horizontal"
     android:paddingLeft="16dp">
+
+    <TextView
+        android:id="@+id/name_other"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginBottom="2dp"
+        android:text="Name"
+        android:textColor="@color/pink2_125"
+        android:textSize="12sp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/con"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name_other">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar_other"
@@ -30,7 +42,7 @@
             android:padding="10dp"
             android:textColor="@color/black"
             android:textIsSelectable="true"
-            android:textSize="14dp"
+            android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/avatar_other"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

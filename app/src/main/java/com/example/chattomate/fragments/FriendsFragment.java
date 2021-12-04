@@ -1,6 +1,7 @@
 package com.example.chattomate.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.example.chattomate.R;
+import com.example.chattomate.activities.ChatActivity;
+import com.example.chattomate.activities.ProfileFriend;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
@@ -40,7 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FriendsFragment extends Fragment {
     RecyclerView recyclerView;
     ListFriendAdapter adapter;
-    ArrayList<Friend> friendsList;
+    ArrayList<Friend> friendsList = new ArrayList<>();
     AppPreferenceManager manager;
     SwipeRefreshLayout mSwipeRefreshLayout;
     ServiceAPI api;
@@ -156,6 +159,7 @@ public class FriendsFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             Friend friend = friends.get(position);
+            ViewHolder h = (ViewHolder) holder;
 
             if (friend.avatarUrl.length() > 0) {
                 Uri imageUri = Uri.parse(friend.avatarUrl);
@@ -163,6 +167,24 @@ public class FriendsFragment extends Fragment {
             }
 
             ((ListFriendAdapter.ViewHolder) holder).name_friend.setText(friend.name);
+
+            String idConversation = manager.getIdConversation(friend._id);
+
+            ((View) h.name_friend.getParent()).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle extras = new Bundle();
+                    extras.putString("idConversation", idConversation);
+                    extras.putString("idFriend", friend._id);
+                    extras.putString("idApiFriend", friend.idApi);
+                    extras.putString("nameConversation", friend.name);
+                    extras.putInt("member_number", 2);
+
+                    Intent intent = new Intent(mContext, ProfileFriend.class);
+                    intent.putExtras(extras);
+                    startActivity(intent);
+                }
+            });
         }
 
         @Override

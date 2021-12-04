@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class User implements Serializable {
+    public String idApi;
     public String _id;
     public String name;
     public String avatarUrl = "";
