@@ -286,12 +286,13 @@ public class AppPreferenceManager {
     // lấy id cuộc trò chuyện của người bạn có _id = idFriend
     public String getIdConversation(String idFriend) {
         ArrayList<Conversation> conversations = getConversations();
-        if(conversations != null) for(Conversation c : conversations) {
-            if(c.members.size() == 2) {
-                Friend friend = getFriend(c.members, idFriend);
-                if(friend != null) return c._id;
+        if (conversations != null)
+            for (Conversation c : conversations) {
+                if (c.members.size() == 2) {
+                    Friend friend = getFriend(c.members, idFriend);
+                    if (friend != null) return c._id;
+                }
             }
-        }
 
         return null;
     }

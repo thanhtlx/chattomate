@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private final String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PASSWORD = "password";
-    public static final String KEY_FB_TOKEN = "token";
+    public static final String KEY_FB_TOKEN = "fb_token";
     public static final String LOGIN_URL = Config.HOST + Config.LOGIN_URL;
     public static String AUTH_TOKEN;
 

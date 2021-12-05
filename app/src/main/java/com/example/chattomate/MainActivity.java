@@ -299,7 +299,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     if(button.getText().toString().equals("Nhắn tin")) {
-                        Bundle extr = new Bundle();
                         String idConversation = manager.getIdConversation(friend._id);
 
                         if(idConversation == null) {
@@ -333,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
                                                     json.getString("emoji"), members);
                                             manager.addConversation(newCvst);
 
+                                            Bundle extr = new Bundle();
                                             extr.putString("idConversation", json.getString("_id"));
                                             extr.putString("idFriend", friend._id);
                                             extr.putString("idApiFriend", friend.idApi);
@@ -393,17 +393,17 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("debug",result.toString());
                             }
                         });
-                    } else if(button.getText().toString().equals("Đồng ý kết bạn")) {
-                        String url = URL_FRIEND + "/:" + friend._id + "/accept";
-                        JSONObject newAddFriend = new JSONObject();
+                    } else if(button.getText().toString().equals("Đồng ý\nkết bạn")) {
+                        String url = URL_FRIEND + "/" + friend._id + "/accept";
+                        JSONObject newFriend = new JSONObject();
                         try {
-                            newAddFriend.put("id", friend._id);
+                            newFriend.put("id", friend._id);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
                         API api = new API(context);
-                        api.Call(Request.Method.PUT, url, newAddFriend, token, new APICallBack() {
+                        api.Call(Request.Method.PUT, url, newFriend, token, new APICallBack() {
                             @Override
                             public void onSuccess(JSONObject result) {
                                 try {

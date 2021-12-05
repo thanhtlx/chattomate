@@ -40,7 +40,6 @@ public class ProfileFriend extends AppCompatActivity {
     TextView textView;
     Button ib, del;
     ServiceAPI serviceAPI;
-    API api;
     HashMap<String, String> token;
     private String idConversation;
     private String idFriend;
@@ -60,7 +59,6 @@ public class ProfileFriend extends AppCompatActivity {
 
         manager = new AppPreferenceManager(getApplicationContext());
         serviceAPI = new ServiceAPI(this, manager);
-        api = new API(this);
         token = manager.getMapToken(this);
 
         Bundle extras = getIntent().getExtras();
@@ -78,10 +76,10 @@ public class ProfileFriend extends AppCompatActivity {
         textView.setText(nameConversation);
         if(friend.avatarUrl.length() > 0) imageView.setImageURI(Uri.parse(friend.avatarUrl));
 
+        API api = new API(this);
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle extras = getIntent().getExtras();
                 int member_number = extras.getInt("member_number");
 
                 if(idConversation == null) {
@@ -164,8 +162,7 @@ public class ProfileFriend extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
             case R.id.voicecall_icon:

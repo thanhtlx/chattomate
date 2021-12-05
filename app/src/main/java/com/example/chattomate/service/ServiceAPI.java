@@ -346,7 +346,7 @@ public class ServiceAPI {
                         for(int i = 0; i < friends.length(); i++) {
                             JSONObject temp = friends.getJSONObject(i);
                             JSONObject tmp = temp.getJSONObject("friend");
-                            Friend friend = new Friend(temp.getString("_id"), temp.getString("nickName"),
+                            Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
                                     tmp.getString("name"), tmp.getString("avatarUrl"));
 
                             friend.idApi = tmp.getString("idApi");
@@ -386,7 +386,7 @@ public class ServiceAPI {
                         for(int i = 0; i < friends.length(); i++) {
                             JSONObject temp = friends.getJSONObject(i);
                             JSONObject tmp = temp.getJSONObject("friend");
-                            Friend friend = new Friend(temp.getString("_id"), temp.getString("nickName"),
+                            Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
                                     tmp.getString("name"), tmp.getString("avatarUrl"));
 
                             friend.idApi = tmp.getString("idApi");
@@ -415,7 +415,7 @@ public class ServiceAPI {
      * @param id id friend
      */
     public void acceptFriend(String id) {
-        String url = URL_FRIEND + "/:" + id + "/accept";
+        String url = URL_FRIEND + "/" + id + "/accept";
         JSONObject newAddFriend = new JSONObject();
         try {
             newAddFriend.put("id", id);
@@ -457,7 +457,7 @@ public class ServiceAPI {
      * @param nickname nickname đặt
      */
     public void setNicknameFriend(String id, String nickname) {
-        String url = URL_FRIEND + "/:" + id + "/change-nickname";
+        String url = URL_FRIEND + "/" + id + "/change-nickname";
         JSONObject nickName = new JSONObject();
         try {
             nickName.put("id", id);
@@ -504,7 +504,7 @@ public class ServiceAPI {
      * @param id id friend
      */
     public void destroyFriend(String id) {
-        String url = URL_FRIEND + "/:" + id;
+        String url = URL_FRIEND + "/" + id;
         JSONObject friend = new JSONObject();
         try {
             friend.put("id", id);
@@ -693,7 +693,7 @@ public class ServiceAPI {
 
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("_id", id);
+            jsonObject.put("id", id);
             jsonObject.put("members", jsonArray);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -733,7 +733,7 @@ public class ServiceAPI {
     public void updateConversation(String id, String name, String background, String emoji) {
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("_id", id);
+            jsonObject.put("id", id);
             if(name != null) jsonObject.put("name", name);
             if(background != null) jsonObject.put("backgroundURI", background);
             if(emoji != null) jsonObject.put("emoji", emoji);
