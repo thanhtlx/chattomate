@@ -90,8 +90,11 @@ public class ChatActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemViewCacheSize(20);
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         adapter = new ChatRoomThreadAdapter(this, listMess,(member_number > 2) , user._id);
+        adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
         if (adapter.getItemCount() > 1) {

@@ -117,9 +117,15 @@ public class UserFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
 
 }

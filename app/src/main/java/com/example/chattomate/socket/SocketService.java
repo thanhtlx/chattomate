@@ -49,7 +49,6 @@ public class SocketService extends Service {
                         Config.ID_NOTIFICATION_NEW_MESSAGE,
                         jsonObject.getJSONObject("sendBy").getString("name"),
                         jsonObject.getString("content"),pendingIntent);
-                socketCallBack.onNewMessage(jsonObject);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.d("DEBUG","error paser json");
@@ -134,7 +133,6 @@ public class SocketService extends Service {
 
         @Override
         public void onFriendActiveChange(JSONObject data) {
-
         }
 
         @Override
@@ -142,7 +140,7 @@ public class SocketService extends Service {
 
         }
     };
-
+    private SocketCallBack defauleSocketCallBack = socketCallBack;
 
 
     private final Emitter.Listener onNewMessage = new Emitter.Listener() {
@@ -150,6 +148,7 @@ public class SocketService extends Service {
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));
 //            notification
+            socketCallBack.onNewMessage((JSONObject) args[0]);
 
         }
     };
@@ -226,6 +225,9 @@ public class SocketService extends Service {
 
     public void setSocketCallBack(SocketCallBack socketCallBack) {
         this.socketCallBack = socketCallBack;
+    }
+    public void unSetSocketCallBack(){
+        this.socketCallBack = this.defauleSocketCallBack;
     }
 
     @Override
