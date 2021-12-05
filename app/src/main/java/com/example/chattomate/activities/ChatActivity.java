@@ -28,6 +28,7 @@ import com.example.chattomate.adapter.ChatRoomThreadAdapter;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.interfaces.ScrollChat;
 import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
@@ -42,9 +43,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements ScrollChat {
     ImageButton send;
     EditText txtContent;
     RecyclerView recyclerView;
@@ -84,13 +86,16 @@ public class ChatActivity extends AppCompatActivity {
         manager = new AppPreferenceManager(getApplicationContext());
         user = manager.getUser();
         listMess = manager.getMessage(idConversation);
+        listMess = new ArrayList<>(listMess.subList(listMess.size()-50,listMess.size()-1));
         serviceAPI = new ServiceAPI(this, manager);
         token.put("auth-token", manager.getToken(this));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+//        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setItemViewCacheSize(20);
+        recyclerView.setItemViewCacheSize(600);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         adapter = new ChatRoomThreadAdapter(this, listMess,(member_number > 2) , user._id);
@@ -98,8 +103,7 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         if (adapter.getItemCount() > 1) {
-            // scrolling to bottom of the recycler view
-            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+//            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
         }
 
 
@@ -144,8 +148,8 @@ public class ChatActivity extends AppCompatActivity {
                             manager.addMessage(sen, idConversation);
                             Log.d("debugGGGG",manager.getMessage(idConversation).get(
                                     manager.getMessage(idConversation).size()-1).content);
-                            listMess.add(sen);
-
+//                            listMess.add(sen);
+                            addMessToList(sen);
                             adapter.notifyDataSetChanged();
                             if (adapter.getItemCount() > 1) {
                                 // scrolling to bottom of the recycler view
@@ -172,6 +176,14 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    private void addMessToList(Message message) {
+        if (listMess.size() > 100) {
+            listMess.remove(0);
+            Log.d("DEBUG", String.valueOf(listMess.size()));
+        }
+        listMess.add(message);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -194,7 +206,8 @@ public class ChatActivity extends AppCompatActivity {
                             data.getString("type"));
                     manager.addMessage(message, idConversation);
 
-                    listMess.add(message);
+//                    listMess.add(message);
+                    addMessToList(message);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -239,8 +252,6 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
     @Override
@@ -340,4 +351,8 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void ScrollRecylerview() {
+        recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+    }
 }

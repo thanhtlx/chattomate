@@ -1,6 +1,7 @@
 package com.example.chattomate.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chattomate.R;
+import com.example.chattomate.interfaces.ScrollChat;
 import com.example.chattomate.models.Message;
 
 import java.text.ParseException;
@@ -121,6 +123,9 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if(position == messageArrayList.size()-1) {
+            ((ScrollChat)mContext).ScrollRecylerview();
+        }
         Message message = messageArrayList.get(position);
 
         ViewHolder h = (ViewHolder) holder;
@@ -159,5 +164,12 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         return timestamp;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        int idx =  messageArrayList.get(position)._id.hashCode();
+        Log.d("DEBUG", String.valueOf(idx));
+        return idx;
     }
 }
