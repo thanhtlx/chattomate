@@ -175,12 +175,78 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        content();
+        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
+            @Override
+            public void onNewMessage(JSONObject data) {
+                Log.d("debugG", data.toString());
+                try {
+                    JSONObject object = data.getJSONObject("sendBy");
+                    String idSender = object.getString("_id");
+                    Friend friend  = manager.getFriend(manager.getFriends(), idSender);
+                    if(friend == null) {
+                        friend = new Friend(object.getString("_id"),
+                                object.getString("name"), object.getString("avatarUrl"));
+                        friend.idApi = object.getString("idApi");
+                    }
+                    Message message = new Message(idConversation, data.getString("_id"),
+                            data.getString("content"), data.getString("contentUrl"),
+                            data.getString("createdAt"), null, friend, false,
+                            data.getString("type"));
+                    manager.addMessage(message, idConversation);
+
+                    listMess.add(message);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("debugGXX", data.toString());
+                }
+            }
+
+            @Override
+            public void onNewFriendRequest(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewConversation(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewFriend(JSONObject data) {
+
+            }
+
+            @Override
+            public void onConversationChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onFriendActiveChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onTyping(JSONObject data) {
+
+            }
+        });
+
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        App.getInstance().getSocket().unSetSocketCallBack();
     }
 
     public synchronized void fetchChat() {
@@ -237,83 +303,11 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
-            @Override
-            public void onNewMessage(JSONObject data) {
-                Log.d("debugG", data.toString());
-                try {
-                    JSONObject object = data.getJSONObject("sendBy");
-                    String idSender = object.getString("_id");
-                    Friend friend  = manager.getFriend(manager.getFriends(), idSender);
-                    if(friend == null) {
-                        friend = new Friend(object.getString("_id"),
-                                object.getString("name"), object.getString("avatarUrl"));
-                        friend.idApi = object.getString("idApi");
-                    }
-                    Message message = new Message(idConversation, data.getString("_id"),
-                            data.getString("content"), data.getString("contentUrl"),
-                            data.getString("createdAt"), null, friend, false,
-                            data.getString("type"));
-                    manager.addMessage(message, idConversation);
-
-                    listMess.add(message);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d("debugGXX", data.toString());
-                }
-            }
-
-            @Override
-            public void onNewFriendRequest(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewConversation(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewFriend(JSONObject data) {
-
-            }
-
-            @Override
-            public void onConversationChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onFriendActiveChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onTyping(JSONObject data) {
-
-            }
-        });
-
         adapter.notifyDataSetChanged();
         if (adapter.getItemCount() > 1) {
-            // scrolling to bottom of the recycler view
+
             recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
         }
-    }
-
-    public void content() {
-        fetchChat();
-        refresh(0);
-    }
-
-    private void refresh (int milliseconds) {
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                content();
-            }
-        };
     }
 
     @Override
@@ -338,6 +332,12 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
 }
