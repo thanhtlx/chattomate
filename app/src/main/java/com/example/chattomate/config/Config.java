@@ -11,7 +11,6 @@ public class Config {
     public static String REGISTER_FB_TOKEN_URL    = "/api/users/register-fcm";
     public static String UN_REGISTER_FB_TOKEN_URL    = "/api/users/un-register-fcm";
 
-
     public static String SOCKET_URL     = "https://chattomate.cf/socket.io/socket.io.js";
 
     public static String NEW_MASSAGE    = "new message";

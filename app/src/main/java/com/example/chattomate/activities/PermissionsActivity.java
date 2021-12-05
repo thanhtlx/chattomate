@@ -16,7 +16,6 @@ import com.example.chattomate.call.utils.PermissionsChecker;
 import com.example.chattomate.call.utils.SharedPrefsHelper;
 import com.example.chattomate.call.utils.ToastUtils;
 
-
 public class PermissionsActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 0;

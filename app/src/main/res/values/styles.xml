@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<!--video call-->
+    <!--video call-->
 
     <style name="VideoChatTheme" parent="AppTheme.Base">
         <item name="colorAccent">@color/color_blue_accent</item>
@@ -167,4 +167,5 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:textSize">16sp</item>
     </style>
+
 </resources>

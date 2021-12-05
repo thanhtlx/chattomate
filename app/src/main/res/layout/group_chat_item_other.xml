@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="256dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="2dp"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp">
+
+    <TextView
+        android:id="@+id/name_other"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginBottom="2dp"
+        android:text="Name"
+        android:textColor="@color/pink2_125"
+        android:textSize="12sp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/con"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name_other">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatar_other"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/avatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/cMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/textview_chat_other"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textIsSelectable="true"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/avatar_other"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        android:id="@+id/timeStamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/con"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="36dp"
+        android:textColor="@color/gray"
+        android:textSize="10dp" />
+
+
+</RelativeLayout>

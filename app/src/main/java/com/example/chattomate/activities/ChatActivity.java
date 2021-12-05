@@ -1,6 +1,8 @@
 package com.example.chattomate.activities;
 
 import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,31 +49,17 @@ public class ChatActivity extends AppCompatActivity {
     EditText txtContent;
     RecyclerView recyclerView;
 
-    //permission
-    private int REQUEST_PERMISSION_OPEN_CAMERA  = 198;
-    private int REQUEST_PERMISSION_OPEN_GALLERY = 199;
-    private int REQUEST_IMAGE_CAMERA            = 200;
-    private int REQUEST_IMAGE_GALLERY           = 201;
-    private int REQUEST_PERMISSION_MIC          = 202;
-
-    //media
-    private File file;
-    private String fileName = "";
-    private MediaRecorder recorder;
-    private boolean isUp = false;
-
     private ArrayList<Message> listMess;
     private User user;
     private AppPreferenceManager manager;
     private ChatRoomThreadAdapter adapter;
     private ServiceAPI serviceAPI;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
     private String idConversation;
     private String idFriend;
     private String nameConversation;
     String URL_MESSAGE      = Config.HOST + Config.MESSAGE_URL;
     Map<String, String> token = new HashMap<>();
-
+    int member_number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +74,7 @@ public class ChatActivity extends AppCompatActivity {
         idConversation = extras.getString("idConversation");
         nameConversation = extras.getString("nameConversation");
         idFriend = extras.getString("idFriend");
+        member_number = extras.getInt("member_number");
 
         Toolbar toolbar = findViewById(R.id.toolbar_chat);
         setSupportActionBar(toolbar);
@@ -97,12 +87,18 @@ public class ChatActivity extends AppCompatActivity {
         serviceAPI = new ServiceAPI(this, manager);
         token.put("auth-token", manager.getToken(this));
 
-        adapter = new ChatRoomThreadAdapter(this, listMess, user._id);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        adapter = new ChatRoomThreadAdapter(this, listMess,(member_number > 2) , user._id);
         recyclerView.setAdapter(adapter);
+
+        if (adapter.getItemCount() > 1) {
+            // scrolling to bottom of the recycler view
+            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+        }
+
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,16 +106,6 @@ public class ChatActivity extends AppCompatActivity {
                 sendMessage();
             }
         });
-
-//        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                if (intent.getAction().equals(Config.ID_NOTIFICATION_NEW_MESSAGE)) {
-//                    // new push message is received
-//                    handlePushNotification(intent);
-//                }
-//            }
-//        };
 
     }
 
@@ -166,12 +152,8 @@ public class ChatActivity extends AppCompatActivity {
                             txtContent.setText("");
                             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-                        } else {
-                            System.out.println("Error");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                        } else { System.out.println("Error"); }
+                    } catch (JSONException e) { e.printStackTrace(); }
                     Log.d("debug",result.toString());
                 }
 
@@ -179,7 +161,6 @@ public class ChatActivity extends AppCompatActivity {
                 public void onError(JSONObject result) {
                     Log.d("debug",result.toString());
                 }
-
             });
 
         } else {
@@ -188,7 +169,18 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    public void fetchChat() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        content();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    public synchronized void fetchChat() {
         API api = new API(this);
         api.Call(Request.Method.GET, URL_MESSAGE+"/"+idConversation, null, token, new APICallBack() {
             @Override
@@ -224,12 +216,8 @@ public class ChatActivity extends AppCompatActivity {
                         }
 
                         manager.storeMessage(messages, idConversation);
-                        listMess.clear();;
+                        listMess.clear();
                         listMess.addAll(messages);
-                        adapter.notifyDataSetChanged();
-                        if (adapter.getItemCount() > 1) {
-                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
-                        }
 
                     } else {
                         System.out.println("Error");
@@ -245,6 +233,70 @@ public class ChatActivity extends AppCompatActivity {
                 Log.d("debug",result.toString());
             }
         });
+
+        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
+            @Override
+            public void onNewMessage(JSONObject data) {
+                Log.d("debugG", data.toString());
+                try {
+                    JSONObject object = data.getJSONObject("sendBy");
+                    String idSender = object.getString("_id");
+                    Friend friend  = manager.getFriend(manager.getFriends(), idSender);
+                    if(friend == null) {
+                        friend = new Friend(object.getString("_id"),
+                                object.getString("name"), object.getString("avatarUrl"));
+                        friend.idApi = object.getString("idApi");
+                    }
+                    Message message = new Message(idConversation, data.getString("_id"),
+                            data.getString("content"), data.getString("contentUrl"),
+                            data.getString("createdAt"), null, friend, false,
+                            data.getString("type"));
+                    manager.addMessage(message, idConversation);
+
+                    listMess.add(message);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("debugGXX", data.toString());
+                }
+            }
+
+            @Override
+            public void onNewFriendRequest(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewConversation(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewFriend(JSONObject data) {
+
+            }
+
+            @Override
+            public void onConversationChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onFriendActiveChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onTyping(JSONObject data) {
+
+            }
+        });
+
+        adapter.notifyDataSetChanged();
+        if (adapter.getItemCount() > 1) {
+            // scrolling to bottom of the recycler view
+            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+        }
     }
 
     public void content() {
@@ -284,76 +336,5 @@ public class ChatActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        content();
-        // registering the receiver for new notification
-//        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-//                new IntentFilter(Config.PUSH_NOTIFICATION));
-        //
-        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
-            @Override
-            public void onNewMessage(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewFriendRequest(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewConversation(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewFriend(JSONObject data) {
-
-            }
-
-            @Override
-            public void onConversationChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onFriendActiveChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onTyping(JSONObject data) {
-
-            }
-        });
-    }
-
-    @Override
-    protected void onPause() {
-//        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-        super.onPause();
-    }
-
-//    /**
-//     * Handling new push message, will add the message to
-//     * recycler view and scroll it to bottom
-//     * */
-//    private void handlePushNotification(Intent intent) {
-//        Message message = (Message) intent.getSerializableExtra("message");
-//
-//        if (message != null && idConversation != null) {
-//            manager.addMessage(message, idConversation);
-//            listMess.add(message);
-//            adapter.notifyDataSetChanged();
-//            if (adapter.getItemCount() > 1) {
-//                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
-//            }
-//        }
-//    }
-
 
 }

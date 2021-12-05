@@ -26,7 +26,7 @@ import com.google.android.gms.tasks.Task;
 public class LoginGoogleActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 101;
     private GoogleSignInClient mGoogleSignInClient;
-//    private FirebaseUser mUser;
+    //    private FirebaseUser mUser;
 //    private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
 

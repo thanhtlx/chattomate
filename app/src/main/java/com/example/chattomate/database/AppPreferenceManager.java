@@ -1,14 +1,10 @@
 package com.example.chattomate.database;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.example.chattomate.MainActivity;
-import com.example.chattomate.activities.LoginActivity;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.interfaces.APICallBack;
 import com.example.chattomate.models.Conversation;
@@ -23,10 +19,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class AppPreferenceManager {
     private static String TAG = AppPreferenceManager.class.getSimpleName();
@@ -50,9 +46,10 @@ public class AppPreferenceManager {
     private static final String PENDING_FRIEND  = "pending_friends";
     private static final String ALL_CONVERSATION= "conversations";
     private static final String ALL_MESSAGE     = "messages";
-    private static final String TOKEN = "token";
-    private static final String FB_TOKEN = "token";
-    private String TIME_TOKEN = "time token";
+    private static final String ALL_USER        = "all_user";
+    private static final String TOKEN           = "token";
+    private static final String FB_TOKEN        = "fb_token";
+    private static final String TIME_TOKEN      = "time token";
 
 
     public AppPreferenceManager(Context context) {
@@ -87,6 +84,13 @@ public class AppPreferenceManager {
         editor.putString(EMAIL, user.email);
         editor.putString(PASSWORD, user.password);
         editor.commit();
+    }
+
+    public Friend getUserAsFriend() {
+        Friend friend = new Friend(getUser()._id);
+        friend.name = getUser().name;
+        friend.avatarUrl = getUser().avatarUrl;
+        return friend;
     }
 
     public User getUser() {
@@ -152,6 +156,20 @@ public class AppPreferenceManager {
         conversations.remove(c);
 
         storeConversation(conversations);
+    }
+
+    public void storeAllUsers(ArrayList<Friend> friends) {
+        Gson gson = new Gson();
+        String str = gson.toJson(friends);
+        editor.putString(ALL_USER, str).commit();
+    }
+
+    public ArrayList<Friend> getAllUsers() {
+        String str = pref.getString(ALL_USER, "");
+        Gson gson = new Gson();
+        Type friendList = new TypeToken<ArrayList<Friend>>(){}.getType();
+        ArrayList<Friend> friends = gson.fromJson(str, friendList);
+        return friends;
     }
 
     public void storeFriends(ArrayList<Friend> friends) {
@@ -265,6 +283,19 @@ public class AppPreferenceManager {
         return null;
     }
 
+    // lấy id cuộc trò chuyện của người bạn có _id = idFriend
+    public String getIdConversation(String idFriend) {
+        ArrayList<Conversation> conversations = getConversations();
+        if(conversations != null) for(Conversation c : conversations) {
+            if(c.members.size() == 2) {
+                Friend friend = getFriend(c.members, idFriend);
+                if(friend != null) return c._id;
+            }
+        }
+
+        return null;
+    }
+
     public void addConversation(Conversation c) {
         ArrayList<Conversation> cv = getConversations();
         Conversation conversation = getConversation(c._id);
@@ -308,8 +339,14 @@ public class AppPreferenceManager {
 
     }
 
+    public HashMap<String, String> getMapToken(Context c) {
+        HashMap<String, String> h = new HashMap<>();
+        h.put("auth-token", getToken(c));
+        return h;
+    }
+
     public String getToken(Context c) {
-        if(!tokenVaild()) {
+        if(!tokenValid()) {
             String LOGIN_URL = Config.HOST + Config.LOGIN_URL;
             JSONObject loginData = new JSONObject();
             try {
@@ -358,17 +395,19 @@ public class AppPreferenceManager {
         editor.commit();
     }
 
-    public Boolean tokenVaild() {
+    public Boolean tokenValid() {
         long time = pref.getLong(TIME_TOKEN, 0);
         Log.d("DEBUG", String.valueOf(time));
         if (time == 0) return false;
         long now = Calendar.getInstance().getTimeInMillis();
         return  time > now;
     }
+
     public String getFBToken(){
         String token = pref.getString(FB_TOKEN, "");
         return  token;
     }
+
     public void setFBToken(String token)  {
         editor.putString(FB_TOKEN, token);
         editor.commit();

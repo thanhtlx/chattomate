@@ -14,7 +14,7 @@
     <string name="start_message">Hãy bắt đầu cuộc trò chuyện!</string>
     <string name="conversation">Conversation</string>
     <string name="time">time</string>
-
+    <string name="add_friend">Kết bạn</string>
 
     <string name="splash_app_title">Sample Video Chat Java</string>
     <string name="splash_create_session_error">Create session errors:</string>
@@ -239,5 +239,4 @@
     <string name="stop_share">Stop</string>
     <string name="camera_swicth_failed">\"Failed switch camera\"</string>
     <string name="versionName">1.0</string>
-
 </resources>

@@ -18,7 +18,7 @@
         android:gravity="center">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/icon_avatar"
+            android:id="@+id/avatar_search"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_margin="10dp"
@@ -41,7 +41,7 @@
                 android:paddingTop="5dp">
 
                 <TextView
-                    android:id="@+id/txtName"
+                    android:id="@+id/name_users"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
@@ -62,7 +62,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/txtMessage"
+                android:id="@+id/email_users"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"

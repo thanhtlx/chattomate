@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 loginData.put(KEY_EMAIL, email);
                 loginData.put(KEY_PASSWORD, password);
-                loginData.put(KEY_FB_TOKEN,manager.getFBToken());
+//                loginData.put(KEY_FB_TOKEN,manager.getFBToken());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -171,11 +171,12 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void getData() {
+    public synchronized void getData() {
         serviceAPI = new ServiceAPI(this, manager);
         serviceAPI.getFriends();
         serviceAPI.getAllConversation();
         serviceAPI.getAllFriendSendAdd();
         serviceAPI.getAllSendAddFriend();
+        serviceAPI.getAll();
     }
 }

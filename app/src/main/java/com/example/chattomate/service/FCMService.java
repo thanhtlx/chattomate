@@ -68,7 +68,7 @@ public class FCMService extends FirebaseMessagingService {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-         if (manager.getFBToken() != "") {
+        if (manager.getFBToken() != "") {
             api.Call(Request.Method.POST, U_R_FB_T_URL, data,token, new APICallBack() {
                 @Override
                 public void onSuccess(JSONObject result) {

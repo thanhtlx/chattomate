@@ -33,12 +33,51 @@ public class ServiceAPI {
     private final String URL_FRIEND       = Config.HOST + Config.FRIENDS_URL;
     private final String URL_CONVERSATION = Config.HOST + Config.CONVERSATION_URL;
     private final String URL_MESSAGE      = Config.HOST + Config.MESSAGE_URL;
+    private String URL = Config.HOST + Config.UPDATE_PROFILE_URL;
 
     public ServiceAPI(Context c, AppPreferenceManager manager) {
         this.context = c;
         this.manager = manager;
         token = new HashMap<>();
         token.put("auth-token", manager.getToken(c));
+    }
+
+    public void getAll() {
+        API api = new API(context);
+        api.Call(Request.Method.GET, URL, null, token, new APICallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    String status = result.getString("status");
+                    if(status.equals("success")) {
+                        JSONArray array = result.getJSONArray("data");
+                        ArrayList<Friend> usersList = new ArrayList<>();
+                        for(int i = 0; i < array.length(); i++) {
+                            JSONObject j = array.getJSONObject(i);
+
+                            Friend f = new Friend(j.getString("_id"));
+                            f.name = j.getString("name");
+                            f.avatarUrl = j.getString("avatarUrl");
+                            f.email = j.getString("email");
+                            f.idApi = j.getString("idApi");
+
+                            usersList.add(f);
+                        }
+                        manager.storeAllUsers(usersList);
+                    } else {
+                        System.out.println("Error");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.d("debug",result.toString());
+            }
+
+            @Override
+            public void onError(JSONObject result) {
+                Log.d("debug",result.toString());
+            }
+        });
     }
 
     /**
@@ -230,6 +269,7 @@ public class ServiceAPI {
                             JSONObject tmp = temp.getJSONObject("friend");
                             Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
                                     tmp.getString("name"), tmp.getString("avatarUrl"));
+                            friend.idApi = tmp.getString("idApi");
                             list.add(friend);
                         }
                         manager.storeFriends(list);
@@ -257,7 +297,7 @@ public class ServiceAPI {
     public void sendAddFriend(String id) {
         JSONObject newAddFriend = new JSONObject();
         try {
-            newAddFriend.put("_id", id);
+            newAddFriend.put("userId", id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -309,6 +349,7 @@ public class ServiceAPI {
                             Friend friend = new Friend(temp.getString("_id"), temp.getString("nickName"),
                                     tmp.getString("name"), tmp.getString("avatarUrl"));
 
+                            friend.idApi = tmp.getString("idApi");
                             list.add(friend);
                         }
                         manager.storeRequestFriend(list);
@@ -348,6 +389,7 @@ public class ServiceAPI {
                             Friend friend = new Friend(temp.getString("_id"), temp.getString("nickName"),
                                     tmp.getString("name"), tmp.getString("avatarUrl"));
 
+                            friend.idApi = tmp.getString("idApi");
                             list.add(friend);
                         }
                         manager.storePendingFriends(list);
@@ -376,7 +418,7 @@ public class ServiceAPI {
         String url = URL_FRIEND + "/:" + id + "/accept";
         JSONObject newAddFriend = new JSONObject();
         try {
-            newAddFriend.put("_id", id);
+            newAddFriend.put("id", id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -418,7 +460,7 @@ public class ServiceAPI {
         String url = URL_FRIEND + "/:" + id + "/change-nickname";
         JSONObject nickName = new JSONObject();
         try {
-            nickName.put("_id", id);
+            nickName.put("id", id);
             nickName.put("nickName", nickName);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -465,7 +507,7 @@ public class ServiceAPI {
         String url = URL_FRIEND + "/:" + id;
         JSONObject friend = new JSONObject();
         try {
-            friend.put("_id", id);
+            friend.put("id", id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -506,7 +548,7 @@ public class ServiceAPI {
      * tạo cuộc trò chuyện
      * @param friends member of conversation
      */
-    public void newConversation(ArrayList<Friend> friends) {
+    public void createNewConversation(ArrayList<Friend> friends) {
         JSONArray jsonArray = new JSONArray();
         for(Friend friend : friends)
             jsonArray.put(friend._id);

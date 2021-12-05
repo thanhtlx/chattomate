@@ -37,6 +37,9 @@
             android:name=".activities.ChatActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.ProfileFriend"
+            android:exported="false" />
+        <activity
             android:name=".activities.LoginGoogleActivity"
             android:exported="true" />
         <activity
@@ -54,7 +57,12 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait"

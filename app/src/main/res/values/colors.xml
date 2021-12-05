@@ -2,6 +2,7 @@
 <resources>
     <color name="black80">#CC000000</color>
     <color name="pink2_125">#C31ACF</color>
+    <color name="pinkk">#EF1FF6</color>
     <color name="pink2">#CCC31ACF</color>
 
     <color name="gray70">#B3252525</color>
@@ -9,7 +10,8 @@
     <color name="pink1">#DC60F4</color>
     <color name="pink3">#FF6200EE</color>
     <color name="message_card">#E6BBF8</color>
-<!--    video call -->
+
+    <!--    video call -->
     <color name="color_blue_qb">#046ad0</color>
     <color name="color_light_blue_qb">#87cefa</color>
     <color name="color_green_qb">#4ad24d</color>

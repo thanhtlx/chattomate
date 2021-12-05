@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -88,19 +87,20 @@ public class ChatFragment extends Fragment {
         return view;
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-////        conversations = manager.getConversations();
-//        adapter = new ListConversationAdapter(conversations, getContext());
-//        recyclerView.setAdapter(adapter);
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        adapter = new ListConversationAdapter(manager.getConversations(), getContext());
+        recyclerView.setAdapter(adapter);
+    }
 
     class ListConversationAdapter extends RecyclerView.Adapter {
         private ArrayList<Conversation> list;
         private Context mContext;
         String nameConversation;
         String idFriend;
+        String idApiFriend;
 
         public ListConversationAdapter(ArrayList<Conversation> conversations, Context mContext) {
             this.list = conversations;
@@ -121,8 +121,14 @@ public class ChatFragment extends Fragment {
 
             if(c != null) {
                 if (c.members.size() == 2) { //tro chuyen 1v1
-                    if(!c.members.get(0)._id.equals(user._id)) idFriend = c.members.get(0)._id;
-                    else idFriend = c.members.get(1)._id;
+                    if(!c.members.get(0)._id.equals(user._id)) {
+                        idFriend = c.members.get(0)._id;
+                        idApiFriend = c.members.get(0).idApi;
+                    }
+                    else {
+                        idFriend = c.members.get(1)._id;
+                        idApiFriend = c.members.get(1).idApi;
+                    }
 
                     Friend friend = manager.getFriend(manager.getFriends(), idFriend);
                     if(friend != null) {
@@ -132,25 +138,29 @@ public class ChatFragment extends Fragment {
                     } else nameConversation = c.name;
                 } else { //tro chuyen nhom
                     idFriend = "";
+                    idApiFriend = "";
                     nameConversation = c.name;
                 }
 
                 if(manager.getMessage(c._id) != null) {
-                    Message message = manager.getMessage(c._id).get(manager.getMessage(c._id).size() - 1);
-                    if (message.sendBy._id.equals(manager.getUser()._id)) {
-                        if (message.content.length() > 0)
-                            h.message.setText("Bạn: " + message.content);
-                        else h.message.setText("Bạn đã gửi file đính kèm");
-                    } else {
-                        String name_friend = message.sendBy.name;
-                        if (message.content.length() > 0)
-                            h.message.setText(name_friend + ": " + message.content);
-                        else h.message.setText(name_friend + " đã gửi file đính kèm");
+                    if(manager.getMessage(c._id).size() > 0) {
+                        Message message = manager.getMessage(c._id).get(manager.getMessage(c._id).size() - 1);
+                        if (message.sendBy._id.equals(manager.getUser()._id)) {
+                            if (message.content.length() > 0)
+                                h.message.setText("Bạn: " + message.content);
+                            else h.message.setText("Bạn đã gửi file đính kèm");
+                        } else {
+                            Friend friend = manager.getFriend(manager.getFriends(), message.sendBy._id);
+                            String name_friend = "Someone";
+                            if(friend != null) name_friend = friend.name;
+                            if (message.content.length() > 0)
+                                h.message.setText(name_friend + ": " + message.content);
+                            else h.message.setText(name_friend + " đã gửi file đính kèm");
 
+                        }
+                        h.time.setText(message.sendAt);
                     }
-                    h.time.setText(message.sendAt);
                 }
-
                 h.name.setText(nameConversation);
             }
 
@@ -160,7 +170,9 @@ public class ChatFragment extends Fragment {
                     Bundle extras = new Bundle();
                     extras.putString("idConversation", c._id);
                     extras.putString("idFriend", idFriend);
+                    extras.putString("idApiFriend", idApiFriend);
                     extras.putString("nameConversation", nameConversation);
+                    extras.putInt("member_number", c.members.size());
 
                     Intent intent = new Intent(mContext, ChatActivity.class);
                     intent.putExtras(extras);
@@ -187,9 +199,9 @@ public class ChatFragment extends Fragment {
 
         public ViewHolder(View view) {
             super(view);
-            avatar = view.findViewById(R.id.icon_avatar);
-            name = view.findViewById(R.id.txtName);
-            message = view.findViewById(R.id.txtMessage);
+            avatar = view.findViewById(R.id.avatar_search);
+            name = view.findViewById(R.id.name_users);
+            message = view.findViewById(R.id.email_users);
             time = view.findViewById(R.id.txtTime);
         }
     }
