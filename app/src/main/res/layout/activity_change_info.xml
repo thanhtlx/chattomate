@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="413dp"
+        android:layout_height="276dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/settings_background" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="32dp"
+        android:src="@mipmap/ic_launcher_round"
+        app:civ_border_color="#FFFFFF"
+        app:civ_border_width="1dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+        app:layout_constraintEnd_toEndOf="@+id/imageView5"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.335" />
+
+    <EditText
+        android:id="@+id/username_changing"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="45dp"
+        android:drawableLeft="@drawable/username_changing"
+        android:ems="10"
+        android:hint="  Edit Username"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@+id/imageView5"
+        tools:layout_editor_absoluteX="55dp" />
+
+    <EditText
+        android:id="@+id/username_changing2"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="25dp"
+        android:drawableLeft="@drawable/date_changing"
+        android:ems="10"
+        android:hint="  Edit Birthday"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@+id/username_changing"
+        tools:layout_editor_absoluteX="55dp" />
+
+    <EditText
+        android:id="@+id/username_changing3"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="25dp"
+        android:drawableLeft="@drawable/mail_changing"
+        android:ems="10"
+        android:hint="  Edit Email"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@+id/username_changing2"
+        tools:layout_editor_absoluteX="55dp" />
+
+    <EditText
+        android:id="@+id/username_changing4"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="25dp"
+        android:drawableLeft="@drawable/phone_changing"
+        android:ems="10"
+        android:hint="  Edit Phonenumber"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@+id/username_changing3"
+        tools:layout_editor_absoluteX="55dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

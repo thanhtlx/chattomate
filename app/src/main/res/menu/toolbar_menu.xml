@@ -3,6 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/friends_request"
+        android:icon="@drawable/friends_request_icon"
+        android:title="Friends_request"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/app_bar_search"
         android:icon="@drawable/search"
         android:title="Search"
