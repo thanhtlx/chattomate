@@ -34,19 +34,17 @@ class MySocket {
     });
   }
 
-  async  getClientUserId(userId) {
+  async getClientUserId(userId) {
     if (MySocket.userActice[userId] !== undefined) {
       return MySocket.userActice[userId];
     } else {
       const user = await UserService.findID(userId);
       user.fcm.map((token) => {
-      console.log("send fcm message" +  token);
+        console.log("send fcm message" + token);
         sendFcmMessage({
           message: {
             token: token,
-            data: {
-
-            },
+            data: {},
             android: {
               direct_boot_ok: true,
             },
@@ -57,6 +55,21 @@ class MySocket {
     }
 
     //
+  }
+  async pingFcm(userID) {
+    const user = await UserService.findID(userId);
+    user.fcm.map((token) => {
+      console.log("send fcm message" + token);
+      sendFcmMessage({
+        message: {
+          token: token,
+          data: { data: "ping" },
+          android: {
+            direct_boot_ok: true,
+          },
+        },
+      });
+    });
   }
 
   getUserActive() {
