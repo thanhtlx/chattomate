@@ -57,7 +57,7 @@ class MySocket {
     //
   }
   async pingFcm(userID) {
-    const user = await UserService.findID(userId);
+    const user = await UserService.findID(userID);
     user.fcm.map((token) => {
       console.log("send fcm message" + token);
       sendFcmMessage({
