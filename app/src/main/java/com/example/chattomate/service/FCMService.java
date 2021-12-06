@@ -38,10 +38,10 @@ public class FCMService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull @NotNull RemoteMessage remoteMessage) {
         Log.d("DEBUG","Receiver mesaage");
-        NotificationService notificationService = new NotificationService(this);
-        Intent intent = new Intent(this.getApplicationContext(), ChatActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, 0);
-        notificationService.pushNotification(Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,Config.ID_NOTIFICATION_NEW_MESSAGE,"title","content",pendingIntent);
+//        NotificationService notificationService = new NotificationService(this);
+//        Intent intent = new Intent(this.getApplicationContext(), ChatActivity.class);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, 0);
+//        notificationService.pushNotification(Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,Config.ID_NOTIFICATION_NEW_MESSAGE,"title","content",pendingIntent);
         App.getInstance();
     }
 
@@ -54,7 +54,7 @@ public class FCMService extends FirebaseMessagingService {
         if (api  == null) {
             api = new API(getApplicationContext());
         }
-        Log.d("DEBUG-new token", s);
+//        Log.d("DEBUG-new token", s);
         manager.setFBToken(s);
         if(manager.getUser() == null) {
             return;

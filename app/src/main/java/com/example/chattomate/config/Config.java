@@ -21,6 +21,7 @@ public class Config {
     public static String FRIEND_CHANGE  = "friend active change";
     public static String TYPING         = "typing";
     public static String DELETE_FRIEND  = "delete friend";
+    public static String IMCOMINGCALL         = "incoming call";
 
     public static long TIME_TO_REFRESH = 10 * 1000;
     public static long TIME_TO_OFFLINE = 2 * 60 * 1000;
