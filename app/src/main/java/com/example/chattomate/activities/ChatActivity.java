@@ -191,29 +191,32 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
             public void onNewMessage(JSONObject data) {
                 Log.d("debugChatNewMess", data.toString());
                 try {
-                    JSONObject object = data.getJSONObject("sendBy");
-                    String idSender = object.getString("_id");
-                    Friend friend  = manager.getFriend(manager.getFriends(), idSender);
-                    if(friend == null) {
-                        friend = new Friend(object.getString("_id"),
-                                object.getString("name"), object.getString("avatarUrl"));
-                        friend.idApi = object.getString("idApi");
-                    }
-                    Message message = new Message(idConversation, data.getString("_id"),
-                            data.getString("content"), data.getString("contentUrl"),
-                            data.getString("createdAt"), null, friend, false,
-                            data.getString("type"));
-                    manager.addMessage(message, idConversation);
-
-//                    listMess.add(message);
-                    addMessToList(message);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter.notifyDataSetChanged();
-                            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+                    String id_Conversation = data.getString("conversation");
+                    if(id_Conversation.equals(idConversation)) {
+                        JSONObject object = data.getJSONObject("sendBy");
+                        String idSender = object.getString("_id");
+                        Friend friend = manager.getFriend(manager.getFriends(), idSender);
+                        if (friend == null) {
+                            friend = new Friend(object.getString("_id"),
+                                    object.getString("name"), object.getString("avatarUrl"));
+                            friend.idApi = object.getString("idApi");
                         }
-                    });
+
+                        Message message = new Message(idConversation, data.getString("_id"),
+                                data.getString("content"), data.getString("contentUrl"),
+                                data.getString("createdAt"), null, friend, false,
+                                data.getString("type"));
+                        manager.addMessage(message, idConversation);
+
+                        addMessToList(message);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.notifyDataSetChanged();
+                                recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+                            }
+                        });
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
