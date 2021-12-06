@@ -12,7 +12,7 @@ class ConversationService {
 
     const data = [];
     userConversations.map((conversation) => {
-      data.push(FriendService.getInfoConversation(conversation));
+      data.push(ConversationService.getInfoConversation(conversation));
     });
 
     return data;
