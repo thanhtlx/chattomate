@@ -34,12 +34,13 @@ class MySocket {
     });
   }
 
-  async getClientUserId(userId) {
+  async static getClientUserId(userId) {
     if (MySocket.userActice[userId] !== undefined) {
       return MySocket.userActice[userId];
     } else {
       const user = await UserService.findID(userId);
       user.fcm.map((token) => {
+      console.log("send fcm message" +  token);
         sendFcmMessage({
           message: {
             token: token,
@@ -52,7 +53,7 @@ class MySocket {
           },
         });
       });
-      return getClientUserId(userId);
+      return MySocket.getClientUserId(userId);
     }
 
     //
