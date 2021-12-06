@@ -26,13 +26,12 @@ import com.example.chattomate.R;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.activities.ProfileFriend;
 import com.example.chattomate.call.CallActivity;
-import com.example.chattomate.call.CallService;
-import com.example.chattomate.call.LoginService;
 import com.example.chattomate.call.utils.PushNotificationSender;
 import com.example.chattomate.call.utils.WebRtcSessionManager;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
@@ -81,6 +80,7 @@ public class FriendsFragment extends Fragment {
         token.put("auth-token", manager.getToken(getContext()));
 
         friendsList = manager.getFriends();
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -111,43 +111,54 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        API api = new API(getContext());
-        String URL_FRIEND       = Config.HOST + Config.FRIENDS_URL;
-
-        api.Call(Request.Method.GET, URL_FRIEND, null, token, new APICallBack() {
+        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
             @Override
-            public void onSuccess(JSONObject result) {
-                try {
-                    String status = result.getString("status");
-                    if(status.equals("success")) {
-                        JSONArray friends = result.getJSONArray("data");
-                        ArrayList<Friend> list = new ArrayList<>();
+            public void onNewMessage(JSONObject data) {
 
-                        for(int i = 0; i < friends.length(); i++) {
-                            JSONObject temp = friends.getJSONObject(i);
-                            JSONObject tmp = temp.getJSONObject("friend");
-                            Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
-                                    tmp.getString("name"), tmp.getString("avatarUrl"), tmp.getString("idApi"));
-                            list.add(friend);
-                        }
-                        manager.storeFriends(list);
-                        if (friendsList != null) {
-                            friendsList.clear();
-                            friendsList.addAll(list);
-                            adapter.notifyDataSetChanged();
-                        }
-                    } else {
-                        System.out.println("Lỗi lấy danh sách bạn bè");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.d("debug",result.toString());
             }
 
             @Override
-            public void onError(JSONObject result) {
-                Log.d("debug",result.toString());
+            public void onNewFriendRequest(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewConversation(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewFriend(JSONObject data) {
+                try {
+                    JSONObject j = data.getJSONObject("friend");
+                    Friend f = new Friend(j.getString("_id"), j.getString("name"),
+                            data.getString("nickname"), j.getString("avatarUrl"));
+
+                    f.idApi = manager.getFriend(manager.getAllUsers(), f._id).idApi;
+
+                    manager.addFriend(f);
+                    friendsList.add(f);
+                    adapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onConversationChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onFriendActiveChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onTyping(JSONObject data) {
+
+
             }
         });
     }
@@ -179,10 +190,10 @@ public class FriendsFragment extends Fragment {
                 ((ViewHolder) holder).avatar_friend.setImageURI(imageUri);
             }
             ((ViewHolder) holder).callVideo.setOnClickListener(v -> {
-                startCall(true,friends.get(position).idApi,friends.get(position)._id);
+                startCall(true,friends.get(position).idApi);
             });
             ((ViewHolder) holder).callVoice.setOnClickListener(v -> {
-                startCall(false,friends.get(position).idApi,friends.get(position)._id);
+                startCall(false,friends.get(position).idApi);
             });
 
             ((ListFriendAdapter.ViewHolder) holder).name_friend.setText(friend.name);
@@ -232,7 +243,19 @@ public class FriendsFragment extends Fragment {
                 callVideo = view.findViewById(R.id.call_video);
 //            state_friend.setVisibility(View.INVISIBLE);
 
+                callVoice.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startCall(false,"1");
+                    }
+                });
 
+                callVideo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startCall(true,"1");
+                    }
+                });
 
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -255,18 +278,10 @@ public class FriendsFragment extends Fragment {
 
     }
 
-    private void startCall(boolean isVideoCall,String idApi, String _id) {
-//        if(!CallService.isCallRunning()) {
-////            start
-//            User user = manager.getUser();
-//            QBUser qbUser = new QBUser(user.email, App.USER_DEFAULT_PASSWORD);
-//            qbUser.setId(Integer.parseInt(user.idApi));
-//            LoginService.start(getContext(), qbUser);
-////            startCall(isVideoCall,idApi,_id);
-//            return;
-//        }
+    private void startCall(boolean isVideoCall, String id) {
+
         ArrayList<Integer> opponentsList = new ArrayList<>();
-        opponentsList.add(Integer.valueOf(idApi));
+        opponentsList.add(Integer.valueOf(id));
         QBRTCTypes.QBConferenceType conferenceType = isVideoCall
                 ? QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_VIDEO
                 : QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_AUDIO;
@@ -279,14 +294,15 @@ public class FriendsFragment extends Fragment {
         ArrayList<String> opponentsIDsList = new ArrayList<>();
         ArrayList<String> opponentsNamesList = new ArrayList<>();
         List<QBUser> usersInCall = new ArrayList<>();
-        Log.d("DEBUG-CALL",idApi);
+
         // the Caller in exactly first position is needed regarding to iOS 13 functionality
-        opponentsIDsList.add(idApi);
+        opponentsIDsList.add(id);
         opponentsNamesList.add(manager.getUser().name);
 
         String opponentsIDsString = TextUtils.join(",", opponentsIDsList);
         String opponentNamesString = TextUtils.join(",", opponentsNamesList);
 
+        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall);
         PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall,_id);
         CallActivity.start(getContext(), false);
     }

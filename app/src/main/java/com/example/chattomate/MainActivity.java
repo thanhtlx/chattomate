@@ -41,6 +41,7 @@ import com.example.chattomate.fragments.ChatFragment;
 import com.example.chattomate.fragments.FriendsFragment;
 import com.example.chattomate.fragments.UserFragment;
 import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
@@ -88,9 +89,9 @@ public class MainActivity extends AppCompatActivity {
         token = manager.getMapToken(this);
         allUsers = manager.getAllUsers();
 
-        serviceAPI = new ServiceAPI(this, manager);
-        serviceAPI.getAllFriendSendAdd();
-        serviceAPI.getAllSendAddFriend();
+//        serviceAPI = new ServiceAPI(this, manager);
+//        serviceAPI.getAllFriendSendAdd();
+//        serviceAPI.getAllSendAddFriend();
 
         viewPager = findViewById(R.id.view_pager);
         bnt = findViewById(R.id.bottom_navigation);
@@ -171,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
 
         requirePermission();
     }
@@ -316,7 +316,9 @@ public class MainActivity extends AppCompatActivity {
                 button.setText("Kết bạn");
                 button.setBackgroundColor(Color.parseColor("#EF1FF6"));
             }
-            
+
+            String btn = button.getText().toString();
+
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

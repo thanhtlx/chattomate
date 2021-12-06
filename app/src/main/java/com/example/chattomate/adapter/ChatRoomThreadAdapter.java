@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.interfaces.ScrollChat;
 import com.example.chattomate.models.Message;
@@ -20,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String id;
@@ -124,7 +127,7 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if(position == messageArrayList.size()-1) {
-            ((ScrollChat)mContext).ScrollRecylerview();
+            ((ScrollChat)mContext).ScrollRecycleView();
         }
         Message message = messageArrayList.get(position);
 
@@ -136,34 +139,14 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             if (message.sendBy.nickName.length() > 0) h.name_other.setText(message.sendBy.nickName);
             else h.name_other.setText(message.sendBy.name);
 
-//        String timestamp = getTimeStamp(message.sendAt);
-//        h.timestamp.setText(timestamp);
+        String timestamp = App.getTimeStamp(message.sendAt);
+        h.timestamp.setText(timestamp);
     }
 
     @Override
     public int getItemCount() {
         if(messageArrayList == null) return 0;
         return messageArrayList.size();
-    }
-
-    public static String getTimeStamp(String dateStr) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String timestamp = "";
-
-        today = today.length() < 2 ? "0" + today : today;
-
-        try {
-            Date date = format.parse(dateStr);
-            SimpleDateFormat todayFormat = new SimpleDateFormat("dd");
-            String dateToday = todayFormat.format(date);
-            format = dateToday.equals(today) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("dd LLL, hh:mm a");
-            String date1 = format.format(date);
-            timestamp = date1.toString();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return timestamp;
     }
 
     @Override

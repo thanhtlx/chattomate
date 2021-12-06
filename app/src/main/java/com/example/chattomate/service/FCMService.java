@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import com.android.volley.Request;
 import com.example.chattomate.App;
 import com.example.chattomate.activities.ChatActivity;
-import com.example.chattomate.call.LoginService;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
@@ -31,11 +30,10 @@ import java.util.Map;
 public class FCMService extends FirebaseMessagingService {
     public static final String R_FB_T_URL = Config.HOST + Config.REGISTER_FB_TOKEN_URL;
     public static final String U_R_FB_T_URL = Config.HOST + Config.UN_REGISTER_FB_TOKEN_URL;
-    private static Map<String, String> token = new HashMap<>();
+    private  static  Map<String, String> token = new HashMap<>();
 
     private AppPreferenceManager manager;
     private API api;
-
     public FCMService() {
     }
 
@@ -60,17 +58,17 @@ public class FCMService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull @NotNull String s) {
         super.onNewToken(s);
-        if (manager == null) {
+        if(manager == null) {
             manager = new AppPreferenceManager(getApplicationContext());
         }
-        if (api == null) {
+        if (api  == null) {
             api = new API(getApplicationContext());
         }
         Log.d("DEBUG-new token", s);
         if (manager.getUser() == null) {
             return;
         }
-        if (token.size() == 0) {
+        if(token.size() == 0){
             token.put("auth-token", manager.getToken(getApplicationContext()));
         }
         JSONObject data = new JSONObject();
@@ -79,13 +77,12 @@ public class FCMService extends FirebaseMessagingService {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (!manager.getFBToken().equals("")) {
-            api.Call(Request.Method.POST, U_R_FB_T_URL, data, token, new APICallBack() {
+        if (manager.getFBToken() != "") {
+            api.Call(Request.Method.POST, U_R_FB_T_URL, data,token, new APICallBack() {
                 @Override
                 public void onSuccess(JSONObject result) {
-                    Log.d("DEBUG-new token", "un registoken success");
+                    Log.d("DEBUG","un registoken success");
                 }
-
                 @Override
                 public void onError(JSONObject result) {
                 }
@@ -101,9 +98,8 @@ public class FCMService extends FirebaseMessagingService {
         api.Call(Request.Method.POST, R_FB_T_URL, data, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
-                Log.d("DEBUG-new token", "registoken success");
+                Log.d("DEBUG","registoken success");
             }
-
             @Override
             public void onError(JSONObject result) {
                 Log.d("DEBUG-new token", "f success");
@@ -111,6 +107,7 @@ public class FCMService extends FirebaseMessagingService {
         });
 
     }
+
 
 
 }

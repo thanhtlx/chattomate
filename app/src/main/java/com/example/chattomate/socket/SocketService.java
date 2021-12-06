@@ -125,7 +125,7 @@ public class SocketService extends Service {
             try {
                 Intent intent = new Intent(context, MainActivity.class);
 //                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                intent.putExtra("idConversation", data.getString("conversation"));
+//                intent.putExtra("conversationID", jsonObject.getString("conversation"));
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
                 notificationService.pushNotification(
                         Config.CHANNEL_NOTIFICATION_NEW_CONVERSATION,
@@ -141,6 +141,7 @@ public class SocketService extends Service {
 
         @Override
         public void onFriendActiveChange(JSONObject data) {
+
         }
 
         @Override
@@ -260,5 +261,4 @@ public class SocketService extends Service {
         mSocket.off(Config.FRIEND_CHANGE,onFriendActiveChange);
         mSocket.off(Config.TYPING,onTyping);
     }
-
 }

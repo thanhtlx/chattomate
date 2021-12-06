@@ -33,26 +33,26 @@ public class AppPreferenceManager {
 
     int PRIVATE_MODE = 0;
 
-    private static final String PREF_NAME = "chattomate_chat";
-    private static final String IS_LOGGED_IN = "isLoggedIn";
-    private static final String STATE_ACTIVE = "state_active";
-    private static final String ID = "_id";
-    private static final String IdApi = "_idApi";
-    private static final String PHONE = "phone";
-    private static final String AVATAR_URL = "avatarUrl";
-    private static final String NAME = "name";
-    private static final String EMAIL = "email";
-    private static final String PASSWORD = "password";
-    private static final String ALL_FRIEND = "friends";
-    private static final String REQUEST_FRIEND = "request_friends";
-    private static final String PENDING_FRIEND = "pending_friends";
-    private static final String ALL_CONVERSATION = "conversations";
-    private static final String ALL_MESSAGE = "messages";
-    private static final String ALL_USER = "all_user";
-    private static final String TOKEN = "token";
-    private static final String FB_TOKEN = "fb_token";
-    private static final String TIME_TOKEN = "time token";
-
+    private static final String PREF_NAME       = "chattomate_chat";
+    private static final String IS_LOGGED_IN    = "isLoggedIn";
+    private static final String STATE_ACTIVE    = "state_active";
+    private static final String ID              = "_id";
+    private static final String IdApi              = "_idApi";
+    private static final String PHONE           = "phone";
+    private static final String AVATAR_URL      = "avatarUrl";
+    private static final String NAME            = "name";
+    private static final String EMAIL           = "email";
+    private static final String PASSWORD        = "password";
+    private static final String ALL_FRIEND      = "friends";
+    private static final String REQUEST_FRIEND  = "request_friends";
+    private static final String PENDING_FRIEND  = "pending_friends";
+    private static final String ALL_CONVERSATION= "conversations";
+    private static final String ALL_MESSAGE     = "messages";
+    private static final String ALL_USER        = "all_user";
+    private static final String TOKEN           = "token";
+    private static final String FB_TOKEN        = "fb_token";
+    private static final String TIME_TOKEN      = "time token";
+    private static final String IS_SILENCE      = "isSilence";
 
     public AppPreferenceManager(Context context) {
         this._context = context;
@@ -65,7 +65,7 @@ public class AppPreferenceManager {
         Log.d(TAG, "User login session modified!");
     }
 
-    public boolean isLoggedIn() {
+    public boolean isLoggedIn(){
         return pref.getBoolean(IS_LOGGED_IN, false);
     }
 
@@ -74,8 +74,17 @@ public class AppPreferenceManager {
         Log.d(TAG, "User state active session modified!");
     }
 
-    public boolean getStateActive() {
+    public boolean getStateActive(){
         return pref.getBoolean(STATE_ACTIVE, false);
+    }
+
+    public void setSilence(boolean b) {
+        editor.putBoolean(IS_SILENCE, b).commit();
+        Log.d(TAG, "User state silence session modified!");
+    }
+
+    public boolean getSilence(){
+        return pref.getBoolean(IS_SILENCE, false);
     }
 
     public void storeUser(User user) {
@@ -105,22 +114,31 @@ public class AppPreferenceManager {
             name = pref.getString(NAME, null);
             email = pref.getString(EMAIL, null);
             password = pref.getString(PASSWORD, null);
-            idApi = pref.getString(IdApi, null);
-            return new User(id, name, avatar, phone, email, password, idApi);
+            idApi = pref.getString(IdApi,null);
+            return new User(id, name, avatar, phone, email, password,idApi);
         } else return null;
+    }
+
+    public String getNameFromIdApi(Integer id) {
+        List<Friend> friends = getAllUsers();
+        for (Friend friend:friends) {
+            if (Integer.parseInt(friend.idApi) == id) {
+                return  friend.name;
+            }
+        }
+        return  "";
     }
 
     public void storeMessage(ArrayList<Message> m, String idConversation) {
         Gson gson = new Gson();
         String str = gson.toJson(m);
-        editor.putString(ALL_MESSAGE + idConversation, str).commit();
+        editor.putString(ALL_MESSAGE+idConversation, str).commit();
     }
 
     public ArrayList<Message> getMessage(String idConversation) {
-        String str = pref.getString(ALL_MESSAGE + idConversation, "");
+        String str = pref.getString(ALL_MESSAGE+idConversation, "");
         Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<Message>>() {
-        }.getType();
+        Type type = new TypeToken<ArrayList<Message>>() {}.getType();
         ArrayList<Message> messages = gson.fromJson(str, type);
 
         return messages;
@@ -128,15 +146,14 @@ public class AppPreferenceManager {
 
     public void addMessage(Message message, String idConversation) {
         ArrayList<Message> m = getMessage(idConversation);
-
         boolean check = false;
-        for (Message message1 : m)
-            if (message1._id.equals(message._id)) {
+        for(Message message1 : m)
+            if(message1._id.equals(message._id)) {
                 check = true;
                 break;
             }
 
-        if (!check) {
+        if(!check) {
             m.add(message);
             storeMessage(m, idConversation);
         }
@@ -145,8 +162,8 @@ public class AppPreferenceManager {
 
     public void deleteAMessage(String id, String idConversation) {
         ArrayList<Message> m = getMessage(idConversation);
-        for (Message message : m)
-            if (message._id.equals(id)) {
+        for(Message message : m)
+            if(message._id.equals(id)) {
                 m.remove(message);
                 break;
             }
@@ -154,7 +171,7 @@ public class AppPreferenceManager {
     }
 
     public void deleteConversation(String idConversation) {
-        editor.remove(ALL_MESSAGE + idConversation).commit();
+        editor.remove(ALL_MESSAGE+idConversation).commit();
 
         ArrayList<Conversation> conversations = getConversations();
         Conversation c = getConversation(idConversation);
@@ -172,8 +189,7 @@ public class AppPreferenceManager {
     public ArrayList<Friend> getAllUsers() {
         String str = pref.getString(ALL_USER, "");
         Gson gson = new Gson();
-        Type friendList = new TypeToken<ArrayList<Friend>>() {
-        }.getType();
+        Type friendList = new TypeToken<ArrayList<Friend>>(){}.getType();
         ArrayList<Friend> friends = gson.fromJson(str, friendList);
         return friends;
     }
@@ -187,14 +203,13 @@ public class AppPreferenceManager {
     public ArrayList<Friend> getFriends() {
         String str = pref.getString(ALL_FRIEND, "");
         Gson gson = new Gson();
-        Type friendList = new TypeToken<ArrayList<Friend>>() {
-        }.getType();
+        Type friendList = new TypeToken<ArrayList<Friend>>(){}.getType();
         ArrayList<Friend> friends = gson.fromJson(str, friendList);
         return friends;
     }
 
     public Friend getFriend(ArrayList<Friend> friends, String id) {
-        if (friends != null)
+        if(friends != null)
             for (Friend friend : friends) {
                 if (friend._id.equals(id)) return friend;
             }
@@ -205,7 +220,7 @@ public class AppPreferenceManager {
         ArrayList<Friend> friends = getFriends();
         Friend f = getFriend(friends, friend._id);
 
-        if (f == null) {
+        if(f == null) {
             friends.add(friend);
             storeFriends(friends);
         }
@@ -226,8 +241,7 @@ public class AppPreferenceManager {
     public ArrayList<Friend> getRequestFriends() {
         String str = pref.getString(REQUEST_FRIEND, "");
         Gson gson = new Gson();
-        Type friendList = new TypeToken<ArrayList<Friend>>() {
-        }.getType();
+        Type friendList = new TypeToken<ArrayList<Friend>>(){}.getType();
         ArrayList<Friend> friends = gson.fromJson(str, friendList);
         return friends;
     }
@@ -253,8 +267,7 @@ public class AppPreferenceManager {
     public ArrayList<Friend> getPendingFriends() {
         String str = pref.getString(PENDING_FRIEND, "");
         Gson gson = new Gson();
-        Type friendList = new TypeToken<ArrayList<Friend>>() {
-        }.getType();
+        Type friendList = new TypeToken<ArrayList<Friend>>(){}.getType();
         ArrayList<Friend> friends = gson.fromJson(str, friendList);
         return friends;
     }
@@ -280,15 +293,14 @@ public class AppPreferenceManager {
     public ArrayList<Conversation> getConversations() {
         String str = pref.getString(ALL_CONVERSATION, "");
         Gson gson = new Gson();
-        Type list = new TypeToken<ArrayList<Conversation>>() {
-        }.getType();
+        Type list = new TypeToken<ArrayList<Conversation>>(){}.getType();
         ArrayList<Conversation> conversations = gson.fromJson(str, list);
         return conversations;
     }
 
     public Conversation getConversation(String id) {
-        for (Conversation conversation : getConversations()) {
-            if (conversation._id.equals(id)) return conversation;
+        for(Conversation conversation : getConversations()) {
+            if(conversation._id.equals(id)) return conversation;
         }
         return null;
     }
@@ -296,21 +308,37 @@ public class AppPreferenceManager {
     // lấy id cuộc trò chuyện của người bạn có _id = idFriend
     public String getIdConversation(String idFriend) {
         ArrayList<Conversation> conversations = getConversations();
-        if (conversations != null) for (Conversation c : conversations) {
-            if (c.members.size() == 2) {
-                Friend friend = getFriend(c.members, idFriend);
-                if (friend != null) return c._id;
+        if (conversations != null)
+            for (Conversation c : conversations) {
+                if (c.members.size() == 2) {
+                    Friend friend = getFriend(c.members, idFriend);
+                    if (friend != null) return c._id;
+                }
             }
-        }
 
         return null;
+    }
+
+    public ArrayList<Friend> getMembersInConversation(String idConversation) {
+        ArrayList<Friend> members = new ArrayList<>();
+        members = getConversation(idConversation).members;
+        members.remove(getFriend(members, getUser()._id)); //remove self
+        for (Friend f : members) {
+            Friend friend = getFriend(getAllUsers(), f._id);
+            f.idApi = friend.idApi;
+            f.avatarUrl = friend.avatarUrl;
+            f.email = friend.email;
+            f.name = friend.name;
+        }
+
+        return members;
     }
 
     public void addConversation(Conversation c) {
         ArrayList<Conversation> cv = getConversations();
         Conversation conversation = getConversation(c._id);
 
-        if (conversation == null) {
+        if(conversation == null) {
             cv.add(c);
             storeConversation(cv);
         }
@@ -328,7 +356,7 @@ public class AppPreferenceManager {
 
                 if (a == 1) for (Friend friend : friends)
                     cvst.members.add(friend);
-                else if (a == -1) for (Friend friend : friends)
+                else if(a == -1) for (Friend friend : friends)
                     cvst.members.remove(friend);
 
                 break;
@@ -356,7 +384,7 @@ public class AppPreferenceManager {
     }
 
     public String getToken(Context c) {
-        if (!tokenValid()) {
+        if(!tokenValid()) {
             String LOGIN_URL = Config.HOST + Config.LOGIN_URL;
             JSONObject loginData = new JSONObject();
             try {
@@ -372,24 +400,24 @@ public class AppPreferenceManager {
                 public void onSuccess(JSONObject result) {
                     try {
                         String status = result.getString("status");
-                        if (status.equals("success")) {
+                        if(status.equals("success")) {
                             String AUTH_TOKEN = result.getJSONObject("data").getString("token");
                             saveToken(AUTH_TOKEN);
 
                             Calendar now = Calendar.getInstance();
-                            now.add(Calendar.DATE, 1);
+                            now.add(Calendar.DATE,1);
                             saveTimeToken(now);
                         }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Log.d("debug", result.toString());
+                    Log.d("debug",result.toString());
                 }
 
                 @Override
                 public void onError(JSONObject result) {
-                    Log.d("debug", result.toString());
+                    Log.d("debug",result.toString());
                 }
             });
         }
@@ -410,15 +438,15 @@ public class AppPreferenceManager {
         Log.d("DEBUG", String.valueOf(time));
         if (time == 0) return false;
         long now = Calendar.getInstance().getTimeInMillis();
-        return time > now;
+        return  time > now;
     }
 
-    public String getFBToken() {
+    public String getFBToken(){
         String token = pref.getString(FB_TOKEN, "");
-        return token;
+        return  token;
     }
 
-    public void setFBToken(String token) {
+    public void setFBToken(String token)  {
         editor.putString(FB_TOKEN, token);
         editor.commit();
     }

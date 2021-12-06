@@ -29,6 +29,7 @@ public class Friend extends User {
         this.name = name;
         this.nickName = nickName;
     }
+
     public Friend(String id, String nickName, String name, String photo, String idApi) {
         this._id = id;
         this.avatarUrl = photo;
