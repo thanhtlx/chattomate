@@ -12,7 +12,7 @@ class ConversationService {
 
     const data = [];
     userConversations.map((conversation) => {
-      data.push(this.getInfoConversation(conversation));
+      data.push(FriendService.getInfoConversation(conversation));
     });
 
     return data;
@@ -100,7 +100,7 @@ class ConversationService {
     if (data.ghim) {
       conversation.ghim = data.ghim;
     }
-    await this.saveConversation(conversation);
+    await ConversationService.saveConversation(conversation);
     const members = conversation.members;
     for (var member of members) {
       NotifyService.notify(
@@ -151,7 +151,7 @@ class ConversationService {
         user.conversations.push(userConversation._id);
         await UserService.saveUser(user);
         conversation.members.push(member);
-        await this.saveConversation(conversation);
+        await ConversationService.saveConversation(conversation);
         await NotifyService.notify(Config.CHANNEL_NEW_CONVERSATION, user._id, {
           message: message,
           data: conversation,
@@ -167,13 +167,14 @@ class ConversationService {
       if (member.toString() == userID) {
         console.log(conversation.members.indexOf(member));
         conversation.members.splice(conversation.members.indexOf(member));
-        await this.saveConversation(conversation);
+        await ConversationService.saveConversation(conversation);
       }
     }
     return conversation;
   }
-
+  // fix 
   static async checkPrivateConversationExisted(members) {
+    members.sort();
     const conversation = await Conversation.findOne({
       members: members,
       isPrivate: true,

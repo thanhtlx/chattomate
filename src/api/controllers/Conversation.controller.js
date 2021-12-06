@@ -101,7 +101,7 @@ class ConversationController {
     const userID = req.user._id;
     const conversationID = req.params.id;
     const conversation = await ConversationService.findID(conversationID);
-    if (await this.checkPermission(conversation, userID)) {
+    if (await ConversationController.checkPermission(conversation, userID)) {
       const result = await ConversationService.deleteConversation(conversation);
       if (result) {
         return res.send({ status: "success" });

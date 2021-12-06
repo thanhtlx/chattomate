@@ -11,7 +11,7 @@ class FriendService {
     await Promise.all(
       await friends.map(async (friend) => {
         if (friend.status == status) {
-          data.push(await this.getFriendInfo(friend));
+          data.push(await FriendService.getFriendInfo(friend));
         }
       })
     );
@@ -20,15 +20,15 @@ class FriendService {
   }
 
   static async getAllFriendAccepted(id) {
-    return this.getAllFriends(id);
+    return FriendService.getAllFriends(id);
   }
 
   static async getAllFriendPendding(id) {
-    return this.getAllFriends(id, -1);
+    return FriendService.getAllFriends(id, -1);
   }
 
   static async getAllFriendRequest(id) {
-    return this.getAllFriends(id, 1);
+    return FriendService.getAllFriends(id, 1);
   }
 
   static async createFriend(receiverID, senderID) {
@@ -73,7 +73,7 @@ class FriendService {
   }
 
   static async acceptFriend(acceptedID, id) {
-    var friendAccepted = await this.getFriendByID(acceptedID, id);
+    var friendAccepted = await FriendService.getFriendByID(acceptedID, id);
     // check null hoa
     if (!friendAccepted || friendAccepted.status == 0) {
       return;
@@ -81,7 +81,7 @@ class FriendService {
     friendAccepted.status = 0; // cho -1 -> 0
     // create friend phia ben nguoi kia ben sender thi 1 -> 0
     // friend cua ben sender
-    const friendSender = await this.getFriendByUserID(
+    const friendSender = await FriendService.getFriendByUserID(
       friendAccepted.friend,
       acceptedID
     );

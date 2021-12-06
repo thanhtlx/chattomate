@@ -7,7 +7,7 @@ class UserService {
 
   static async getAllUsers() {
     const users = await User.find();
-    return users.map((user) => this.getInfoUser(user));
+    return users.map((user) => UserService.getInfoUser(user));
   }
 
   static getInfoUser(user) {
@@ -30,7 +30,7 @@ class UserService {
     data.password = bcrypt.hashSync(data.password, salt);
     const user = new User(data);
     try {
-      const idApi = await this.createQbUser(user);
+      const idApi = await UserService.createQbUser(user);
       if (!idApi) {
         return "Can't create user";
       }
@@ -77,6 +77,7 @@ class UserService {
         headers: { "Content-Type": "application/json", "QB-Token": token },
       }
     );
+
     const dataRegister = await responseRegister.json();
     console.log(dataRegister);
     return dataRegister.user.id;
