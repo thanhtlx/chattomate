@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.call.db.QbUsersDbManager;
 import com.example.chattomate.call.fragments.AudioConversationFragment;
@@ -34,6 +35,7 @@ import com.example.chattomate.call.utils.SettingsUtil;
 import com.example.chattomate.call.utils.SharedPrefsHelper;
 import com.example.chattomate.call.utils.ToastUtils;
 import com.example.chattomate.call.utils.WebRtcSessionManager;
+import com.example.chattomate.database.AppPreferenceManager;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.users.model.QBUser;
 import com.quickblox.videochat.webrtc.AppRTCAudioManager;
@@ -98,15 +100,21 @@ public class CallService extends Service {
     private CallTimerTask callTimerTask = new CallTimerTask();
     private Timer callTimer = new Timer();
     private Long callTime;
+    private static boolean isRunning = false;
+
 
     public static void start(Context context) {
         Intent intent = new Intent(context, CallService.class);
         context.startService(intent);
+        isRunning = true;
+
     }
 
     public static void stop(Context context) {
         Intent intent = new Intent(context, CallService.class);
         context.stopService(intent);
+        isRunning = false;
+
     }
 
     @Override
@@ -119,6 +127,8 @@ public class CallService extends Service {
         initAudioManager();
         ringtonePlayer = new RingtonePlayer(this, R.raw.ringtone);
         super.onCreate();
+        isRunning = true;
+
     }
 
     @Override
@@ -146,6 +156,8 @@ public class CallService extends Service {
         if (notificationManager != null) {
             notificationManager.cancelAll();
         }
+        isRunning = false;
+
     }
 
     @Nullable
@@ -789,8 +801,9 @@ public class CallService extends Service {
     private class VideoTrackListener implements QBRTCClientVideoTracksCallbacks<QBRTCSession> {
         @Override
         public void onLocalVideoTrackReceive(QBRTCSession session, QBRTCVideoTrack videoTrack) {
+            AppPreferenceManager manager = new AppPreferenceManager(App.getInstance());
             if (videoTrack != null) {
-                int userID = QBChatService.getInstance().getUser().getId();
+                int userID = Integer.parseInt(manager.getUser().idApi);
                 removeVideoTrack(userID);
                 addVideoTrack(userID, videoTrack);
             }
@@ -804,6 +817,10 @@ public class CallService extends Service {
             }
             Log.d(TAG, "onRemoteVideoTrackReceive for Opponent= " + userID);
         }
+    }
+
+    public static boolean isCallRunning() {
+        return  isRunning;
     }
 
     public interface CallTimerListener {

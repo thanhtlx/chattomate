@@ -21,17 +21,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
+import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.activities.ProfileFriend;
 import com.example.chattomate.call.CallActivity;
 import com.example.chattomate.call.CallService;
+import com.example.chattomate.call.LoginService;
 import com.example.chattomate.call.utils.PushNotificationSender;
 import com.example.chattomate.call.utils.WebRtcSessionManager;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
 import com.example.chattomate.models.Friend;
+import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
 import com.example.chattomate.service.ServiceAPI;
 import com.quickblox.users.model.QBUser;
@@ -176,10 +179,10 @@ public class FriendsFragment extends Fragment {
                 ((ViewHolder) holder).avatar_friend.setImageURI(imageUri);
             }
             ((ViewHolder) holder).callVideo.setOnClickListener(v -> {
-                startCall(true,friends.get(position).idApi);
+                startCall(true,friends.get(position).idApi,friends.get(position)._id);
             });
             ((ViewHolder) holder).callVoice.setOnClickListener(v -> {
-                startCall(false,friends.get(position).idApi);
+                startCall(false,friends.get(position).idApi,friends.get(position)._id);
             });
 
             ((ListFriendAdapter.ViewHolder) holder).name_friend.setText(friend.name);
@@ -252,10 +255,18 @@ public class FriendsFragment extends Fragment {
 
     }
 
-    private void startCall(boolean isVideoCall, String id) {
-//        if(CallService.)
+    private void startCall(boolean isVideoCall,String idApi, String _id) {
+//        if(!CallService.isCallRunning()) {
+////            start
+//            User user = manager.getUser();
+//            QBUser qbUser = new QBUser(user.email, App.USER_DEFAULT_PASSWORD);
+//            qbUser.setId(Integer.parseInt(user.idApi));
+//            LoginService.start(getContext(), qbUser);
+////            startCall(isVideoCall,idApi,_id);
+//            return;
+//        }
         ArrayList<Integer> opponentsList = new ArrayList<>();
-        opponentsList.add(Integer.valueOf(id));
+        opponentsList.add(Integer.valueOf(idApi));
         QBRTCTypes.QBConferenceType conferenceType = isVideoCall
                 ? QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_VIDEO
                 : QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_AUDIO;
@@ -268,15 +279,15 @@ public class FriendsFragment extends Fragment {
         ArrayList<String> opponentsIDsList = new ArrayList<>();
         ArrayList<String> opponentsNamesList = new ArrayList<>();
         List<QBUser> usersInCall = new ArrayList<>();
-
+        Log.d("DEBUG-CALL",idApi);
         // the Caller in exactly first position is needed regarding to iOS 13 functionality
-        opponentsIDsList.add(id);
+        opponentsIDsList.add(idApi);
         opponentsNamesList.add(manager.getUser().name);
 
         String opponentsIDsString = TextUtils.join(",", opponentsIDsList);
         String opponentNamesString = TextUtils.join(",", opponentsNamesList);
 
-        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall);
+        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall,_id);
         CallActivity.start(getContext(), false);
     }
 }

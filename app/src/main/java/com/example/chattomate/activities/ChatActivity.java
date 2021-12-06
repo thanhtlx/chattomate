@@ -67,9 +67,19 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
     private String idConversation;
     private String idFriend;
     private String nameConversation;
-    String URL_MESSAGE      = Config.HOST + Config.MESSAGE_URL;
+    String URL_MESSAGE = Config.HOST + Config.MESSAGE_URL;
     Map<String, String> token = new HashMap<>();
     int member_number;
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Bundle extras = getIntent().getExtras();
+        idConversation = extras.getString("idConversation");
+        nameConversation = extras.getString("nameConversation");
+        idFriend = extras.getString("idFriend");
+        member_number = extras.getInt("member_number");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +89,15 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         send = findViewById(R.id.btn_send);
         txtContent = findViewById(R.id.txt_message);
         recyclerView = findViewById(R.id.recycler_view_chat);
-
         Bundle extras = getIntent().getExtras();
         idConversation = extras.getString("idConversation");
         nameConversation = extras.getString("nameConversation");
         idFriend = extras.getString("idFriend");
         member_number = extras.getInt("member_number");
+        if (idConversation == null) {
+            onNewIntent(getIntent());
+        }
+        Log.d("DEBUGX", String.valueOf(idConversation));
 
         Toolbar toolbar = findViewById(R.id.toolbar_chat);
         setSupportActionBar(toolbar);
@@ -94,11 +107,12 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         manager = new AppPreferenceManager(getApplicationContext());
         user = manager.getUser();
         listMess = manager.getMessage(idConversation);
-        listMess = new ArrayList<>(listMess.subList(listMess.size()-50,listMess.size()-1));
+        if (listMess != null)
+            listMess = new ArrayList<>(listMess.subList(listMess.size() - 50, listMess.size() - 1));
         serviceAPI = new ServiceAPI(this, manager);
         token.put("auth-token", manager.getToken(this));
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 //        layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -106,7 +120,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         recyclerView.setItemViewCacheSize(600);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        adapter = new ChatRoomThreadAdapter(this, listMess,(member_number > 2) , user._id);
+        adapter = new ChatRoomThreadAdapter(this, listMess, (member_number > 2), user._id);
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
 
@@ -143,7 +157,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 public void onSuccess(JSONObject result) {
                     try {
                         String status = result.getString("status");
-                        if(status.equals("success")) {
+                        if (status.equals("success")) {
                             JSONObject j = result.getJSONObject("data");
 
                             String id = j.getString("_id");
@@ -154,8 +168,8 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
 
                             Message sen = new Message(idConversation, id, content, contentUrl, sendAt, null, sender, false, "1");
                             manager.addMessage(sen, idConversation);
-                            Log.d("debugGGGG",manager.getMessage(idConversation).get(
-                                    manager.getMessage(idConversation).size()-1).content);
+                            Log.d("debugGGGG", manager.getMessage(idConversation).get(
+                                    manager.getMessage(idConversation).size() - 1).content);
 //                            listMess.add(sen);
                             addMessToList(sen);
                             adapter.notifyDataSetChanged();
@@ -167,14 +181,18 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                             txtContent.setText("");
                             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-                        } else { System.out.println("Error"); }
-                    } catch (JSONException e) { e.printStackTrace(); }
-                    Log.d("debug",result.toString());
+                        } else {
+                            System.out.println("Error");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("debug", result.toString());
                 }
 
                 @Override
                 public void onError(JSONObject result) {
-                    Log.d("debug",result.toString());
+                    Log.d("debug", result.toString());
                 }
             });
 
@@ -202,8 +220,8 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 try {
                     JSONObject object = data.getJSONObject("sendBy");
                     String idSender = object.getString("_id");
-                    Friend friend  = manager.getFriend(manager.getFriends(), idSender);
-                    if(friend == null) {
+                    Friend friend = manager.getFriend(manager.getFriends(), idSender);
+                    if (friend == null) {
                         friend = new Friend(object.getString("_id"),
                                 object.getString("name"), object.getString("avatarUrl"));
                         friend.idApi = object.getString("idApi");
@@ -270,15 +288,15 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
 
     public synchronized void fetchChat() {
         API api = new API(this);
-        api.Call(Request.Method.GET, URL_MESSAGE+"/"+idConversation, null, token, new APICallBack() {
+        api.Call(Request.Method.GET, URL_MESSAGE + "/" + idConversation, null, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
                 try {
                     String status = result.getString("status");
-                    if(status.equals("success")) {
+                    if (status.equals("success")) {
                         JSONArray array = result.getJSONArray("data");
                         ArrayList<Message> messages = new ArrayList<>();
-                        for(int i = 0; i < array.length(); i++) {
+                        for (int i = 0; i < array.length(); i++) {
                             JSONObject j = array.getJSONObject(i);
                             String conversation = j.getString("conversation");
                             String id = j.getString("_id");
@@ -293,7 +311,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                             Boolean deleted = j.getJSONArray("deleteBy").length() > 0;
 
                             ArrayList<Friend> idSeenBy = new ArrayList<>();
-                            if(j.getJSONArray("seenBy").length() > 0) {
+                            if (j.getJSONArray("seenBy").length() > 0) {
                                 for (int n = 0; n < j.getJSONArray("seenBy").length(); n++) {
                                     JSONObject b = j.getJSONArray("seenBy").getJSONObject(i);
                                     idSeenBy.add(new Friend(b.getString("_id"), b.getString("name"), b.getString("avatarUrl")));
@@ -313,12 +331,12 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.d("debug",result.toString());
+                Log.d("debug", result.toString());
             }
 
             @Override
             public void onError(JSONObject result) {
-                Log.d("debug",result.toString());
+                Log.d("debug", result.toString());
             }
         });
 
@@ -337,19 +355,21 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                break;
             case R.id.voicecall_icon:
-                startCall(false,"1");
+                List<Friend> friends = manager.getUserInConversation(idConversation);
+                startCall(false, "1", "1");
                 break;
             case R.id.videocall_icon:
-                startCall(true,"1");
+                startCall(true, "1", "1");
                 break;
             case R.id.options:
 
-            default:break;
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -366,9 +386,10 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
     }
 
-    private void startCall(boolean isVideoCall, String id) {
+    private void startCall(boolean isVideoCall, String idApi, String _id) {
+//        if(CallService.)
         ArrayList<Integer> opponentsList = new ArrayList<>();
-        opponentsList.add(Integer.valueOf(id));
+        opponentsList.add(Integer.valueOf(idApi));
         QBRTCTypes.QBConferenceType conferenceType = isVideoCall
                 ? QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_VIDEO
                 : QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_AUDIO;
@@ -381,15 +402,15 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         ArrayList<String> opponentsIDsList = new ArrayList<>();
         ArrayList<String> opponentsNamesList = new ArrayList<>();
         List<QBUser> usersInCall = new ArrayList<>();
-
+        Log.d("DEBUG-CALL", idApi);
         // the Caller in exactly first position is needed regarding to iOS 13 functionality
-        opponentsIDsList.add(id);
+        opponentsIDsList.add(idApi);
         opponentsNamesList.add(manager.getUser().name);
 
         String opponentsIDsString = TextUtils.join(",", opponentsIDsList);
         String opponentNamesString = TextUtils.join(",", opponentsNamesList);
 
-        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall);
+        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall, _id);
         CallActivity.start(this, false);
     }
 }

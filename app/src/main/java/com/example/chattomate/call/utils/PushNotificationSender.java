@@ -1,5 +1,8 @@
 package com.example.chattomate.call.utils;
 
+import android.util.Log;
+
+import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.quickblox.core.helper.StringifyArrayList;
 import com.quickblox.messages.QBPushNotifications;
@@ -13,8 +16,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class PushNotificationSender {
-    public static void sendPushMessage(ArrayList<Integer> recipients, String senderName, String newSessionID,
-                                       String opponentsIDs, String opponentsNames, boolean isVideoCall) {
+    public static void sendPushMessage(
+            ArrayList<Integer> recipients, String senderName,
+            String newSessionID,String opponentsIDs,
+            String opponentsNames, boolean isVideoCall, String caller) {
         String outMessage = String.format(String.valueOf(R.string.text_push_notification_message), senderName);
 
         long timeStamp = System.currentTimeMillis();
@@ -42,7 +47,14 @@ public class PushNotificationSender {
 
         StringifyArrayList<Integer> userIds = new StringifyArrayList<>(recipients);
         qbEvent.setUserIds(userIds);
+        String jsonString = "{caller: " +  caller + "}";
 
+        try {
+            App.getInstance().getSocket().emitNewCall(new JSONObject(jsonString));
+        } catch (JSONException e) {
+            Log.d("DEBUG","ERR parse string to json object ");
+            e.printStackTrace();
+        }
         QBPushNotifications.createEvent(qbEvent).performAsync(null);
     }
 }
