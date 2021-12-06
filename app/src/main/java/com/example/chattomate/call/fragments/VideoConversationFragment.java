@@ -142,9 +142,9 @@ public class VideoConversationFragment extends BaseConversationFragment implemen
 
     public void setDuringCallActionBar() {
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(currentUser.getFullName());
+        actionBar.setTitle(manager.getUser().name);
         if (isPeerToPeerCall) {
-            actionBar.setSubtitle(getString(R.string.opponent, opponents.get(0).getFullName()));
+            actionBar.setSubtitle(getString(R.string.opponent, manager.getNameFromIdApi(opponents.get(0).getId())));
         } else {
             actionBar.setSubtitle(getString(R.string.opponents, String.valueOf(amountOpponents)));
         }

@@ -32,15 +32,7 @@ public class User implements Serializable {
         this.email = email;
         this.password = password;
     }
-    public User(String _id, String name, String avatarUrl, String phone, String email, String password, String idApi) {
-        this._id = _id;
-        this.name = name;
-        this.avatarUrl = avatarUrl;
-        this.phone = phone;
-        this.email = email;
-        this.password = password;
-        this.idApi = idApi;
-    }
+
 
     public User(String _id, String name, String avatarUrl, String phone, String email) {
         this._id = _id;
@@ -62,4 +54,5 @@ public class User implements Serializable {
         this.email = email;
         this.password = password;
     }
+
 }

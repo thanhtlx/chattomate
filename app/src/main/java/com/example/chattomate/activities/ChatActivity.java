@@ -88,10 +88,6 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        Toolbar toolbar = findViewById(R.id.toolbar_chat);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(nameConversation);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         callService = new Call(this);
         manager = new AppPreferenceManager(getApplicationContext());
@@ -111,15 +107,12 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         if (idConversation == null) {
             onNewIntent(getIntent());
         }
-        Log.d("DEBUGX", String.valueOf(idConversation));
-
         Toolbar toolbar = findViewById(R.id.toolbar_chat);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(nameConversation);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        manager = new AppPreferenceManager(getApplicationContext());
-        user = manager.getUser();
+
         listMess = manager.getMessage(idConversation);
         if(listMess != null && listMess.size() > 50)
             listMess = new ArrayList<>(listMess.subList(listMess.size()-50,listMess.size()));
@@ -312,12 +305,13 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 onBackPressed();
                 break;
             case R.id.voicecall_icon:
-//                callService.startCall(false, idApiFriend);
-                List<Friend> friends = manager.getUserInConversation(idConversation);
-                startCall(false, "1", "1");
+                callService.startCall(false, "1","1");
+//                List<Friend> friends = manager.getUserInConversation(idConversation);
+//                startCall(false, "1", "1");
+
                 break;
             case R.id.videocall_icon:
-                startCall(true, "1", "1");
+                callService.startCall(true, "1", "1");
                 break;
             case R.id.options:
 

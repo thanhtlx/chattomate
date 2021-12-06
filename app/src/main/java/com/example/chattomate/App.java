@@ -6,8 +6,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.android.volley.Request;
 import com.example.chattomate.call.util.QBResRequestExecutor;
 import com.example.chattomate.database.AppPreferenceManager;
+import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.service.API;
 import com.example.chattomate.socket.SocketController;
 import com.example.chattomate.socket.SocketService;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -15,12 +18,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.quickblox.auth.session.QBSettings;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
+
+import static com.example.chattomate.service.FCMService.R_FB_T_URL;
 
 public class App  extends Application {
     private static App instance;
@@ -83,8 +93,9 @@ public class App  extends Application {
     public  static void  initSocket() {
         socket = new SocketService(instance);
         initFCM();
-
     }
+
+
 
     private static void initFCM() {
         FirebaseMessaging.getInstance().getToken()

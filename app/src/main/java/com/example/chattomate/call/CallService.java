@@ -33,7 +33,6 @@ import com.example.chattomate.call.utils.Consts;
 import com.example.chattomate.call.utils.RingtonePlayer;
 import com.example.chattomate.call.utils.SettingsUtil;
 import com.example.chattomate.call.utils.SharedPrefsHelper;
-import com.example.chattomate.call.utils.ToastUtils;
 import com.example.chattomate.call.utils.WebRtcSessionManager;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.quickblox.chat.QBChatService;
@@ -289,21 +288,18 @@ public class CallService extends Service {
         appRTCAudioManager.setOnWiredHeadsetStateListener(new AppRTCAudioManager.OnWiredHeadsetStateListener() {
             @Override
             public void onWiredHeadsetStateChanged(boolean plugged, boolean hasMicrophone) {
-                ToastUtils.shortToast("Headset " + (plugged ? "Plugged" : "Unplugged"));
             }
         });
 
         appRTCAudioManager.setBluetoothAudioDeviceStateListener(new AppRTCAudioManager.BluetoothAudioDeviceStateListener() {
             @Override
             public void onStateChanged(boolean connected) {
-                ToastUtils.shortToast("Bluetooth " + (connected ? "Connected" : "Disconnected"));
             }
         });
 
         appRTCAudioManager.start(new AppRTCAudioManager.AudioManagerEvents() {
             @Override
             public void onAudioDeviceChanged(AppRTCAudioManager.AudioDevice audioDevice, Set<AppRTCAudioManager.AudioDevice> set) {
-                ToastUtils.shortToast("Audio Device Switched to " + audioDevice);
             }
         });
 
@@ -668,7 +664,6 @@ public class CallService extends Service {
 
                 QBUser participant = QbUsersDbManager.getInstance(getApplicationContext()).getUserById(userID);
                 String participantName = participant != null ? participant.getFullName() : userID.toString();
-                ToastUtils.shortToast("User " + participantName + " " + getString(R.string.text_status_hang_up) + " conversation");
             }
         }
 
@@ -690,7 +685,6 @@ public class CallService extends Service {
 
         @Override
         public void onUserNoActions(QBRTCSession qbrtcSession, Integer integer) {
-            ToastUtils.longToast("Call was stopped by UserNoActions timer");
             clearCallState();
             clearButtonsState();
             WebRtcSessionManager.getInstance(getApplicationContext()).setCurrentSession(null);
@@ -739,7 +733,6 @@ public class CallService extends Service {
         public void onConnectionClosedForUser(QBRTCSession qbrtcSession, Integer userID) {
             if (userID != null) {
                 Log.d(TAG, "Connection closed for user: " + userID);
-                ToastUtils.shortToast("The user: " + userID + " has left the call");
                 removeVideoTrack(userID);
             }
         }
@@ -753,7 +746,6 @@ public class CallService extends Service {
 
         @Override
         public void onErrorSendingPacket(QBSignalingSpec.QBSignalCMD qbSignalCMD, Integer integer, QBRTCSignalException e) {
-            ToastUtils.shortToast(R.string.dlg_signal_error);
         }
     }
 
@@ -761,40 +753,36 @@ public class CallService extends Service {
 
         @Override
         public void connectivityChanged(boolean availableNow) {
-            ToastUtils.shortToast("Internet Connection " + (availableNow ? "Available" : "Unavailable"));
         }
     }
 
     private class CameraEventsListener implements CameraVideoCapturer.CameraEventsHandler {
         @Override
         public void onCameraError(String s) {
-            ToastUtils.shortToast("Camera Error: " + s);
+
         }
 
         @Override
         public void onCameraDisconnected() {
-            ToastUtils.shortToast("Camera Disconnected");
+
         }
 
         @Override
         public void onCameraFreezed(String s) {
-            ToastUtils.shortToast("Camera Freezed");
             hangUpCurrentSession(new HashMap<>());
         }
 
         @Override
         public void onCameraOpening(String s) {
-            ToastUtils.shortToast("Camera Opening");
+
         }
 
         @Override
         public void onFirstFrameAvailable() {
-            ToastUtils.shortToast("Camera onFirstFrameAvailable");
         }
 
         @Override
         public void onCameraClosed() {
-            ToastUtils.shortToast("Camera Closed");
         }
     }
 

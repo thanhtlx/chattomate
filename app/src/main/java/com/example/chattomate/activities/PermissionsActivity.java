@@ -14,7 +14,6 @@ import androidx.core.app.ActivityCompat;
 import com.example.chattomate.R;
 import com.example.chattomate.call.utils.PermissionsChecker;
 import com.example.chattomate.call.utils.SharedPrefsHelper;
-import com.example.chattomate.call.utils.ToastUtils;
 
 public class PermissionsActivity extends AppCompatActivity {
 
@@ -123,15 +122,7 @@ public class PermissionsActivity extends AppCompatActivity {
     }
 
     private void showDeniedResponse(int[] grantResults) {
-        if (grantResults.length > 1) {
-            for (int i = 0; i < grantResults.length; i++) {
-                if (grantResults[i] != 0) {
-                    ToastUtils.longToast(getString(R.string.permission_unavailable, permissionFeatures.values()[i]));
-                }
-            }
-        } else {
-            ToastUtils.longToast(getString(R.string.permission_unavailable, permissionFeatures.MICROPHONE));
-        }
+
     }
 
     private boolean hasAllPermissionsGranted(@NonNull int[] grantResults) {

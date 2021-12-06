@@ -178,11 +178,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void requirePermission() {
         if (Build.VERSION.SDK_INT >= 23){
-            if (ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions( new String[]{Manifest.permission.CAMERA},REQUEST_PERMISTION_OPEN_CAMERA);
-            }
-            if (ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions( new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_PERMISTION_MIC);
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                    ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions( new String[]{Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO},REQUEST_PERMISTION_OPEN_CAMERA);
             }
         }
     }

@@ -455,15 +455,6 @@ public class AppPreferenceManager {
         editor.clear().commit();
     }
 
-    public String getNameFromIdApi(Integer id) {
-        List<Friend> friends = getAllUsers();
-        for (Friend friend : friends) {
-            if (Integer.parseInt(friend.idApi) == id) {
-                return friend.name;
-            }
-        }
-        return "";
-    }
 
     public List<Friend> getUserInConversation(String idConversation) {
         List<Friend> res = new ArrayList<>();

@@ -75,7 +75,6 @@ public class SocketService extends Service {
                         Config.ID_NOTIFICATION_NEW_FRIEND_REQUEST,
                         "new Friend Request",
                         data.getString( "message"),pendingIntent);
-                socketCallBack.onNewMessage(data);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.d("DEBUG","error paser json");
@@ -94,7 +93,6 @@ public class SocketService extends Service {
                         Config.ID_NOTIFICATION_NEW_CONVERSATION,
                         "new Conversation",
                         data.getString( "message"),pendingIntent);
-                socketCallBack.onNewMessage(data);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.d("DEBUG","error paser json");
@@ -113,7 +111,6 @@ public class SocketService extends Service {
                         Config.ID_NOTIFICATION_NEW_FRIEND,
                         "new Friend",
                         data.getString( "message"),pendingIntent);
-                socketCallBack.onNewMessage(data);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.d("DEBUG","error paser json");
@@ -132,7 +129,6 @@ public class SocketService extends Service {
                         Config.ID_NOTIFICATION_NEW_CONVERSATION,
                         "conversation change",
                         data.getString( "message"),pendingIntent);
-                socketCallBack.onNewMessage(data);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.d("DEBUG","error paser json");

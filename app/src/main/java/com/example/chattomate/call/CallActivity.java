@@ -42,7 +42,6 @@ import com.example.chattomate.call.utils.FragmentExecuotr;
 import com.example.chattomate.call.utils.PermissionsChecker;
 import com.example.chattomate.call.utils.SettingsUtil;
 import com.example.chattomate.call.utils.SharedPrefsHelper;
-import com.example.chattomate.call.utils.ToastUtils;
 import com.example.chattomate.call.utils.UsersUtils;
 import com.example.chattomate.call.utils.WebRtcSessionManager;
 import com.quickblox.chat.QBChatService;
@@ -299,7 +298,6 @@ public class CallActivity extends BaseActivity implements IncomeCallFragmentCall
                     }
                 }*/
                 // This is a fix to prevent call stop in case calling to user with more then one device logged in.
-                ToastUtils.longToast("Call was stopped by UserNoActions timer");
                 callService.clearCallState();
                 callService.clearButtonsState();
                 WebRtcSessionManager.getInstance(getApplicationContext()).setCurrentSession(null);
@@ -455,7 +453,6 @@ public class CallActivity extends BaseActivity implements IncomeCallFragmentCall
             }
             QBUser participant = dbManager.getUserById(userID);
             final String participantName = participant != null ? participant.getFullName() : String.valueOf(userID);
-            ToastUtils.shortToast("User " + participantName + " " + getString(R.string.text_status_hang_up) + " conversation");
         }
     }
 

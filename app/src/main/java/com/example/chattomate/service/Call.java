@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.example.chattomate.call.CallActivity;
 import com.example.chattomate.call.utils.PushNotificationSender;
 import com.example.chattomate.call.utils.WebRtcSessionManager;
+import com.example.chattomate.database.AppPreferenceManager;
 import com.quickblox.users.model.QBUser;
 import com.quickblox.videochat.webrtc.QBRTCClient;
 import com.quickblox.videochat.webrtc.QBRTCSession;
@@ -16,14 +17,17 @@ import java.util.List;
 
 public class Call {
     Context context;
+    private AppPreferenceManager manager;
 
     public Call(Context context) {
         this.context = context;
+        manager = new AppPreferenceManager(context);
     }
 
-    public void startCall(boolean isVideoCall, String id) {
+    public void startCall(boolean isVideoCall, String idApi, String _id) {
+
         ArrayList<Integer> opponentsList = new ArrayList<>();
-        opponentsList.add(Integer.valueOf(id));
+        opponentsList.add(Integer.valueOf(idApi));
         QBRTCTypes.QBConferenceType conferenceType = isVideoCall
                 ? QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_VIDEO
                 : QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_AUDIO;
@@ -37,14 +41,13 @@ public class Call {
         ArrayList<String> opponentsNamesList = new ArrayList<>();
         List<QBUser> usersInCall = new ArrayList<>();
 
-        // the Caller in exactly first position is needed regarding to iOS 13 functionality
-        opponentsIDsList.add(id);
-        opponentsNamesList.add("userName");
+        opponentsIDsList.add(idApi);
+        opponentsNamesList.add(manager.getUser().name);
 
         String opponentsIDsString = TextUtils.join(",", opponentsIDsList);
         String opponentNamesString = TextUtils.join(",", opponentsNamesList);
 
-        PushNotificationSender.sendPushMessage(opponentsList, "admin", newSessionID, opponentsIDsString, opponentNamesString, isVideoCall);
+        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall,_id);
         CallActivity.start(context, false);
     }
 

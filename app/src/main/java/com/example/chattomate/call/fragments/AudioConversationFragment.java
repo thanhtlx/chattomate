@@ -72,7 +72,7 @@ public class AudioConversationFragment extends BaseConversationFragment implemen
         setVisibilityAlsoOnCallTextView();
 
         firstOpponentNameTextView = (TextView) view.findViewById(R.id.text_caller_name);
-        firstOpponentNameTextView.setText(opponents.get(0).getFullName());
+        firstOpponentNameTextView.setText(manager.getNameFromIdApi(opponents.get(0).getId()));
 
         otherOpponentsTextView = (TextView) view.findViewById(R.id.text_other_inc_users);
         otherOpponentsTextView.setText(getOtherOpponentsNames());
@@ -144,6 +144,7 @@ public class AudioConversationFragment extends BaseConversationFragment implemen
     @Override
     public void onCallTimeUpdate(String time) {
         timerCallText.setText(time);
+
     }
 
     @Override

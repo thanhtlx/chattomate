@@ -1,16 +1,12 @@
 package com.example.chattomate.service;
 
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.android.volley.Request;
 import com.example.chattomate.App;
-import com.example.chattomate.activities.ChatActivity;
+import com.example.chattomate.call.LoginService;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
@@ -40,19 +36,20 @@ public class FCMService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull @NotNull RemoteMessage remoteMessage) {
         Log.d("DEBUG", "Receiver mesaage");
-//        NotificationService notificationService = new NotificationService(this);
-//        Intent intent = new Intent(this.getApplicationContext(), ChatActivity.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, 0);
-//        notificationService.pushNotification(Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,Config.ID_NOTIFICATION_NEW_MESSAGE,"title","content",pendingIntent);
         App.getInstance();
         if (manager == null) {
             manager = new AppPreferenceManager(this);
         }
         User user = manager.getUser();
         if (user == null) return;
-        QBUser qbUser = new QBUser(user.email, App.USER_DEFAULT_PASSWORD);
-        qbUser.setId(Integer.parseInt(user.idApi));
-        LoginService.start(this, qbUser);
+        Map<String, String> data = remoteMessage.getData();
+        Log.d("DEBUG", String.valueOf(data));
+        if(data.containsKey("data") && data.get("data").equals("ping")) {
+            Log.d("DEBUG", "Start chat");
+            QBUser qbUser = new QBUser(user.email, App.USER_DEFAULT_PASSWORD);
+            qbUser.setId(Integer.parseInt(user.idApi));
+            LoginService.start(this, qbUser);
+        }
     }
 
     @Override
@@ -107,7 +104,5 @@ public class FCMService extends FirebaseMessagingService {
         });
 
     }
-
-
 
 }

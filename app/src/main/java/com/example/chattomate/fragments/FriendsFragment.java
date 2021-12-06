@@ -35,6 +35,7 @@ import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
+import com.example.chattomate.service.Call;
 import com.example.chattomate.service.ServiceAPI;
 import com.quickblox.users.model.QBUser;
 import com.quickblox.videochat.webrtc.QBRTCClient;
@@ -60,8 +61,10 @@ public class FriendsFragment extends Fragment {
     SwipeRefreshLayout mSwipeRefreshLayout;
     ServiceAPI api;
     Map<String, String> token = new HashMap<>();
+    private Call callService;
 
     public FriendsFragment() {
+        callService = new Call(App.getInstance());
     }
 
     @Override
@@ -190,10 +193,11 @@ public class FriendsFragment extends Fragment {
                 ((ViewHolder) holder).avatar_friend.setImageURI(imageUri);
             }
             ((ViewHolder) holder).callVideo.setOnClickListener(v -> {
-                startCall(true,friends.get(position).idApi);
+                callService.startCall(true,friends.get(position).idApi,friends.get(position)._id);
             });
             ((ViewHolder) holder).callVoice.setOnClickListener(v -> {
-                startCall(false,friends.get(position).idApi);
+
+                callService.startCall(false,friends.get(position).idApi,friends.get(position)._id);
             });
 
             ((ListFriendAdapter.ViewHolder) holder).name_friend.setText(friend.name);
@@ -242,21 +246,6 @@ public class FriendsFragment extends Fragment {
                 callVoice = view.findViewById(R.id.call_voice);
                 callVideo = view.findViewById(R.id.call_video);
 //            state_friend.setVisibility(View.INVISIBLE);
-
-                callVoice.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startCall(false,"1");
-                    }
-                });
-
-                callVideo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startCall(true,"1");
-                    }
-                });
-
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -276,34 +265,5 @@ public class FriendsFragment extends Fragment {
         }
 
 
-    }
-
-    private void startCall(boolean isVideoCall, String id) {
-
-        ArrayList<Integer> opponentsList = new ArrayList<>();
-        opponentsList.add(Integer.valueOf(id));
-        QBRTCTypes.QBConferenceType conferenceType = isVideoCall
-                ? QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_VIDEO
-                : QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_AUDIO;
-
-        QBRTCClient qbrtcClient = QBRTCClient.getInstance(getContext());
-        QBRTCSession newQbRtcSession = qbrtcClient.createNewSessionWithOpponents(opponentsList, conferenceType);
-        WebRtcSessionManager.getInstance(getContext()).setCurrentSession(newQbRtcSession);
-        // Make Users FullName Strings and ID's list for iOS VOIP push
-        String newSessionID = newQbRtcSession.getSessionID();
-        ArrayList<String> opponentsIDsList = new ArrayList<>();
-        ArrayList<String> opponentsNamesList = new ArrayList<>();
-        List<QBUser> usersInCall = new ArrayList<>();
-
-        // the Caller in exactly first position is needed regarding to iOS 13 functionality
-        opponentsIDsList.add(id);
-        opponentsNamesList.add(manager.getUser().name);
-
-        String opponentsIDsString = TextUtils.join(",", opponentsIDsList);
-        String opponentNamesString = TextUtils.join(",", opponentsNamesList);
-
-        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall);
-        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall,_id);
-        CallActivity.start(getContext(), false);
     }
 }
