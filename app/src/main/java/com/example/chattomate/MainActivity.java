@@ -87,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
         token = manager.getMapToken(this);
         allUsers = manager.getAllUsers();
 
-        serviceAPI = new ServiceAPI(this, manager);
-        serviceAPI.getAllFriendSendAdd();
-        serviceAPI.getAllSendAddFriend();
+//        serviceAPI = new ServiceAPI(this, manager);
+//        serviceAPI.getAllFriendSendAdd();
+//        serviceAPI.getAllSendAddFriend();
 
         viewPager = findViewById(R.id.view_pager);
         bnt = findViewById(R.id.bottom_navigation);
@@ -311,11 +311,13 @@ public class MainActivity extends AppCompatActivity {
                 button.setText("Kết bạn");
                 button.setBackgroundColor(Color.parseColor("#EF1FF6"));
             }
+
+            String btn = button.getText().toString();
             
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(button.getText().toString().equals("Nhắn tin")) {
+                    if(btn.equals("Nhắn tin")) {
                         String idConversation = manager.getIdConversation(friend._id);
 
                         Bundle extr = new Bundle();
@@ -327,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtras(extr);
                         startActivity(intent);
 
-                    } else if(button.getText().toString().equals("Kết bạn")) {
+                    } else if(btn.equals("Kết bạn")) {
                         JSONObject newAddFriend = new JSONObject();
                         try {
                             newAddFriend.put("userId", friend._id);
@@ -360,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("debug",result.toString());
                             }
                         });
-                    } else if(button.getText().toString().equals("Đồng ý\nkết bạn")) {
+                    } else if(btn.equals("Đồng ý\nkết bạn")) {
                         String url = URL_FRIEND + "/" + friend._id + "/accept";
                         JSONObject newFriend = new JSONObject();
                         try {

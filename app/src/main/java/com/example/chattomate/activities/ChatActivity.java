@@ -80,15 +80,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         nameConversation = extras.getString("nameConversation");
         member_number = extras.getInt("member_number");
 
-        members = manager.getConversation(idConversation).members;
-        members.remove(manager.getFriend(members, user._id)); //remove self
-        for (Friend f : members) {
-            Friend friend = manager.getFriend(manager.getAllUsers(), f._id);
-            f.idApi = friend.idApi;
-            f.avatarUrl = friend.avatarUrl;
-            f.email = friend.email;
-            f.name = friend.name;
-        }
+        members = manager.getMembersInConversation(idConversation);
 
         listMess = manager.getMessage(idConversation);
         if(listMess != null && listMess.size() > 50)

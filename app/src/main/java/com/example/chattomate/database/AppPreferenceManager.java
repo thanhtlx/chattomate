@@ -319,6 +319,21 @@ public class AppPreferenceManager {
         return null;
     }
 
+    public ArrayList<Friend> getMembersInConversation(String idConversation) {
+        ArrayList<Friend> members = new ArrayList<>();
+        members = getConversation(idConversation).members;
+        members.remove(getFriend(members, getUser()._id)); //remove self
+        for (Friend f : members) {
+            Friend friend = getFriend(getAllUsers(), f._id);
+            f.idApi = friend.idApi;
+            f.avatarUrl = friend.avatarUrl;
+            f.email = friend.email;
+            f.name = friend.name;
+        }
+
+        return members;
+    }
+
     public void addConversation(Conversation c) {
         ArrayList<Conversation> cv = getConversations();
         Conversation conversation = getConversation(c._id);
