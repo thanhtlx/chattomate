@@ -15,7 +15,7 @@ class NotifyService {
       if (clientID) {
         socket.emit(clientID, Config.CHANNEL_FIREND_ACTICE_CHANGE, {
           message: message,
-          data: await this.getAllFriendOnline(friend),
+          data: await NotifyService.getAllFriendOnline(friend),
         });
         return;
       }
@@ -42,8 +42,7 @@ class NotifyService {
   static async getAllFriendOnline(userID) {
     const friends = await FriendService.getAllFriends(userID);
     const res = friends.filter(
-      (friend) =>
-        friend.friend._id.toString() in socket.getUserActive()
+      (friend) => friend.friend._id.toString() in socket.getUserActive()
     );
     return res;
   }
@@ -68,7 +67,7 @@ class NotifyService {
   }
 
   static async notifyAll(userID) {
-    const notifiers = await this.getAllNotifiers(userID);
+    const notifiers = await NotifyService.getAllNotifiers(userID);
     for (notify of notifiers) {
       var clientID = await socket.getClientUserId(userID);
       if (clientID) {
@@ -76,6 +75,14 @@ class NotifyService {
         notify.delete();
         return;
       }
+    }
+  }
+
+  static async notifyIncomingCall(userID, caller) {
+    const clientID = await socket.getClientUserId(userID);
+    if (clientID) {
+      socket.emit(clientID, Config.CHANNEL_IMCOMING_CALL, { caller: caller });
+      return;
     }
   }
 }

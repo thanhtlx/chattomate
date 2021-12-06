@@ -19,9 +19,9 @@ class MySocket {
         await NotifyService.notifyTyping(userID, data.conversationID);
       });
 
-      // socket.on("incoming-call", async (data) => {
-      //   await NotifyService.notifyIncomingCall(userID, data.caller);
-      // });
+      socket.on("new-call", async (data) => {
+        await NotifyService.notifyIncomingCall(userID, data.caller);
+      });
 
       console.log(MySocket.userActice);
 
