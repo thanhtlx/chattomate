@@ -20,7 +20,7 @@ class MySocket {
       });
 
       socket.on("new-call", async (data) => {
-        await NotifyService.notifyIncomingCall(userID, data.caller);
+        await NotifyService.notifyIncomingCall(data.caller);
       });
 
       console.log(MySocket.userActice);
@@ -43,14 +43,16 @@ class MySocket {
         sendFcmMessage({
           message: {
             token: token,
-            data: {},
+            data: {
+
+            },
             android: {
               direct_boot_ok: true,
             },
           },
         });
       });
-      return;
+      return getClientUserId(userId);
     }
 
     //

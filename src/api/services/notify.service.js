@@ -78,12 +78,14 @@ class NotifyService {
     }
   }
 
-  static async notifyIncomingCall(userID, caller) {
-    const clientID = await socket.getClientUserId(userID);
+  static async notifyIncomingCall(caller) {
+    const clientID = await socket.getClientUserId(caller);
     if (clientID) {
-      socket.emit(clientID, Config.CHANNEL_IMCOMING_CALL, { caller: caller });
+      socket.emit(clientID, Config.CHANNEL_IMCOMING_CALL, {});
+      console.log("emit incomming call");
       return;
     }
+    console.log("faild  to emit imcoming call");
   }
 }
 
