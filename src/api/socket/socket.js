@@ -53,7 +53,7 @@ class MySocket {
           },
         });
       });
-      return this.getClientUserId(userId);
+      return;
     }
 
     //
