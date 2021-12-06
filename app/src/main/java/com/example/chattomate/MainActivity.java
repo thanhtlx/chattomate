@@ -1,12 +1,15 @@
 package com.example.chattomate;
 
+import android.Manifest;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,9 +21,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -52,6 +57,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.example.chattomate.config.Config.REQUEST_PERMISTION_MIC;
+import static com.example.chattomate.config.Config.REQUEST_PERMISTION_OPEN_CAMERA;
 
 public class MainActivity extends AppCompatActivity {
     ViewPager viewPager;
@@ -163,6 +171,20 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
+        requirePermission();
+    }
+
+    private void requirePermission() {
+        if (Build.VERSION.SDK_INT >= 23){
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions( new String[]{Manifest.permission.CAMERA},REQUEST_PERMISTION_OPEN_CAMERA);
+            }
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions( new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_PERMISTION_MIC);
+            }
+        }
     }
 
     @Override
@@ -447,5 +469,13 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_PERMISTION_OPEN_CAMERA || requestCode == REQUEST_PERMISTION_MIC) {
+            requirePermission();
+        }
     }
 }

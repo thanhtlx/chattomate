@@ -25,6 +25,7 @@ import com.example.chattomate.R;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.activities.ProfileFriend;
 import com.example.chattomate.call.CallActivity;
+import com.example.chattomate.call.CallService;
 import com.example.chattomate.call.utils.PushNotificationSender;
 import com.example.chattomate.call.utils.WebRtcSessionManager;
 import com.example.chattomate.config.Config;
@@ -77,7 +78,6 @@ public class FriendsFragment extends Fragment {
         token.put("auth-token", manager.getToken(getContext()));
 
         friendsList = manager.getFriends();
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -124,14 +124,15 @@ public class FriendsFragment extends Fragment {
                             JSONObject temp = friends.getJSONObject(i);
                             JSONObject tmp = temp.getJSONObject("friend");
                             Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
-                                    tmp.getString("name"), tmp.getString("avatarUrl"));
+                                    tmp.getString("name"), tmp.getString("avatarUrl"), tmp.getString("idApi"));
                             list.add(friend);
                         }
                         manager.storeFriends(list);
-                        friendsList.clear();
-                        friendsList.addAll(list);
-                        adapter.notifyDataSetChanged();
-
+                        if (friendsList != null) {
+                            friendsList.clear();
+                            friendsList.addAll(list);
+                            adapter.notifyDataSetChanged();
+                        }
                     } else {
                         System.out.println("Lỗi lấy danh sách bạn bè");
                     }
@@ -149,10 +150,10 @@ public class FriendsFragment extends Fragment {
     }
 
     public class ListFriendAdapter extends RecyclerView.Adapter {
-        private ArrayList<Friend> friends = new ArrayList<>();
+        private List<Friend> friends = new ArrayList<>();
         private Context mContext;
 
-        public ListFriendAdapter(ArrayList<Friend> _friend, Context mContext) {
+        public ListFriendAdapter(List<Friend> _friend, Context mContext) {
             this.friends = _friend;
             this.mContext = mContext;
         }
@@ -174,6 +175,12 @@ public class FriendsFragment extends Fragment {
                 Uri imageUri = Uri.parse(friend.avatarUrl);
                 ((ViewHolder) holder).avatar_friend.setImageURI(imageUri);
             }
+            ((ViewHolder) holder).callVideo.setOnClickListener(v -> {
+                startCall(true,friends.get(position).idApi);
+            });
+            ((ViewHolder) holder).callVoice.setOnClickListener(v -> {
+                startCall(false,friends.get(position).idApi);
+            });
 
             ((ListFriendAdapter.ViewHolder) holder).name_friend.setText(friend.name);
 
@@ -194,6 +201,8 @@ public class FriendsFragment extends Fragment {
                     startActivity(intent);
                 }
             });
+
+            holder.getAdapterPosition();
         }
 
         @Override
@@ -220,19 +229,7 @@ public class FriendsFragment extends Fragment {
                 callVideo = view.findViewById(R.id.call_video);
 //            state_friend.setVisibility(View.INVISIBLE);
 
-                callVoice.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startCall(false,"1");
-                    }
-                });
 
-                callVideo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startCall(true,"1");
-                    }
-                });
 
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -256,7 +253,7 @@ public class FriendsFragment extends Fragment {
     }
 
     private void startCall(boolean isVideoCall, String id) {
-
+//        if(CallService.)
         ArrayList<Integer> opponentsList = new ArrayList<>();
         opponentsList.add(Integer.valueOf(id));
         QBRTCTypes.QBConferenceType conferenceType = isVideoCall
@@ -274,12 +271,12 @@ public class FriendsFragment extends Fragment {
 
         // the Caller in exactly first position is needed regarding to iOS 13 functionality
         opponentsIDsList.add(id);
-        opponentsNamesList.add("userName");
+        opponentsNamesList.add(manager.getUser().name);
 
         String opponentsIDsString = TextUtils.join(",", opponentsIDsList);
         String opponentNamesString = TextUtils.join(",", opponentsNamesList);
 
-        PushNotificationSender.sendPushMessage(opponentsList, "admin", newSessionID, opponentsIDsString, opponentNamesString, isVideoCall);
+        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall);
         CallActivity.start(getContext(), false);
     }
 }

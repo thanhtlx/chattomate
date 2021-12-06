@@ -19,6 +19,7 @@ import com.example.chattomate.R;
 import com.example.chattomate.call.util.QBResRequestExecutor;
 import com.example.chattomate.call.utils.ErrorUtils;
 import com.example.chattomate.call.utils.SharedPrefsHelper;
+import com.example.chattomate.database.AppPreferenceManager;
 
 /**
  * QuickBlox team
@@ -29,11 +30,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected SharedPrefsHelper sharedPrefsHelper;
     private ProgressDialog progressDialog;
     protected QBResRequestExecutor requestExecutor;
+    protected AppPreferenceManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        manager = new AppPreferenceManager(this);
         actionBar = getSupportActionBar();
         requestExecutor = App.getInstance().getQbResRequestExecutor();
         sharedPrefsHelper = SharedPrefsHelper.getInstance();
@@ -41,10 +43,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @SuppressLint("StringFormatInvalid")
     public void initDefaultActionBar() {
-        String currentUserFullName = "";
-        if (sharedPrefsHelper.getQbUser() != null) {
-            currentUserFullName = sharedPrefsHelper.getQbUser().getFullName();
-        }
+        String currentUserFullName = manager.getUser().name;
+//        if (sharedPrefsHelper.getQbUser() != null) {
+//            currentUserFullName = mana;
+//        }
 
         setActionBarTitle("");
         setActionbarSubTitle(String.format(getString(R.string.subtitle_text_logged_in_as), currentUserFullName));

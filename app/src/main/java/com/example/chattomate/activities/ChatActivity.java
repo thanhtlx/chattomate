@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +26,9 @@ import com.android.volley.Request;
 import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.adapter.ChatRoomThreadAdapter;
+import com.example.chattomate.call.CallActivity;
+import com.example.chattomate.call.utils.PushNotificationSender;
+import com.example.chattomate.call.utils.WebRtcSessionManager;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
@@ -35,6 +39,10 @@ import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
 import com.example.chattomate.service.ServiceAPI;
+import com.quickblox.users.model.QBUser;
+import com.quickblox.videochat.webrtc.QBRTCClient;
+import com.quickblox.videochat.webrtc.QBRTCSession;
+import com.quickblox.videochat.webrtc.QBRTCTypes;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -334,9 +342,11 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
             case android.R.id.home:
                 onBackPressed();
             case R.id.voicecall_icon:
-
+                startCall(false,"1");
+                break;
             case R.id.videocall_icon:
-
+                startCall(true,"1");
+                break;
             case R.id.options:
 
             default:break;
@@ -354,5 +364,32 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
     @Override
     public void ScrollRecylerview() {
         recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+    }
+
+    private void startCall(boolean isVideoCall, String id) {
+        ArrayList<Integer> opponentsList = new ArrayList<>();
+        opponentsList.add(Integer.valueOf(id));
+        QBRTCTypes.QBConferenceType conferenceType = isVideoCall
+                ? QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_VIDEO
+                : QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_AUDIO;
+
+        QBRTCClient qbrtcClient = QBRTCClient.getInstance(this);
+        QBRTCSession newQbRtcSession = qbrtcClient.createNewSessionWithOpponents(opponentsList, conferenceType);
+        WebRtcSessionManager.getInstance(this).setCurrentSession(newQbRtcSession);
+        // Make Users FullName Strings and ID's list for iOS VOIP push
+        String newSessionID = newQbRtcSession.getSessionID();
+        ArrayList<String> opponentsIDsList = new ArrayList<>();
+        ArrayList<String> opponentsNamesList = new ArrayList<>();
+        List<QBUser> usersInCall = new ArrayList<>();
+
+        // the Caller in exactly first position is needed regarding to iOS 13 functionality
+        opponentsIDsList.add(id);
+        opponentsNamesList.add(manager.getUser().name);
+
+        String opponentsIDsString = TextUtils.join(",", opponentsIDsList);
+        String opponentNamesString = TextUtils.join(",", opponentsNamesList);
+
+        PushNotificationSender.sendPushMessage(opponentsList, manager.getUser().name, newSessionID, opponentsIDsString, opponentNamesString, isVideoCall);
+        CallActivity.start(this, false);
     }
 }

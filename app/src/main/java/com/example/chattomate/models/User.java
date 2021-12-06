@@ -11,7 +11,6 @@ public class User implements Serializable {
     public String phone = "";
     public String email;
     public String password;
-    public String idAPi;
 
     public User() { }
 
@@ -22,6 +21,15 @@ public class User implements Serializable {
         this.phone = phone;
         this.email = email;
         this.password = password;
+    }
+    public User(String _id, String name, String avatarUrl, String phone, String email, String password, String idApi) {
+        this._id = _id;
+        this.name = name;
+        this.avatarUrl = avatarUrl;
+        this.phone = phone;
+        this.email = email;
+        this.password = password;
+        this.idApi = idApi;
     }
 
     public User(String _id, String name, String avatarUrl, String phone, String email) {

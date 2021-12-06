@@ -134,8 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject jsonObject = result.getJSONObject("data").getJSONObject("user");
                             User user = new User(jsonObject.getString("_id"),
                                     jsonObject.getString("name"),
-                                    jsonObject.getString("avatarUrl"), email);
-                            user.password = password;
+                                    jsonObject.getString("avatarUrl"),"", email,password,jsonObject.getString("idApi"));
                             manager.setStateActive(true);
                             manager.setLogin(true);
                             manager.storeUser(user);

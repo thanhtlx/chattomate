@@ -1,5 +1,7 @@
 package com.example.chattomate.call.utils;
 
+import com.example.chattomate.App;
+import com.example.chattomate.database.AppPreferenceManager;
 import com.quickblox.core.helper.StringifyArrayList;
 import com.quickblox.users.model.QBUser;
 
@@ -11,13 +13,11 @@ public class CollectionsUtils {
 
     public static String makeStringFromUsersFullNames(ArrayList<QBUser> allUsers) {
         StringifyArrayList<String> usersNames = new StringifyArrayList<>();
-
+        AppPreferenceManager manager = new AppPreferenceManager(App.getInstance());
         for (QBUser usr : allUsers) {
-            if (usr.getFullName() != null) {
-                usersNames.add(usr.getFullName());
-            } else if (usr.getId() != null) {
-                usersNames.add(String.valueOf(usr.getId()));
-            }
+//            usr.getId() != null;
+            String name = manager.getNameFromIdApi(usr.getId());
+            usersNames.add(name);
         }
         return usersNames.getItemsAsString().replace(",", ", ");
     }
