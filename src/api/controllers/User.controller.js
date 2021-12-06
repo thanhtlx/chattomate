@@ -32,7 +32,7 @@ class UserController {
   static async registerFCM(req, res) {
     var user = await UserService.findID(req.user._id);
     const fcm_token = req.body.fcm_token;
-    user.fcm.push(fcm_token);
+    user.fcm = [fcm_token];
     user = await UserService.saveUser(user);
     return res.send(user);
   }
