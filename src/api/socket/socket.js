@@ -34,7 +34,7 @@ class MySocket {
     });
   }
 
-  async static getClientUserId(userId) {
+  static async getClientUserId(userId) {
     if (MySocket.userActice[userId] !== undefined) {
       return MySocket.userActice[userId];
     } else {
