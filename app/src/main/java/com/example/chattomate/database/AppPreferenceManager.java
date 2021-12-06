@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 public class AppPreferenceManager {
     private static String TAG = AppPreferenceManager.class.getSimpleName();
@@ -36,6 +37,7 @@ public class AppPreferenceManager {
     private static final String IS_LOGGED_IN    = "isLoggedIn";
     private static final String STATE_ACTIVE    = "state_active";
     private static final String ID              = "_id";
+    private static final String IdApi              = "_idApi";
     private static final String PHONE           = "phone";
     private static final String AVATAR_URL      = "avatarUrl";
     private static final String NAME            = "name";
@@ -87,6 +89,7 @@ public class AppPreferenceManager {
 
     public void storeUser(User user) {
         editor.putString(ID, user._id);
+        editor.putString(IdApi, user.idApi);
         editor.putString(PHONE, user.phone);
         editor.putString(AVATAR_URL, user.avatarUrl);
         editor.putString(NAME, user.name);
@@ -103,17 +106,27 @@ public class AppPreferenceManager {
     }
 
     public User getUser() {
-        if (pref.getString(PHONE, null) != null) {
-            String id, phone, avatar, name, password, email;
+        if (pref.getString(ID, null) != null) {
+            String id, phone, avatar, name, password, email, idApi;
             id = pref.getString(ID, null);
             phone = pref.getString(PHONE, null);
             avatar = pref.getString(AVATAR_URL, null);
             name = pref.getString(NAME, null);
             email = pref.getString(EMAIL, null);
             password = pref.getString(PASSWORD, null);
-
-            return new User(id, name, avatar, phone, email, password);
+            idApi = pref.getString(IdApi,null);
+            return new User(id, name, avatar, phone, email, password,idApi);
         } else return null;
+    }
+
+    public String getNameFromIdApi(Integer id) {
+        List<Friend> friends = getAllUsers();
+        for (Friend friend:friends) {
+            if (Integer.parseInt(friend.idApi) == id) {
+                return  friend.name;
+            }
+        }
+        return  "";
     }
 
     public void storeMessage(ArrayList<Message> m, String idConversation) {

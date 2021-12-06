@@ -239,8 +239,6 @@ public class ChatFragment extends Fragment {
                 public void onClick(View view) {
                     Bundle extras = new Bundle();
                     extras.putString("idConversation", c._id);
-                    extras.putString("idFriend", idFriend);
-                    extras.putString("idApiFriend", idApiFriend);
                     extras.putString("nameConversation", nameConversation);
                     extras.putInt("member_number", c.members.size());
 

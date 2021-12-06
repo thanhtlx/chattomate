@@ -269,7 +269,7 @@ public class ServiceAPI {
                             JSONObject temp = friends.getJSONObject(i);
                             JSONObject tmp = temp.getJSONObject("friend");
                             Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
-                                    tmp.getString("name"), tmp.getString("avatarUrl"));
+                                    tmp.getString("name"), tmp.getString("avatarUrl"), tmp.getString("idApi"));
 
                             Friend x;
                             if((x = manager.getFriend(manager.getAllUsers(), friend._id)) != null)

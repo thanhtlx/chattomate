@@ -43,7 +43,7 @@ public class SplashActivity extends AppCompatActivity {
     }
     private void loginQB(User user) {
         QBUser qbUser = new QBUser(user.email, App.USER_DEFAULT_PASSWORD);
-        qbUser.setId(132156844);
+        qbUser.setId(Integer.parseInt(user.idApi));
         LoginService.start(this, qbUser);
     }
 

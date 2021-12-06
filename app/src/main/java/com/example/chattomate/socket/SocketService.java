@@ -8,13 +8,17 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.chattomate.App;
 import com.example.chattomate.MainActivity;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.activities.LoginActivity;
+import com.example.chattomate.call.LoginService;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.SocketCallBack;
+import com.example.chattomate.models.User;
 import com.example.chattomate.service.NotificationService;
+import com.quickblox.users.model.QBUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -194,6 +198,16 @@ public class SocketService extends Service {
             socketCallBack.onTyping((JSONObject) args[0]);
         }
     };
+    private final Emitter.Listener onInComingCall = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            Log.d("DEBUG-CALL", Arrays.toString(args));
+            User user = manager.getUser();
+            QBUser qbUser = new QBUser(user.email, App.USER_DEFAULT_PASSWORD);
+            qbUser.setId(Integer.parseInt(user.idApi));
+            LoginService.start(getApplicationContext(), qbUser);
+        }
+    };
 
     public SocketService(Context context) {
         this.context = context;
@@ -221,6 +235,7 @@ public class SocketService extends Service {
         mSocket.on(Config.CONVERSATION_CHANGE,onConversationChange);
         mSocket.on(Config.FRIEND_CHANGE,onFriendActiveChange);
         mSocket.on(Config.TYPING,onTyping);
+        mSocket.on(Config.IMCOMINGCALL,onInComingCall);
     }
 
     public void setSocketCallBack(SocketCallBack socketCallBack) {

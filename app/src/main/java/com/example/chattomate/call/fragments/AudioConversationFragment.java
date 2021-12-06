@@ -54,7 +54,7 @@ public class AudioConversationFragment extends BaseConversationFragment implemen
 
     @Override
     protected void configureActionBar() {
-        actionBar.setSubtitle(String.format(getString(R.string.subtitle_text_logged_in_as), currentUser.getFullName()));
+        actionBar.setSubtitle(String.format(getString(R.string.subtitle_text_logged_in_as),manager.getUser().name));
     }
 
     @Override

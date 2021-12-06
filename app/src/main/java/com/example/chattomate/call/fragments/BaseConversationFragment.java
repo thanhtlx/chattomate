@@ -22,6 +22,7 @@ import com.example.chattomate.call.utils.Consts;
 import com.example.chattomate.call.utils.SharedPrefsHelper;
 import com.example.chattomate.call.utils.UsersUtils;
 import com.example.chattomate.call.utils.WebRtcSessionManager;
+import com.example.chattomate.database.AppPreferenceManager;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.users.model.QBUser;
 import com.quickblox.videochat.webrtc.QBRTCTypes;
@@ -36,6 +37,7 @@ public abstract class BaseConversationFragment extends BaseToolBarFragment imple
     public static final String MIC_ENABLED = "is_microphone_enabled";
     protected QbUsersDbManager dbManager;
     protected WebRtcSessionManager sessionManager;
+    protected AppPreferenceManager manager;
 
     private boolean isIncomingCall;
     protected TextView timerCallText;
@@ -73,6 +75,7 @@ public abstract class BaseConversationFragment extends BaseToolBarFragment imple
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        manager = new AppPreferenceManager(getContext());
         if (conversationFragmentCallback != null) {
             conversationFragmentCallback.addCurrentCallStateListener(this);
         }

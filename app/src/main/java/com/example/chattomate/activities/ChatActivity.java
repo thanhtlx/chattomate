@@ -46,13 +46,11 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
     Call callService;
 
     private ArrayList<Message> listMess;
+    private ArrayList<Friend> members; //cac thanh vien trong cuoc tro chuyen (ko có mình)
     private User user;
     private AppPreferenceManager manager;
     private ChatRoomThreadAdapter adapter;
-    private ServiceAPI serviceAPI;
     private String idConversation;
-    private String idFriend;
-    private String idApiFriend;
     private String nameConversation;
     String URL_MESSAGE      = Config.HOST + Config.MESSAGE_URL;
     Map<String, String> token = new HashMap<>();
@@ -62,7 +60,16 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        Toolbar toolbar = findViewById(R.id.toolbar_chat);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(nameConversation);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         callService = new Call(this);
+        manager = new AppPreferenceManager(getApplicationContext());
+        user = manager.getUser();
+
+        token.put("auth-token", manager.getToken(this));
 
         send = findViewById(R.id.btn_send);
         txtContent = findViewById(R.id.txt_message);
@@ -71,23 +78,21 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         Bundle extras = getIntent().getExtras();
         idConversation = extras.getString("idConversation");
         nameConversation = extras.getString("nameConversation");
-        idFriend = extras.getString("idFriend");
-        idApiFriend = extras.getString("idApiFriend");
         member_number = extras.getInt("member_number");
 
-        Toolbar toolbar = findViewById(R.id.toolbar_chat);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(nameConversation);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        members = manager.getConversation(idConversation).members;
+        members.remove(manager.getFriend(members, user._id)); //remove self
+        for (Friend f : members) {
+            Friend friend = manager.getFriend(manager.getAllUsers(), f._id);
+            f.idApi = friend.idApi;
+            f.avatarUrl = friend.avatarUrl;
+            f.email = friend.email;
+            f.name = friend.name;
+        }
 
-        manager = new AppPreferenceManager(getApplicationContext());
-        user = manager.getUser();
         listMess = manager.getMessage(idConversation);
         if(listMess != null && listMess.size() > 50)
             listMess = new ArrayList<>(listMess.subList(listMess.size()-50,listMess.size()));
-
-        serviceAPI = new ServiceAPI(this, manager);
-        token.put("auth-token", manager.getToken(this));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
 //        layoutManager.setReverseLayout(true);
@@ -100,11 +105,6 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         adapter = new ChatRoomThreadAdapter(this, listMess,(member_number > 2) , user._id);
         adapter.setHasStableIds(true);
         recyclerView.setAdapter(adapter);
-
-        if (adapter.getItemCount() > 1) {
-//            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
-        }
-
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,7 +147,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                             manager.addMessage(sen, idConversation);
                             Log.d("debugGGGG",manager.getMessage(idConversation).get(
                                     manager.getMessage(idConversation).size()-1).content);
-//                            listMess.add(sen);
+
                             addMessToList(sen);
                             adapter.notifyDataSetChanged();
                             if (adapter.getItemCount() > 1) {
@@ -195,7 +195,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                     if(id_Conversation.equals(idConversation)) {
                         JSONObject object = data.getJSONObject("sendBy");
                         String idSender = object.getString("_id");
-                        Friend friend = manager.getFriend(manager.getFriends(), idSender);
+                        Friend friend = manager.getFriend(manager.getAllUsers(), idSender);
                         if (friend == null) {
                             friend = new Friend(object.getString("_id"),
                                     object.getString("name"), object.getString("avatarUrl"));

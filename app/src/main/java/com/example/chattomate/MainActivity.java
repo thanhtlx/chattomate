@@ -1,12 +1,15 @@
 package com.example.chattomate;
 
+import android.Manifest;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,9 +21,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -50,7 +55,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import static com.example.chattomate.config.Config.REQUEST_PERMISTION_MIC;
+import static com.example.chattomate.config.Config.REQUEST_PERMISTION_OPEN_CAMERA;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -164,6 +170,19 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        requirePermission();
+    }
+
+    private void requirePermission() {
+        if (Build.VERSION.SDK_INT >= 23){
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions( new String[]{Manifest.permission.CAMERA},REQUEST_PERMISTION_OPEN_CAMERA);
+            }
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions( new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_PERMISTION_MIC);
+            }
+        }
     }
 
     @Override
@@ -299,64 +318,14 @@ public class MainActivity extends AppCompatActivity {
                     if(button.getText().toString().equals("Nhắn tin")) {
                         String idConversation = manager.getIdConversation(friend._id);
 
-                        if(idConversation == null) {
-                            ArrayList<Friend> members = new ArrayList<>();
-                            members.add(friend);
-                            members.add(manager.getUserAsFriend());
+                        Bundle extr = new Bundle();
+                        extr.putString("idConversation", idConversation);
+                        extr.putString("nameConversation", friend.name);
+                        extr.putInt("member_number", 2);
 
-                            String URL_CONVERSATION = Config.HOST + Config.CONVERSATION_URL;
-
-                            JSONArray jsonArray = new JSONArray();
-                            for(Friend f : members)
-                                jsonArray.put(f._id);
-
-                            JSONObject m = new JSONObject();
-                            try {
-                                m.put("members", jsonArray);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            API api = new API(context);
-                            api.Call(Request.Method.POST, URL_CONVERSATION, m, token, new APICallBack() {
-                                @Override
-                                public void onSuccess(JSONObject result) {
-                                    try {
-                                        String status = result.getString("status");
-                                        if(status.equals("success")) {
-                                            JSONObject json = result.getJSONObject("data");
-                                            Conversation newCvst = new Conversation(json.getString("_id"),
-                                                    json.getString("name"), json.getString("backgroundURI"),
-                                                    json.getString("emoji"), members);
-                                            manager.addConversation(newCvst);
-
-                                            Bundle extr = new Bundle();
-                                            extr.putString("idConversation", json.getString("_id"));
-                                            extr.putString("idFriend", friend._id);
-                                            extr.putString("idApiFriend", friend.idApi);
-                                            extr.putString("nameConversation", friend.name);
-                                            extr.putInt("member_number", 2);
-
-                                            Intent intent = new Intent(context, ChatActivity.class);
-                                            intent.putExtras(extr);
-                                            startActivity(intent);
-
-                                        } else {
-                                            System.out.println("Error");
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    Log.d("debug",result.toString());
-                                }
-
-                                @Override
-                                public void onError(JSONObject result) {
-                                    Log.d("debug",result.toString());
-                                }
-                            });
-
-                        }
+                        Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                        intent.putExtras(extr);
+                        startActivity(intent);
 
                     } else if(button.getText().toString().equals("Kết bạn")) {
                         JSONObject newAddFriend = new JSONObject();
@@ -445,5 +414,13 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_PERMISTION_OPEN_CAMERA || requestCode == REQUEST_PERMISTION_MIC) {
+            requirePermission();
+        }
     }
 }
