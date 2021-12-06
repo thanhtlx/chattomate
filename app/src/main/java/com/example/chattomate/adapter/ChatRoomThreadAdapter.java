@@ -1,16 +1,17 @@
 package com.example.chattomate.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chattomate.R;
+import com.example.chattomate.interfaces.ScrollChat;
 import com.example.chattomate.models.Message;
 
 import java.text.ParseException;
@@ -22,13 +23,8 @@ import java.util.Date;
 public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String id;
     private int SELF = -10;
-    private int load = -11;
     private static String today;
     private boolean group;
-    boolean isLoading;
-    ILoadMore loadMore;
-    int visibleThreshold = 20;
-    int lastVisibleItem, totalItemCount;
 
     private Context mContext;
     private ArrayList<Message> messageArrayList;
@@ -44,38 +40,11 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    class LoadingViewHolder extends RecyclerView.ViewHolder {
-        public ProgressBar progressBar;
-
-        public LoadingViewHolder(View itemView) {
-            super(itemView);
-            progressBar = (ProgressBar)itemView.findViewById(R.id.progressBar);
-        }
-    }
-
     public ChatRoomThreadAdapter(Context mContext, ArrayList<Message> messageArrayList, boolean group, String _id) {
         this.mContext = mContext;
         this.messageArrayList = messageArrayList;
         this.id = _id;
         this.group = group;
-
-//        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager)recyclerView.getLayoutManager();
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                totalItemCount = linearLayoutManager.getItemCount();
-//                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition();
-//                if(!isLoading && totalItemCount <= (lastVisibleItem+visibleThreshold))
-//                {
-//                    if(loadMore != null)
-//                        loadMore.onLoadMore();
-//                    isLoading = true;
-//                }
-//
-//            }
-//        });
-
         Calendar calendar = Calendar.getInstance();
         today = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
     }
@@ -84,11 +53,6 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView;
 
-        // view type is to identify where to render the chat message
-        // left or right
-//        if(viewType == load)
-//            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.loader, parent, false);
-//        else
         if (viewType == SELF) { // self message
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_self, parent, false);
         } else { // others message
@@ -106,21 +70,14 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             return SELF;
         }
 
-//        if(position == 0)
-
         return position;
-    }
-
-    public void setLoadMore(ILoadMore loadMore) {
-        this.loadMore = loadMore;
-    }
-
-    public void setLoaded() {
-        isLoading = false;
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if(position == messageArrayList.size()-1) {
+            ((ScrollChat)mContext).ScrollRecycleView();
+        }
         Message message = messageArrayList.get(position);
 
         ViewHolder h = (ViewHolder) holder;
@@ -159,5 +116,12 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         return timestamp;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        int idx =  messageArrayList.get(position)._id.hashCode();
+        Log.d("DEBUG", String.valueOf(idx));
+        return idx;
     }
 }

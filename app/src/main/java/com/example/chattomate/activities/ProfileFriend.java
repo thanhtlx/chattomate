@@ -155,8 +155,6 @@ public class ProfileFriend extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_friend, menu);
-
         return true;
     }
 
@@ -165,10 +163,6 @@ public class ProfileFriend extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-            case R.id.voicecall_icon:
-
-            case R.id.videocall_icon:
-
             default:break;
         }
 

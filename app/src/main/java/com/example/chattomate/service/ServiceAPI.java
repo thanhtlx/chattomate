@@ -42,6 +42,7 @@ public class ServiceAPI {
         token.put("auth-token", manager.getToken(c));
     }
 
+    //lấy tất cả người dùng
     public void getAll() {
         API api = new API(context);
         api.Call(Request.Method.GET, URL, null, token, new APICallBack() {
@@ -152,7 +153,7 @@ public class ServiceAPI {
                             String id = j.getString("_id");
                             String content = j.getString("content");
                             String contentUrl = j.getString("contentUrl");
-                            String sendAt = j.getJSONObject("sendBy").getString("createdAt");
+                            String sendAt = j.getString("createdAt");
 
                             JSONObject a = j.getJSONObject("sendBy");
                             Friend sender = new Friend(a.getString("_id"), a.getString("name"), a.getString("avatarUrl"));
@@ -183,7 +184,7 @@ public class ServiceAPI {
 
             @Override
             public void onError(JSONObject result) {
-                Log.d("debug",result.toString());
+//                Log.d("debug",result.toString());
             }
         });
 
@@ -269,7 +270,11 @@ public class ServiceAPI {
                             JSONObject tmp = temp.getJSONObject("friend");
                             Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
                                     tmp.getString("name"), tmp.getString("avatarUrl"));
-                            friend.idApi = tmp.getString("idApi");
+
+                            Friend x;
+                            if((x = manager.getFriend(manager.getAllUsers(), friend._id)) != null)
+                                friend.idApi = x.idApi;
+
                             list.add(friend);
                         }
                         manager.storeFriends(list);

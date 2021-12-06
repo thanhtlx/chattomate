@@ -50,7 +50,7 @@ public class AppPreferenceManager {
     private static final String TOKEN           = "token";
     private static final String FB_TOKEN        = "fb_token";
     private static final String TIME_TOKEN      = "time token";
-
+    private static final String IS_SILENCE      = "isSilence";
 
     public AppPreferenceManager(Context context) {
         this._context = context;
@@ -74,6 +74,15 @@ public class AppPreferenceManager {
 
     public boolean getStateActive(){
         return pref.getBoolean(STATE_ACTIVE, false);
+    }
+
+    public void setSilence(boolean b) {
+        editor.putBoolean(IS_SILENCE, b).commit();
+        Log.d(TAG, "User state silence session modified!");
+    }
+
+    public boolean getSilence(){
+        return pref.getBoolean(IS_SILENCE, false);
     }
 
     public void storeUser(User user) {

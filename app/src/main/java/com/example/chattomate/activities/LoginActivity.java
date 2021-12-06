@@ -173,10 +173,11 @@ public class LoginActivity extends AppCompatActivity {
 
     public synchronized void getData() {
         serviceAPI = new ServiceAPI(this, manager);
+        serviceAPI.getAll();
+
         serviceAPI.getFriends();
         serviceAPI.getAllConversation();
         serviceAPI.getAllFriendSendAdd();
         serviceAPI.getAllSendAddFriend();
-        serviceAPI.getAll();
     }
 }

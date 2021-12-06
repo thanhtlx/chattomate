@@ -123,14 +123,13 @@ public class ChatFragment extends Fragment {
                 if (c.members.size() == 2) { //tro chuyen 1v1
                     if(!c.members.get(0)._id.equals(user._id)) {
                         idFriend = c.members.get(0)._id;
-                        idApiFriend = c.members.get(0).idApi;
                     }
                     else {
                         idFriend = c.members.get(1)._id;
-                        idApiFriend = c.members.get(1).idApi;
                     }
 
                     Friend friend = manager.getFriend(manager.getFriends(), idFriend);
+                    idApiFriend = manager.getFriend(manager.getAllUsers(), idFriend).idApi;
                     if(friend != null) {
                         if (friend.avatarUrl.length() > 0)
                             h.avatar.setImageURI(Uri.parse(friend.avatarUrl));
