@@ -76,73 +76,73 @@ public class ProfileFriend extends AppCompatActivity {
         textView.setText(nameConversation);
         if(friend.avatarUrl.length() > 0) imageView.setImageURI(Uri.parse(friend.avatarUrl));
 
-        API api = new API(this);
-        ib.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int member_number = extras.getInt("member_number");
-
-                if(idConversation == null) {
-                    ArrayList<Friend> members = new ArrayList<>();
-                    members.add(friend);
-                    members.add(manager.getUserAsFriend());
-
-                    String URL_CONVERSATION = Config.HOST + Config.CONVERSATION_URL;
-
-                    JSONArray jsonArray = new JSONArray();
-                    for(Friend f : members)
-                        jsonArray.put(f._id);
-
-                    JSONObject m = new JSONObject();
-                    try {
-                        m.put("members", jsonArray);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    api.Call(Request.Method.POST, URL_CONVERSATION, m, token, new APICallBack() {
-                        @Override
-                        public void onSuccess(JSONObject result) {
-                            try {
-                                String status = result.getString("status");
-                                if(status.equals("success")) {
-                                    JSONObject json = result.getJSONObject("data");
-                                    Conversation newCvst = new Conversation(json.getString("_id"),
-                                            json.getString("name"), json.getString("backgroundURI"),
-                                            json.getString("emoji"), members);
-                                    manager.addConversation(newCvst);
-
-                                    Bundle extr = new Bundle();
-
-                                    extr.putString("idConversation", json.getString("_id"));
-                                    extr.putString("idFriend", idFriend);
-                                    extr.putString("idApiFriend", idApiFriend);
-                                    extr.putString("nameConversation", nameConversation);
-                                    extr.putInt("member_number", member_number);
-
-                                    Intent intent = new Intent(ProfileFriend.this, ChatActivity.class);
-                                    intent.putExtras(extr);
-                                    startActivity(intent);
-
-                                } else {
-                                    System.out.println("Error");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            Log.d("debug",result.toString());
-                        }
-
-                        @Override
-                        public void onError(JSONObject result) {
-                            Log.d("debug",result.toString());
-                        }
-                    });
-
-                }
-
-            }
-        });
+//        API api = new API(this);
+//        ib.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                int member_number = extras.getInt("member_number");
+//
+//                if(idConversation == null) {
+//                    ArrayList<Friend> members = new ArrayList<>();
+//                    members.add(friend);
+//                    members.add(manager.getUserAsFriend());
+//
+//                    String URL_CONVERSATION = Config.HOST + Config.CONVERSATION_URL;
+//
+//                    JSONArray jsonArray = new JSONArray();
+//                    for(Friend f : members)
+//                        jsonArray.put(f._id);
+//
+//                    JSONObject m = new JSONObject();
+//                    try {
+//                        m.put("members", jsonArray);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    api.Call(Request.Method.POST, URL_CONVERSATION, m, token, new APICallBack() {
+//                        @Override
+//                        public void onSuccess(JSONObject result) {
+//                            try {
+//                                String status = result.getString("status");
+//                                if(status.equals("success")) {
+//                                    JSONObject json = result.getJSONObject("data");
+//                                    Conversation newCvst = new Conversation(json.getString("_id"),
+//                                            json.getString("name"), json.getString("backgroundURI"),
+//                                            json.getString("emoji"), members);
+//                                    manager.addConversation(newCvst);
+//
+//                                    Bundle extr = new Bundle();
+//
+//                                    extr.putString("idConversation", json.getString("_id"));
+//                                    extr.putString("idFriend", idFriend);
+//                                    extr.putString("idApiFriend", idApiFriend);
+//                                    extr.putString("nameConversation", nameConversation);
+//                                    extr.putInt("member_number", member_number);
+//
+//                                    Intent intent = new Intent(ProfileFriend.this, ChatActivity.class);
+//                                    intent.putExtras(extr);
+//                                    startActivity(intent);
+//
+//                                } else {
+//                                    System.out.println("Error");
+//                                }
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                            Log.d("debug",result.toString());
+//                        }
+//
+//                        @Override
+//                        public void onError(JSONObject result) {
+//                            Log.d("debug",result.toString());
+//                        }
+//                    });
+//
+//                }
+//
+//            }
+//        });
 
         del.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -15,6 +15,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.quickblox.auth.session.QBSettings;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 public class App  extends Application {
     private static App instance;
     private static SocketService socket;
@@ -25,6 +32,31 @@ public class App  extends Application {
 
     public static final String USER_DEFAULT_PASSWORD = "chattomate-qb-secert";
     private QBResRequestExecutor qbResRequestExecutor;
+    static Calendar calendar = Calendar.getInstance();
+
+    public static String getTimeStamp(String dateStr) {
+        String today = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+        SimpleDateFormat format = new SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String timestamp = "";
+
+        today = today.length() < 2 ? "0" + today : today;
+
+        try {
+            Date date = format.parse(dateStr);
+            SimpleDateFormat todayFormat = new SimpleDateFormat("dd");
+
+            String dateToday = todayFormat.format(date);
+            format = dateToday.equals(today) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("dd LLL, hh:mm a");
+            String date1 = format.format(date);
+            timestamp = date1.toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return timestamp;
+    }
 
     @Override
     public void onCreate() {

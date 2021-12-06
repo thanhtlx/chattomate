@@ -84,7 +84,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         user = manager.getUser();
         listMess = manager.getMessage(idConversation);
         if(listMess != null && listMess.size() > 50)
-            listMess = new ArrayList<>(listMess.subList(listMess.size()-50,listMess.size()-1));
+            listMess = new ArrayList<>(listMess.subList(listMess.size()-50,listMess.size()));
 
         serviceAPI = new ServiceAPI(this, manager);
         token.put("auth-token", manager.getToken(this));
@@ -189,7 +189,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
             @Override
             public void onNewMessage(JSONObject data) {
-                Log.d("debugG", data.toString());
+                Log.d("debugChatNewMess", data.toString());
                 try {
                     JSONObject object = data.getJSONObject("sendBy");
                     String idSender = object.getString("_id");
@@ -259,67 +259,6 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         App.getInstance().getSocket().unSetSocketCallBack();
     }
 
-    public synchronized void fetchChat() {
-        API api = new API(this);
-        api.Call(Request.Method.GET, URL_MESSAGE+"/"+idConversation, null, token, new APICallBack() {
-            @Override
-            public void onSuccess(JSONObject result) {
-                try {
-                    String status = result.getString("status");
-                    if(status.equals("success")) {
-                        JSONArray array = result.getJSONArray("data");
-                        ArrayList<Message> messages = new ArrayList<>();
-                        for(int i = 0; i < array.length(); i++) {
-                            JSONObject j = array.getJSONObject(i);
-                            String conversation = j.getString("conversation");
-                            String id = j.getString("_id");
-                            String content = j.getString("content");
-                            String contentUrl = j.getString("contentUrl");
-                            String sendAt = j.getJSONObject("sendBy").getString("createdAt");
-
-                            JSONObject a = j.getJSONObject("sendBy");
-                            Friend sender = new Friend(a.getString("_id"), a.getString("name"), a.getString("avatarUrl"));
-
-                            String type = j.getString("type");
-                            Boolean deleted = j.getJSONArray("deleteBy").length() > 0;
-
-                            ArrayList<Friend> idSeenBy = new ArrayList<>();
-                            if(j.getJSONArray("seenBy").length() > 0) {
-                                for (int n = 0; n < j.getJSONArray("seenBy").length(); n++) {
-                                    JSONObject b = j.getJSONArray("seenBy").getJSONObject(i);
-                                    idSeenBy.add(new Friend(b.getString("_id"), b.getString("name"), b.getString("avatarUrl")));
-                                }
-                            }
-
-                            messages.add(new Message(conversation, id, content, contentUrl, sendAt, idSeenBy, sender, deleted, type));
-                        }
-
-                        manager.storeMessage(messages, idConversation);
-                        listMess.clear();
-                        listMess.addAll(messages);
-
-                    } else {
-                        System.out.println("Error");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.d("debug",result.toString());
-            }
-
-            @Override
-            public void onError(JSONObject result) {
-                Log.d("debug",result.toString());
-            }
-        });
-
-        adapter.notifyDataSetChanged();
-        if (adapter.getItemCount() > 1) {
-
-            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_chat, menu);
@@ -333,9 +272,9 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
             case android.R.id.home:
                 onBackPressed();
             case R.id.voicecall_icon:
-                if(!idApiFriend.isEmpty()) callService.startCall(false, idApiFriend);
+//                callService.startCall(false, idApiFriend);
             case R.id.videocall_icon:
-                if(!idApiFriend.isEmpty()) callService.startCall(true, idApiFriend);
+//                callService.startCall(true, idApiFriend);
             case R.id.options:
 
             default:break;

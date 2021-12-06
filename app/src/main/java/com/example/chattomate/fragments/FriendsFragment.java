@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
+import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.activities.ProfileFriend;
@@ -30,6 +31,7 @@ import com.example.chattomate.call.utils.WebRtcSessionManager;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.service.API;
 import com.example.chattomate.service.Call;
@@ -112,42 +114,54 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        API api = new API(getContext());
-        String URL_FRIEND       = Config.HOST + Config.FRIENDS_URL;
 
-        api.Call(Request.Method.GET, URL_FRIEND, null, token, new APICallBack() {
+        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
             @Override
-            public void onSuccess(JSONObject result) {
-                try {
-                    String status = result.getString("status");
-                    if(status.equals("success")) {
-                        JSONArray friends = result.getJSONArray("data");
-                        ArrayList<Friend> list = new ArrayList<>();
+            public void onNewMessage(JSONObject data) {
 
-                        for(int i = 0; i < friends.length(); i++) {
-                            JSONObject temp = friends.getJSONObject(i);
-                            JSONObject tmp = temp.getJSONObject("friend");
-                            Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
-                                    tmp.getString("name"), tmp.getString("avatarUrl"));
-                            list.add(friend);
-                        }
-                        manager.storeFriends(list);
-                        friendsList.clear();
-                        friendsList.addAll(list);
-                        adapter.notifyDataSetChanged();
-
-                    } else {
-                        System.out.println("Lỗi lấy danh sách bạn bè");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.d("debug",result.toString());
             }
 
             @Override
-            public void onError(JSONObject result) {
-                Log.d("debug",result.toString());
+            public void onNewFriendRequest(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewConversation(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewFriend(JSONObject data) {
+                try {
+                    JSONObject j = data.getJSONObject("friend");
+                    Friend f = new Friend(j.getString("_id"), j.getString("name"),
+                            data.getString("nickname"), j.getString("avatarUrl"));
+
+                    f.idApi = manager.getFriend(manager.getAllUsers(), f._id).idApi;
+
+                    manager.addFriend(f);
+                    friendsList.add(f);
+                    adapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onConversationChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onFriendActiveChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onTyping(JSONObject data) {
+
             }
         });
     }

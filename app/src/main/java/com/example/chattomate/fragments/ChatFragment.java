@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +18,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.database.AppPreferenceManager;
+import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.ServiceAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -91,8 +97,73 @@ public class ChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        adapter = new ListConversationAdapter(manager.getConversations(), getContext());
-        recyclerView.setAdapter(adapter);
+        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
+            @Override
+            public void onNewMessage(JSONObject data) {
+                Log.d("debugChatFragment", data.toString());
+                try {
+                    JSONObject object = data.getJSONObject("sendBy");
+                    String idConversation = data.getString("conversation");
+                    String content = data.getString("content");
+                    String contentUrl = data.getString("contentUrl");
+                    String idSender = object.getString("_id");
+                    Friend friend  = manager.getFriend(manager.getFriends(), idSender);
+                    if(friend == null) {
+                        friend = new Friend(object.getString("_id"),
+                                object.getString("name"), object.getString("avatarUrl"));
+                        friend.idApi = object.getString("idApi");
+                    }
+                    Message message = new Message(idConversation, data.getString("_id"),
+                            content, contentUrl,
+                            data.getString("createdAt"), null, friend, false,
+                            data.getString("type"));
+                    manager.addMessage(message, idConversation);
+
+                    //TODO
+//                    adapter = new ListConversationAdapter(manager.getConversations(), getContext());
+//                    recyclerView.setAdapter(adapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onNewFriendRequest(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewConversation(JSONObject data) {
+
+            }
+
+            @Override
+            public void onNewFriend(JSONObject data) {
+
+            }
+
+            @Override
+            public void onConversationChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onFriendActiveChange(JSONObject data) {
+
+            }
+
+            @Override
+            public void onTyping(JSONObject data) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        App.getInstance().getSocket().unSetSocketCallBack();
     }
 
     class ListConversationAdapter extends RecyclerView.Adapter {
@@ -157,7 +228,7 @@ public class ChatFragment extends Fragment {
                             else h.message.setText(name_friend + " đã gửi file đính kèm");
 
                         }
-                        h.time.setText(message.sendAt);
+                        h.time.setText(App.getTimeStamp(message.sendAt));
                     }
                 }
                 h.name.setText(nameConversation);
@@ -184,6 +255,11 @@ public class ChatFragment extends Fragment {
         public int getItemCount() {
             if(list == null) return 0;
             return list.size();
+        }
+
+        public void newMessage(ArrayList<Conversation> conversations) {
+            list = new ArrayList<>(conversations);
+            notifyDataSetChanged();
         }
 
     }

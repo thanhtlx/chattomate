@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.interfaces.ScrollChat;
 import com.example.chattomate.models.Message;
@@ -19,13 +20,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String id;
     private int SELF = -10;
-    private static String today;
     private boolean group;
-
     private Context mContext;
     private ArrayList<Message> messageArrayList;
 
@@ -45,8 +46,6 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         this.messageArrayList = messageArrayList;
         this.id = _id;
         this.group = group;
-        Calendar calendar = Calendar.getInstance();
-        today = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
     }
 
     @Override
@@ -82,40 +81,19 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         ViewHolder h = (ViewHolder) holder;
         h.message.setText(message.content);
-        h.timestamp.setText(message.sendAt);
 
         if (group)
             if (message.sendBy.nickName.length() > 0) h.name_other.setText(message.sendBy.nickName);
             else h.name_other.setText(message.sendBy.name);
 
-//        String timestamp = getTimeStamp(message.sendAt);
-//        h.timestamp.setText(timestamp);
+        String timestamp = App.getTimeStamp(message.sendAt);
+        h.timestamp.setText(timestamp);
     }
 
     @Override
     public int getItemCount() {
         if(messageArrayList == null) return 0;
         return messageArrayList.size();
-    }
-
-    public static String getTimeStamp(String dateStr) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String timestamp = "";
-
-        today = today.length() < 2 ? "0" + today : today;
-
-        try {
-            Date date = format.parse(dateStr);
-            SimpleDateFormat todayFormat = new SimpleDateFormat("dd");
-            String dateToday = todayFormat.format(date);
-            format = dateToday.equals(today) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("dd LLL, hh:mm a");
-            String date1 = format.format(date);
-            timestamp = date1.toString();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return timestamp;
     }
 
     @Override
