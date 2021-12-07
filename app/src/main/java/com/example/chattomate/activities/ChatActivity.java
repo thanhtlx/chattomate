@@ -1,5 +1,6 @@
 package com.example.chattomate.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -29,9 +30,7 @@ import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
 import com.example.chattomate.service.Call;
-import com.example.chattomate.service.ServiceAPI;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,7 +61,6 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         setContentView(R.layout.activity_chat);
         Toolbar toolbar = findViewById(R.id.toolbar_chat);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(nameConversation);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         callService = new Call(this);
@@ -78,6 +76,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         Bundle extras = getIntent().getExtras();
         idConversation = extras.getString("idConversation");
         nameConversation = extras.getString("nameConversation");
+        getSupportActionBar().setTitle(nameConversation);
         member_number = extras.getInt("member_number");
 
         members = manager.getMembersInConversation(idConversation);
@@ -104,6 +103,12 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 sendMessage();
             }
         });
+
+        if(members.size() == 1) {
+            Friend x = members.get(0);
+            if(x.nickName.length() > 0) getSupportActionBar().setTitle(x.nickName);
+        }
+        getSupportActionBar().setTitle(nameConversation);
 
     }
 
@@ -157,7 +162,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
 
                 @Override
                 public void onError(JSONObject result) {
-                    Log.d("debug",result.toString());
+//                    Log.d("debug",result.toString());
                 }
             });
 
@@ -266,12 +271,28 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         {
             case android.R.id.home:
                 onBackPressed();
+                break;
             case R.id.voicecall_icon:
 //                callService.startCall(false, idApiFriend);
             case R.id.videocall_icon:
 //                callService.startCall(true, idApiFriend);
             case R.id.options:
+                Intent intent;
+                Bundle ext = new Bundle();
+                ext.putInt("member_number", members.size());
+                if(members.size() == 1) {
+                    ext.putString("id", members.get(0)._id);
+                    ext.putString("name", members.get(0).name);
+                    intent = new Intent(ChatActivity.this, MenuFriendChatRoom.class);
+                } else {
+                    ext.putString("name", nameConversation);
+                    ext.putString("id", idConversation);
+                    intent = new Intent(ChatActivity.this, MenuGroupChatRoom.class);
+                }
 
+                intent.putExtras(ext);
+                startActivity(intent);
+                break;
             default:break;
         }
 

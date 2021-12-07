@@ -50,8 +50,8 @@ public class UserFragment extends Fragment {
         manager = new AppPreferenceManager(getContext());
         user = manager.getUser();
 
-        avatarUser = view.findViewById(R.id.avatar_menu_chat);
-        nameUser = view.findViewById(R.id.name_menu_chat);
+        avatarUser = view.findViewById(R.id.user_avatar);
+        nameUser = view.findViewById(R.id.User_name);
         turnoff_active = view.findViewById(R.id.turnoffactive_switch);
         disturb = view.findViewById(R.id.donotdisturb_switch);
         update_profile = view.findViewById(R.id.changing_infor_text);

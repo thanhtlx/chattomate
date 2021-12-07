@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     AppPreferenceManager manager;
     ServiceAPI serviceAPI;
     ArrayList<Friend> allUsers = new ArrayList<>();
-    private String URL = Config.HOST + Config.UPDATE_PROFILE_URL;
     private String URL_FRIEND       = Config.HOST + Config.FRIENDS_URL;
     HashMap<String, String> token;
     MatrixCursor cursor;
