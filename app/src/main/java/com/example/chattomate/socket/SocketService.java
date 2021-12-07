@@ -1,6 +1,5 @@
 package com.example.chattomate.socket;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -11,7 +10,6 @@ import android.util.Log;
 import com.example.chattomate.App;
 import com.example.chattomate.MainActivity;
 import com.example.chattomate.activities.ChatActivity;
-import com.example.chattomate.activities.LoginActivity;
 import com.example.chattomate.call.LoginService;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
@@ -20,12 +18,10 @@ import com.example.chattomate.models.User;
 import com.example.chattomate.service.NotificationService;
 import com.quickblox.users.model.QBUser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import io.socket.client.IO;

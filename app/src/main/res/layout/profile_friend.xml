@@ -19,7 +19,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/top_settings_background"
+            android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:scaleType="centerCrop"
@@ -30,15 +30,15 @@
             app:srcCompat="@drawable/settings_background" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_friend_avatar"
+            android:id="@+id/avatarChangepwd"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginTop="50dp"
             android:src="@drawable/avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="@+id/top_settings_background"
-            app:layout_constraintTop_toTopOf="@+id/top_settings_background" />
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view" />
 
         <TextView
             android:id="@+id/profile_friend_name"
@@ -49,8 +49,8 @@
             android:textColor="@color/black"
             android:textSize="20dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/top_settings_background"
-            app:layout_constraintTop_toBottomOf="@+id/profile_friend_avatar" />
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toBottomOf="@+id/avatarChangepwd" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout

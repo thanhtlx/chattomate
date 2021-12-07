@@ -53,7 +53,7 @@ public class ProfileFriend extends AppCompatActivity {
         idFriend = extras.getString("idFriend");
         friend = manager.getFriend(manager.getFriends(), idFriend);
 
-        imageView = findViewById(R.id.profile_friend_avatar);
+        imageView = findViewById(R.id.avatarChangepwd);
         textView = findViewById(R.id.profile_friend_name);
         ib = findViewById(R.id.message_friend);
         del = findViewById(R.id.del_friend);

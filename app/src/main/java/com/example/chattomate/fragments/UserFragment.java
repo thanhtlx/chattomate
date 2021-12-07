@@ -14,9 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
-import com.example.chattomate.MainActivity;
 import com.example.chattomate.R;
 import com.example.chattomate.activities.ChangePasswordActivity;
 import com.example.chattomate.activities.LoginActivity;
@@ -52,8 +50,8 @@ public class UserFragment extends Fragment {
         manager = new AppPreferenceManager(getContext());
         user = manager.getUser();
 
-        avatarUser = view.findViewById(R.id.user_avatar);
-        nameUser = view.findViewById(R.id.User_name);
+        avatarUser = view.findViewById(R.id.avatar_menu_chat);
+        nameUser = view.findViewById(R.id.name_menu_chat);
         turnoff_active = view.findViewById(R.id.turnoffactive_switch);
         disturb = view.findViewById(R.id.donotdisturb_switch);
         update_profile = view.findViewById(R.id.changing_infor_text);
