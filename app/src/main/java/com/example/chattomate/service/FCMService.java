@@ -6,11 +6,15 @@ import androidx.annotation.NonNull;
 
 import com.android.volley.Request;
 import com.example.chattomate.App;
+import com.example.chattomate.call.LoginService;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.models.User;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.quickblox.users.model.QBUser;
+
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -31,12 +35,21 @@ public class FCMService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull @NotNull RemoteMessage remoteMessage) {
-        Log.d("DEBUG","Receiver mesaage");
-//        NotificationService notificationService = new NotificationService(this);
-//        Intent intent = new Intent(this.getApplicationContext(), ChatActivity.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0, intent, 0);
-//        notificationService.pushNotification(Config.CHANNEL_NOTIFICATION_NEW_MESSAGE,Config.ID_NOTIFICATION_NEW_MESSAGE,"title","content",pendingIntent);
+        Log.d("DEBUG", "Receiver mesaage");
         App.getInstance();
+        if (manager == null) {
+            manager = new AppPreferenceManager(this);
+        }
+        User user = manager.getUser();
+        if (user == null) return;
+        Map<String, String> data = remoteMessage.getData();
+        Log.d("DEBUG", String.valueOf(data));
+        if(data.containsKey("data") && data.get("data").equals("ping")) {
+            Log.d("DEBUG", "Start chat");
+            QBUser qbUser = new QBUser(user.email, App.USER_DEFAULT_PASSWORD);
+            qbUser.setId(Integer.parseInt(user.idApi));
+            LoginService.start(this, qbUser);
+        }
     }
 
     @Override
@@ -48,9 +61,8 @@ public class FCMService extends FirebaseMessagingService {
         if (api  == null) {
             api = new API(getApplicationContext());
         }
-//        Log.d("DEBUG-new token", s);
-        manager.setFBToken(s);
-        if(manager.getUser() == null) {
+        Log.d("DEBUG-new token", s);
+        if (manager.getUser() == null) {
             return;
         }
         if(token.size() == 0){
@@ -73,18 +85,24 @@ public class FCMService extends FirebaseMessagingService {
                 }
             });
         }
-        api.Call(Request.Method.POST, R_FB_T_URL, data,token, new APICallBack() {
+        manager.setFBToken(s);
+        try {
+            data.remove("fcm_token");
+            data.put("fcm_token", manager.getFBToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        api.Call(Request.Method.POST, R_FB_T_URL, data, token, new APICallBack() {
             @Override
             public void onSuccess(JSONObject result) {
                 Log.d("DEBUG","registoken success");
             }
             @Override
             public void onError(JSONObject result) {
+                Log.d("DEBUG-new token", "f success");
             }
         });
 
     }
-
-
 
 }

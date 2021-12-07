@@ -30,6 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/NoActionBar">
         <activity
+            android:name=".activities.CreateGroupChat"
+            android:exported="true" />
+        <activity
             android:name=".activities.MenuFriendChatRoom"
             android:exported="false" />
         <activity

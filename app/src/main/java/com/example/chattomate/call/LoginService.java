@@ -3,8 +3,10 @@ package com.example.chattomate.call;
 import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -59,6 +61,7 @@ public class LoginService extends Service {
     }
 
     public static void start(Context context, QBUser qbUser) {
+        Log.d("DEBUG-CALL",qbUser.getLogin());
         start(context, qbUser, null);
     }
 
@@ -223,6 +226,8 @@ public class LoginService extends Service {
     @Override
     public void onDestroy() {
         Log.d(TAG, "Service onDestroy()");
+        logout();
+        ChatPingAlarmManager.onDestroy();
         super.onDestroy();
     }
 

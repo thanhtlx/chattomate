@@ -273,9 +273,11 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 onBackPressed();
                 break;
             case R.id.voicecall_icon:
-//                callService.startCall(false, idApiFriend);
+                callService.startCall(false, "1","1");
+                break;
             case R.id.videocall_icon:
-//                callService.startCall(true, idApiFriend);
+                callService.startCall(true, "1", "1");
+                break;
             case R.id.options:
                 Intent intent;
                 Bundle ext = new Bundle();

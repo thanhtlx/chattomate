@@ -68,8 +68,7 @@ public class ErrorUtils {
     }
 
     public static void showErrorToast(QBResponseException exception) {
-        ToastUtils.shortToast(String.format("[ERROR] Request has been completed with errors: %s", exception.getErrors()
-                + ", code: " + exception.getHttpStatusCode()));
+
     }
 
     public static void showErrorDialog(Context context, @StringRes int errorMessage, String error) {

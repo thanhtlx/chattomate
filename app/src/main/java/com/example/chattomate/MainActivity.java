@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +36,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.android.volley.Request;
 import com.example.chattomate.activities.ChatActivity;
+import com.example.chattomate.activities.CreateGroupChat;
 import com.example.chattomate.activities.ProfileFriend;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
@@ -109,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
         searchView = findViewById(R.id.search_view);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setQueryHint("Tìm kiếm");
-        searchView.setSuggestionsAdapter(new SearchAdapter(this, cursor, allUsers));
+        SearchAdapter searchAdapter = new SearchAdapter(this, cursor, allUsers);
+        searchView.setSuggestionsAdapter(searchAdapter);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -118,7 +122,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
+                if (TextUtils.isEmpty(newText)) {
+                    searchAdapter.getFilter().filter("");
+//                    .clearTextFilter();
+                } else {
+                    searchAdapter.getFilter().filter(newText.toString());
+                }
                 return true;
             }
         });
@@ -175,11 +184,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void requirePermission() {
         if (Build.VERSION.SDK_INT >= 23){
-            if (ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions( new String[]{Manifest.permission.CAMERA},REQUEST_PERMISTION_OPEN_CAMERA);
-            }
-            if (ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
-                requestPermissions( new String[]{Manifest.permission.RECORD_AUDIO},REQUEST_PERMISTION_MIC);
+            if (ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED ||
+                    ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
+                requestPermissions( new String[]{Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO},REQUEST_PERMISTION_OPEN_CAMERA);
             }
         }
     }
@@ -243,8 +250,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case R.id.add_new_message:
-                //Tạo tin nhắn mới
-
+                if(manager.getFriends().size() == 0)
+                    Toast.makeText(MainActivity.this, "Bạn hiện chưa có người bạn nào.\nHãy kết thêm bạn bè để trò chuyện!", Toast.LENGTH_SHORT).show();
+                else startActivity(new Intent(MainActivity.this, CreateGroupChat.class));
             default:
                 return super.onOptionsItemSelected(item);
         }

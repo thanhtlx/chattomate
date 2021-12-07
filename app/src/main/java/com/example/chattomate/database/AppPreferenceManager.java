@@ -455,4 +455,18 @@ public class AppPreferenceManager {
         editor.clear().commit();
     }
 
+    public String checkHasConversation(ArrayList<Friend> friends) {
+        for(Conversation c : getConversations()) {
+            if(c.members.size() == friends.size()) {
+                for(Friend f : friends) {
+                    if(getFriend(c.members, f._id) != null) c.members.remove(getFriend(c.members, f._id));
+                    else break;
+                }
+
+                if(c.members.size() == 0) return c._id;
+            }
+        }
+        return null;
+    }
+
 }
