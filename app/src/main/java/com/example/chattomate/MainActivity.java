@@ -41,6 +41,7 @@ import com.example.chattomate.activities.ProfileFriend;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.fragments.ChatFragment;
+import com.example.chattomate.fragments.FriendMainFragment;
 import com.example.chattomate.fragments.FriendsFragment;
 import com.example.chattomate.fragments.UserFragment;
 import com.example.chattomate.interfaces.APICallBack;
@@ -268,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 1:
-                    return new FriendsFragment();
+                    return new FriendMainFragment();
                 case 2:
                     return new UserFragment();
                 case 0:

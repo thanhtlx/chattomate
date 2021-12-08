@@ -50,7 +50,7 @@ public class UserFragment extends Fragment {
         manager = new AppPreferenceManager(getContext());
         user = manager.getUser();
 
-        avatarUser = view.findViewById(R.id.user_avatar);
+        avatarUser = view.findViewById(R.id.avatar_request);
         nameUser = view.findViewById(R.id.User_name);
         turnoff_active = view.findViewById(R.id.turnoffactive_switch);
         disturb = view.findViewById(R.id.donotdisturb_switch);

@@ -428,7 +428,6 @@ public class ServiceAPI {
             e.printStackTrace();
         }
 
-
         API api = new API(context);
         api.Call(Request.Method.PUT, url, newAddFriend, token, new APICallBack() {
             @Override

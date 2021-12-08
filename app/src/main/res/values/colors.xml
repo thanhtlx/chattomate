@@ -10,6 +10,7 @@
     <color name="pink1">#DC60F4</color>
     <color name="pink3">#FF6200EE</color>
     <color name="message_card">#E6BBF8</color>
+    <color name="friend_card">#F1D8FD</color>
 
     <!--    video call -->
     <color name="color_blue_qb">#046ad0</color>
