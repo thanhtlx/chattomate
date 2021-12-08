@@ -30,6 +30,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.335" />
 
+    <ImageButton
+        android:id="@+id/imageButton4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+        app:layout_constraintEnd_toEndOf="@+id/imageView5"
+        app:layout_constraintStart_toStartOf="@+id/imageView5"
+        app:layout_constraintTop_toBottomOf="@+id/user_avatar"
+        app:layout_constraintVertical_bias="0.474"
+        app:srcCompat="@drawable/change_avt" />
+
     <EditText
         android:id="@+id/username_changing"
         android:layout_width="300dp"
@@ -37,7 +51,7 @@
         android:layout_marginTop="45dp"
         android:drawableLeft="@drawable/username_changing"
         android:ems="10"
-        android:hint="  Edit Username"
+        android:hint="  Tên người dùng"
         android:inputType="textPersonName"
         app:layout_constraintTop_toBottomOf="@+id/imageView5"
         tools:layout_editor_absoluteX="55dp" />
@@ -47,23 +61,11 @@
         android:layout_width="300dp"
         android:layout_height="48dp"
         android:layout_marginTop="25dp"
-        android:drawableLeft="@drawable/date_changing"
+        android:drawableLeft="@drawable/time_changing"
         android:ems="10"
-        android:hint="  Edit Birthday"
+        android:hint="  Ngày sinh (dd/mm/yyyy)"
         android:inputType="textPersonName"
         app:layout_constraintTop_toBottomOf="@+id/username_changing"
-        tools:layout_editor_absoluteX="55dp" />
-
-    <EditText
-        android:id="@+id/username_changing3"
-        android:layout_width="300dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="25dp"
-        android:drawableLeft="@drawable/mail_changing"
-        android:ems="10"
-        android:hint="  Edit Email"
-        android:inputType="textPersonName"
-        app:layout_constraintTop_toBottomOf="@+id/username_changing2"
         tools:layout_editor_absoluteX="55dp" />
 
     <EditText
@@ -73,9 +75,22 @@
         android:layout_marginTop="25dp"
         android:drawableLeft="@drawable/phone_changing"
         android:ems="10"
-        android:hint="  Edit Phonenumber"
+        android:hint="  Số điện thoại"
         android:inputType="textPersonName"
-        app:layout_constraintTop_toBottomOf="@+id/username_changing3"
+        app:layout_constraintTop_toBottomOf="@+id/username_changing2"
         tools:layout_editor_absoluteX="55dp" />
+
+    <ImageButton
+        android:id="@+id/imageButton3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username_changing4"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/save_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
