@@ -1,6 +1,7 @@
 package com.example.chattomate.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,18 +24,23 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String id;
     private int SELF = -10;
     private boolean group;
     private Context mContext;
     private ArrayList<Message> messageArrayList;
+    private boolean isMe = false;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView message, timestamp, name_other;
+        CircleImageView avatar_friend;
 
         public ViewHolder(View view) {
             super(view);
+            avatar_friend = itemView.findViewById(R.id.avatar_other);
             message = itemView.findViewById(R.id.cMessage);
             timestamp = itemView.findViewById(R.id.timeStamp);
             if(group) name_other = itemView.findViewById(R.id.name_other);
@@ -53,6 +59,7 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         View itemView;
 
         if (viewType == SELF) { // self message
+            isMe = true;
             itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_self, parent, false);
         } else { // others message
             if(group) itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.group_chat_item_other, parent, false);
@@ -82,8 +89,13 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         ViewHolder h = (ViewHolder) holder;
         h.message.setText(message.content);
 
+        if(message.sendBy.avatarUrl.length() > 0 && !isMe) {
+            h.avatar_friend.setImageURI(Uri.parse(message.sendBy.avatarUrl));
+        }
+
         if (group)
-            if (message.sendBy.nickName.length() > 0) h.name_other.setText(message.sendBy.nickName);
+            if (message.sendBy.nickName.length() > 0)
+                h.name_other.setText(message.sendBy.nickName);
             else h.name_other.setText(message.sendBy.name);
 
         String timestamp = App.getTimeStamp(message.sendAt);

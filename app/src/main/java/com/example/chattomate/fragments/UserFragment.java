@@ -14,9 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
-import com.example.chattomate.MainActivity;
 import com.example.chattomate.R;
 import com.example.chattomate.activities.ChangePasswordActivity;
 import com.example.chattomate.activities.LoginActivity;
@@ -52,7 +50,7 @@ public class UserFragment extends Fragment {
         manager = new AppPreferenceManager(getContext());
         user = manager.getUser();
 
-        avatarUser = view.findViewById(R.id.user_avatar);
+        avatarUser = view.findViewById(R.id.avatar_request);
         nameUser = view.findViewById(R.id.User_name);
         turnoff_active = view.findViewById(R.id.turnoffactive_switch);
         disturb = view.findViewById(R.id.donotdisturb_switch);
@@ -61,12 +59,13 @@ public class UserFragment extends Fragment {
         log_out = view.findViewById(R.id.logout_text);
         active_point = view.findViewById(R.id.active_point);
         wait_message = view.findViewById(R.id.chat_waiting_text);
-        turnoff_active.setChecked(manager.getStateActive());
-        if(manager.getStateActive()) active_point.setVisibility(View.VISIBLE);
-        else active_point.setVisibility(View.INVISIBLE);
 
         if(user.avatarUrl.length() > 0) avatarUser.setImageURI(Uri.parse(user.avatarUrl));
         nameUser.setText(manager.getUser().name);
+
+        turnoff_active.setChecked(manager.getStateActive());
+        if(manager.getStateActive()) active_point.setVisibility(View.VISIBLE);
+        else active_point.setVisibility(View.INVISIBLE);
 
         turnoff_active.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -78,6 +77,14 @@ public class UserFragment extends Fragment {
                     manager.setStateActive(false);
                     active_point.setVisibility(View.INVISIBLE);
                 }
+            }
+        });
+
+        disturb.setChecked(manager.getSilence());
+        disturb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                manager.setSilence(disturb.isChecked());
             }
         });
 

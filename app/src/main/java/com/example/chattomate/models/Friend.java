@@ -1,9 +1,7 @@
 package com.example.chattomate.models;
 
-import java.util.ArrayList;
-
 public class Friend extends User {
-    public String nickName;
+    public String nickName="";
     public boolean accepted;
 
     public Friend() {}

@@ -428,7 +428,6 @@ public class ServiceAPI {
             e.printStackTrace();
         }
 
-
         API api = new API(context);
         api.Call(Request.Method.PUT, url, newAddFriend, token, new APICallBack() {
             @Override
@@ -669,7 +668,7 @@ public class ServiceAPI {
                 try {
                     String status = result.getString("status");
                     if(status.equals("success")) {
-                        manager.updateConversation(id,null,null,null,1,friends);
+                        manager.updateConversation(id,0,null,null,null,1,friends);
                     } else {
                         System.out.println("Error");
                     }
@@ -711,7 +710,7 @@ public class ServiceAPI {
                 try {
                     String status = result.getString("status");
                     if(status.equals("success")) {
-                        manager.updateConversation(id,null,null,null,-1,friends);
+                        manager.updateConversation(id,0, null,null,null,-1,friends);
                     } else {
                         System.out.println("Error");
                     }
@@ -753,7 +752,7 @@ public class ServiceAPI {
                 try {
                     String status = result.getString("status");
                     if(status.equals("success")) {
-                        manager.updateConversation(id, name, background, emoji, 0, null);
+                        manager.updateConversation(id, 0, name, background, emoji, 0, null);
                     } else {
                         System.out.println("Error");
                     }

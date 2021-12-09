@@ -120,8 +120,6 @@ public class ChatFragment extends Fragment {
                     manager.addMessage(message, idConversation);
 
                     //TODO
-//                    adapter = new ListConversationAdapter(manager.getConversations(), getContext());
-//                    recyclerView.setAdapter(adapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -158,6 +156,9 @@ public class ChatFragment extends Fragment {
 
             }
         });
+
+        adapter = new ListConversationAdapter(manager.getConversations(), getContext());
+        recyclerView.setAdapter(adapter);
     }
 
     @Override

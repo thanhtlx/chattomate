@@ -83,7 +83,6 @@ public class FriendsFragment extends Fragment {
         token.put("auth-token", manager.getToken(getContext()));
 
         friendsList = manager.getFriends();
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -196,11 +195,10 @@ public class FriendsFragment extends Fragment {
                 callService.startCall(true,friends.get(position).idApi,friends.get(position)._id);
             });
             ((ViewHolder) holder).callVoice.setOnClickListener(v -> {
-
                 callService.startCall(false,friends.get(position).idApi,friends.get(position)._id);
             });
 
-            ((ListFriendAdapter.ViewHolder) holder).name_friend.setText(friend.name);
+            ((ViewHolder) holder).name_friend.setText(friend.name);
 
             String idConversation = manager.getIdConversation(friend._id);
 
@@ -210,9 +208,7 @@ public class FriendsFragment extends Fragment {
                     Bundle extras = new Bundle();
                     extras.putString("idConversation", idConversation);
                     extras.putString("idFriend", friend._id);
-                    extras.putString("idApiFriend", friend.idApi);
                     extras.putString("nameConversation", friend.name);
-                    extras.putInt("member_number", 2);
 
                     Intent intent = new Intent(mContext, ProfileFriend.class);
                     intent.putExtras(extras);
@@ -246,21 +242,6 @@ public class FriendsFragment extends Fragment {
                 callVoice = view.findViewById(R.id.call_voice);
                 callVideo = view.findViewById(R.id.call_video);
 //            state_friend.setVisibility(View.INVISIBLE);
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                    }
-                });
-
-                view.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View view) {
-                        //
-                        return true;
-                    }
-                });
-
             }
         }
 

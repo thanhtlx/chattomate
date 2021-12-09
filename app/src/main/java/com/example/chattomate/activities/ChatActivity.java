@@ -49,10 +49,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ChatActivity extends AppCompatActivity implements ScrollChat {
@@ -75,19 +73,12 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
     int member_number;
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Bundle extras = getIntent().getExtras();
-        idConversation = extras.getString("idConversation");
-        nameConversation = extras.getString("nameConversation");
-        idFriend = extras.getString("idFriend");
-        member_number = extras.getInt("member_number");
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        Toolbar toolbar = findViewById(R.id.toolbar_chat);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         callService = new Call(this);
         manager = new AppPreferenceManager(getApplicationContext());
@@ -102,16 +93,13 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         Bundle extras = getIntent().getExtras();
         idConversation = extras.getString("idConversation");
         nameConversation = extras.getString("nameConversation");
-        idFriend = extras.getString("idFriend");
         member_number = extras.getInt("member_number");
         if (idConversation == null) {
             onNewIntent(getIntent());
         }
-        Toolbar toolbar = findViewById(R.id.toolbar_chat);
-        setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(nameConversation);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        members = manager.getMembersInConversation(idConversation);
 
         listMess = manager.getMessage(idConversation);
         if(listMess != null && listMess.size() > 50)
@@ -141,6 +129,12 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 sendMessage();
             }
         });
+
+        if(members.size() == 1) {
+            Friend x = members.get(0);
+            if(x.nickName.length() > 0) getSupportActionBar().setTitle(x.nickName);
+        }
+        getSupportActionBar().setTitle(nameConversation);
 
     }
 
@@ -176,8 +170,8 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                             manager.addMessage(sen, idConversation);
                             Log.d("debugGGGG",manager.getMessage(idConversation).get(
                                     manager.getMessage(idConversation).size()-1).content);
-                            listMess.add(sen);
 
+                            addMessToList(sen);
                             adapter.notifyDataSetChanged();
                             if (adapter.getItemCount() > 1) {
                                 // scrolling to bottom of the recycler view
@@ -221,22 +215,23 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 Log.d("debugChatNewMess", data.toString());
                 try {
                     String id_Conversation = data.getString("conversation");
-                    if(id_Conversation.equals(idConversation)) {
-                        JSONObject object = data.getJSONObject("sendBy");
-                        String idSender = object.getString("_id");
-                        Friend friend = manager.getFriend(manager.getAllUsers(), idSender);
-                        if (friend == null) {
-                            friend = new Friend(object.getString("_id"),
-                                    object.getString("name"), object.getString("avatarUrl"));
-                            friend.idApi = object.getString("idApi");
-                        }
 
-                        Message message = new Message(idConversation, data.getString("_id"),
-                                data.getString("content"), data.getString("contentUrl"),
-                                data.getString("createdAt"), null, friend, false,
-                                data.getString("type"));
-                        manager.addMessage(message, idConversation);
+                    JSONObject object = data.getJSONObject("sendBy");
+                    String idSender = object.getString("_id");
+                    Friend friend = manager.getFriend(manager.getAllUsers(), idSender);
+                    if (friend == null) {
+                        friend = new Friend(object.getString("_id"),
+                                object.getString("name"), object.getString("avatarUrl"));
+                        friend.idApi = object.getString("idApi");
+                    }
 
+                    Message message = new Message(id_Conversation, data.getString("_id"),
+                            data.getString("content"), data.getString("contentUrl"),
+                            data.getString("createdAt"), null, friend, false,
+                            data.getString("type"));
+                    manager.addMessage(message, id_Conversation);
+
+                    if (id_Conversation.equals(idConversation)) {
                         addMessToList(message);
                         runOnUiThread(new Runnable() {
                             @Override
@@ -306,15 +301,27 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 break;
             case R.id.voicecall_icon:
                 callService.startCall(false, "1","1");
-//                List<Friend> friends = manager.getUserInConversation(idConversation);
-//                startCall(false, "1", "1");
-
                 break;
             case R.id.videocall_icon:
                 callService.startCall(true, "1", "1");
                 break;
             case R.id.options:
+                Intent intent;
+                Bundle ext = new Bundle();
+                ext.putInt("member_number", members.size());
+                if(members.size() == 1) {
+                    ext.putString("id", members.get(0)._id);
+                    ext.putString("name", members.get(0).name);
+                    intent = new Intent(ChatActivity.this, MenuFriendChatRoom.class);
+                } else {
+                    ext.putString("name", nameConversation);
+                    ext.putString("id", idConversation);
+                    intent = new Intent(ChatActivity.this, MenuGroupChatRoom.class);
+                }
 
+                intent.putExtras(ext);
+                startActivity(intent);
+                break;
             default:break;
         }
 

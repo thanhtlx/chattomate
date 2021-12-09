@@ -135,9 +135,11 @@ public class LoginActivity extends AppCompatActivity {
                             User user = new User(jsonObject.getString("_id"),
                                     jsonObject.getString("name"),
                                     jsonObject.getString("avatarUrl"),"", email,password,jsonObject.getString("idApi"));
-                            manager.setStateActive(true);
+
                             manager.setLogin(true);
                             manager.storeUser(user);
+                            manager.setStateActive(true);
+                            manager.setSilence(false);
 
                             getData();
 

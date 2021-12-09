@@ -11,6 +11,7 @@ public class Conversation {
     public ArrayList<Friend> members;
     public Friend admin;
     public Message ghim;
+    public boolean isSilence = false;
 
     public Conversation(String name) {
         this.name = name;
