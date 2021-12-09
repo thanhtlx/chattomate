@@ -19,6 +19,7 @@ import com.example.chattomate.R;
 import com.example.chattomate.activities.ChangePasswordActivity;
 import com.example.chattomate.activities.LoginActivity;
 import com.example.chattomate.activities.SetupProfileActivity;
+import com.example.chattomate.activities.WaitingChatActivity;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.models.User;
 
@@ -85,6 +86,13 @@ public class UserFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 manager.setSilence(disturb.isChecked());
+            }
+        });
+
+        wait_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), WaitingChatActivity.class));
             }
         });
 
