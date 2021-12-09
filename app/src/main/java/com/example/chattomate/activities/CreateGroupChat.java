@@ -1,5 +1,6 @@
 package com.example.chattomate.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -46,6 +47,7 @@ public class CreateGroupChat extends AppCompatActivity {
     RecyclerView recyclerView;
     FloatingActionButton button;
     ListAdapter adapter;
+    private static final int REQUEST_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +160,24 @@ public class CreateGroupChat extends AppCompatActivity {
             }
         });
 
+        avatar_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent,REQUEST_CODE);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @NonNull Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode==REQUEST_CODE && resultCode==RESULT_OK && data!=null) {
+            Uri imageUri = data.getData();
+            avatar_group.setImageURI(imageUri);
+        }
     }
 
     @Override
