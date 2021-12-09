@@ -346,13 +346,22 @@ public class AppPreferenceManager {
 
     // cập nhật cuộc trò chuyện: thêm xóa thành viên hoặc thay đổi tên, background...
     // a = 1 là thêm tv, -1 là xóa tv, khác là kp thêm hoặc xóa tv
-    public void updateConversation(String id, String name, String background, String emoji, int a, ArrayList<Friend> friends) {
+    // isNoti: thông báo về cuộc trò chuyện: 1 là true, -1 là false, khác là ko cập nhật
+    public void updateConversation(String id, int isSilence, String name, String background, String emoji, int a, ArrayList<Friend> friends) {
         ArrayList<Conversation> cv = getConversations();
         for (Conversation cvst : cv)
             if (cvst._id.equals(id)) {
+                int noti;
+                if(cvst.isSilence) noti = 1;
+                else noti = -1;
+
                 if (name != null) cvst.name = name;
                 if (background != null) cvst.backgroundUrl = background;
                 if (emoji != null) cvst.emoji = emoji;
+
+                if(isSilence == 1 || isSilence == -1) if(noti != isSilence) {
+                    cvst.isSilence = isSilence == 1;
+                }
 
                 if (a == 1) for (Friend friend : friends)
                     cvst.members.add(friend);

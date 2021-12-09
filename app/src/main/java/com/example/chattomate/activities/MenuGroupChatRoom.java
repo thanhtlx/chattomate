@@ -12,13 +12,15 @@ import android.widget.TextView;
 
 import com.example.chattomate.R;
 import com.example.chattomate.database.AppPreferenceManager;
+import com.example.chattomate.models.Conversation;
 
 public class MenuGroupChatRoom extends AppCompatActivity {
     Toolbar toolbar;
     AppPreferenceManager manager;
     Switch notification;
-    TextView members;
+    TextView members, add_member;
     String idConversation;
+    Conversation conversation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +33,11 @@ public class MenuGroupChatRoom extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         idConversation = bundle.getString("id");
+        conversation = manager.getConversation(idConversation);
         getSupportActionBar().setTitle(bundle.getString("name"));
 
         members = findViewById(R.id.members_group);
+        add_member = findViewById(R.id.add_members_to_group);
         notification = findViewById((R.id.turn_noti_group));
 
         members.setOnClickListener(new View.OnClickListener() {
@@ -43,9 +47,18 @@ public class MenuGroupChatRoom extends AppCompatActivity {
             }
         });
 
+        notification.setChecked(conversation.isSilence);
         notification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                conversation.isSilence = notification.isChecked();
+                manager.updateConversation(idConversation, notification.isChecked() ? 1 : -1, null, null, null, 0, null);
+            }
+        });
+
+        add_member.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
             }
         });

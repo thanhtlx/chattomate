@@ -59,12 +59,13 @@ public class UserFragment extends Fragment {
         log_out = view.findViewById(R.id.logout_text);
         active_point = view.findViewById(R.id.active_point);
         wait_message = view.findViewById(R.id.chat_waiting_text);
-        turnoff_active.setChecked(manager.getStateActive());
-        if(manager.getStateActive()) active_point.setVisibility(View.VISIBLE);
-        else active_point.setVisibility(View.INVISIBLE);
 
         if(user.avatarUrl.length() > 0) avatarUser.setImageURI(Uri.parse(user.avatarUrl));
         nameUser.setText(manager.getUser().name);
+
+        turnoff_active.setChecked(manager.getStateActive());
+        if(manager.getStateActive()) active_point.setVisibility(View.VISIBLE);
+        else active_point.setVisibility(View.INVISIBLE);
 
         turnoff_active.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -76,6 +77,14 @@ public class UserFragment extends Fragment {
                     manager.setStateActive(false);
                     active_point.setVisibility(View.INVISIBLE);
                 }
+            }
+        });
+
+        disturb.setChecked(manager.getSilence());
+        disturb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                manager.setSilence(disturb.isChecked());
             }
         });
 

@@ -58,7 +58,8 @@ public class App  extends Application {
             SimpleDateFormat todayFormat = new SimpleDateFormat("dd");
 
             String dateToday = todayFormat.format(date);
-            format = dateToday.equals(today) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("dd LLL, hh:mm a");
+//            format = dateToday.equals(today) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("dd LLL, hh:mm a");
+            format = dateToday.equals(today) ? new SimpleDateFormat("hh:mm") : new SimpleDateFormat("dd LLL, hh:mm");
             String date1 = format.format(date);
             timestamp = date1.toString();
         } catch (ParseException e) {
