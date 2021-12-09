@@ -96,67 +96,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
-            @Override
-            public void onNewMessage(JSONObject data) {
-                Log.d("debugChatFragment", data.toString());
-                try {
-                    JSONObject object = data.getJSONObject("sendBy");
-                    String idConversation = data.getString("conversation");
-                    String content = data.getString("content");
-                    String contentUrl = data.getString("contentUrl");
-                    String idSender = object.getString("_id");
-                    Friend friend  = manager.getFriend(manager.getFriends(), idSender);
-                    if(friend == null) {
-                        friend = new Friend(object.getString("_id"),
-                                object.getString("name"), object.getString("avatarUrl"));
-                        friend.idApi = object.getString("idApi");
-                    }
-                    Message message = new Message(idConversation, data.getString("_id"),
-                            content, contentUrl,
-                            data.getString("createdAt"), null, friend, false,
-                            data.getString("type"));
-                    manager.addMessage(message, idConversation);
-
-                    //TODO
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void onNewFriendRequest(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewConversation(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewFriend(JSONObject data) {
-
-            }
-
-            @Override
-            public void onConversationChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onFriendActiveChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onTyping(JSONObject data) {
-
-            }
-        });
-
         adapter = new ListConversationAdapter(manager.getConversations(), getContext());
         recyclerView.setAdapter(adapter);
     }
@@ -164,7 +103,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        App.getInstance().getSocket().unSetSocketCallBack();
     }
 
     class ListConversationAdapter extends RecyclerView.Adapter {

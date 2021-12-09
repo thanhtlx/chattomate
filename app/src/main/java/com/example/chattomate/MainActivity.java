@@ -204,46 +204,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        API api = new API(this);
-        api.Call(Request.Method.GET, URL, null, token, new APICallBack() {
-            @Override
-            public void onSuccess(JSONObject result) {
-                try {
-                    String status = result.getString("status");
-                    if(status.equals("success")) {
-                        JSONArray array = result.getJSONArray("data");
-                        ArrayList<Friend> usersList = new ArrayList<>();
-                        for(int i = 0; i < array.length(); i++) {
-                            JSONObject j = array.getJSONObject(i);
-
-                            Friend f = new Friend(j.getString("_id"));
-                            f.name = j.getString("name");
-                            f.avatarUrl = j.getString("avatarUrl");
-                            f.email = j.getString("email");
-                            f.idApi = j.getString("idApi");
-
-                            usersList.add(f);
-                        }
-                        manager.storeAllUsers(usersList);
-                        if(allUsers != null) allUsers.clear();
-                        allUsers = usersList;
-                        searchView.setSuggestionsAdapter(new SearchAdapter(MainActivity.this, cursor, allUsers));
-
-                    } else {
-                        System.out.println("Error");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.d("debug",result.toString());
-            }
-
-            @Override
-            public void onError(JSONObject result) {
-                Log.d("debug",result.toString());
-            }
-        });
     }
 
     @Override
