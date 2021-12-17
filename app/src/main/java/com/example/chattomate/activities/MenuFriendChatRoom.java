@@ -3,9 +3,11 @@ package com.example.chattomate.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -22,6 +24,7 @@ public class MenuFriendChatRoom extends AppCompatActivity {
     TextView name_view;
     Switch notification;
     AppPreferenceManager manager;
+    Button btnMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,7 @@ public class MenuFriendChatRoom extends AppCompatActivity {
         avatar = findViewById(R.id.avatar_menu_chat);
         name_view = findViewById(R.id.name_menu_chat);
         notification = findViewById(R.id.turn_noti_group);
+        btnMap = findViewById(R.id.btnMap);
 
         Bundle extras = getIntent().getExtras();
         String id = extras.getString("id");
@@ -54,6 +58,12 @@ public class MenuFriendChatRoom extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
             }
+        });
+
+        btnMap.setOnClickListener(v -> {
+            Intent intent = new Intent(this,MapsActivity.class);
+            intent.putExtras(extras);
+            startActivity(intent);
         });
     }
 

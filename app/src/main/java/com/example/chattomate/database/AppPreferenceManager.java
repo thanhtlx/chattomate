@@ -140,12 +140,15 @@ public class AppPreferenceManager {
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<Message>>() {}.getType();
         ArrayList<Message> messages = gson.fromJson(str, type);
-
+        if (messages == null) return new ArrayList<>();
         return messages;
     }
 
     public void addMessage(Message message, String idConversation) {
         ArrayList<Message> m = getMessage(idConversation);
+        if(m == null) {
+            return;
+        }
         boolean check = false;
         for(Message message1 : m)
             if(message1._id.equals(message._id)) {
@@ -325,6 +328,7 @@ public class AppPreferenceManager {
         members.remove(getFriend(members, getUser()._id)); //remove self
         for (Friend f : members) {
             Friend friend = getFriend(getAllUsers(), f._id);
+            if (friend == null) continue;
             f.idApi = friend.idApi;
             f.avatarUrl = friend.avatarUrl;
             f.email = friend.email;

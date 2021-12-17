@@ -139,8 +139,9 @@ public class ChatFragment extends Fragment {
                     }
 
                     Friend friend = manager.getFriend(manager.getFriends(), idFriend);
-                    idApiFriend = manager.getFriend(manager.getAllUsers(), idFriend).idApi;
+
                     if(friend != null) {
+                        idApiFriend = friend.idApi;
                         if (friend.avatarUrl.length() > 0)
                             h.avatar.setImageURI(Uri.parse(friend.avatarUrl));
                         nameConversation = friend.name;
