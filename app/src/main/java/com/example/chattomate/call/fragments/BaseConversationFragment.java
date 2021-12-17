@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import com.example.chattomate.R;
 import com.example.chattomate.call.CallActivity;
 import com.example.chattomate.call.CallService;
-import com.example.chattomate.call.db.QbUsersDbManager;
 import com.example.chattomate.call.utils.CollectionsUtils;
 import com.example.chattomate.call.utils.Consts;
 import com.example.chattomate.call.utils.SharedPrefsHelper;
@@ -35,7 +34,6 @@ public abstract class BaseConversationFragment extends BaseToolBarFragment imple
     private static final String TAG = BaseConversationFragment.class.getSimpleName();
 
     public static final String MIC_ENABLED = "is_microphone_enabled";
-    protected QbUsersDbManager dbManager;
     protected WebRtcSessionManager sessionManager;
     protected AppPreferenceManager manager;
 
@@ -112,7 +110,6 @@ public abstract class BaseConversationFragment extends BaseToolBarFragment imple
     protected abstract void configureToolbar();
 
     protected void initFields() {
-        dbManager = QbUsersDbManager.getInstance(getActivity().getApplicationContext());
         sessionManager = WebRtcSessionManager.getInstance(getActivity());
         currentUser = QBChatService.getInstance().getUser();
         if (currentUser == null) {
@@ -234,15 +231,14 @@ public abstract class BaseConversationFragment extends BaseToolBarFragment imple
             List<Integer> opponentsIds = conversationFragmentCallback.getOpponents();
 
             if (opponentsIds != null) {
-                ArrayList<QBUser> usersFromDb = dbManager.getUsersByIds(opponentsIds);
+                ArrayList<QBUser> usersFromDb = new ArrayList<>();
+
                 opponents = UsersUtils.getListAllUsersFromIds(usersFromDb, opponentsIds);
             }
+            int idApi = conversationFragmentCallback.getCallerId();
 
-            QBUser caller = dbManager.getUserById(conversationFragmentCallback.getCallerId());
-            if (caller == null) {
-                caller = new QBUser(conversationFragmentCallback.getCallerId());
-                caller.setFullName(String.valueOf(conversationFragmentCallback.getCallerId()));
-            }
+            QBUser caller = new QBUser(idApi);
+            caller.setFullName(manager.getNameFromIdApi(idApi));
 
             if (isIncomingCall) {
                 opponents.add(caller);

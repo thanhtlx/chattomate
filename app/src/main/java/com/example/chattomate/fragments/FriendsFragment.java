@@ -113,56 +113,56 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
-            @Override
-            public void onNewMessage(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewFriendRequest(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewConversation(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewFriend(JSONObject data) {
-                try {
-                    JSONObject j = data.getJSONObject("friend");
-                    Friend f = new Friend(j.getString("_id"), j.getString("name"),
-                            data.getString("nickname"), j.getString("avatarUrl"));
-
-                    f.idApi = manager.getFriend(manager.getAllUsers(), f._id).idApi;
-
-                    manager.addFriend(f);
-                    friendsList.add(f);
-                    adapter.notifyDataSetChanged();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onConversationChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onFriendActiveChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onTyping(JSONObject data) {
-
-
-            }
-        });
+//        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
+//            @Override
+//            public void onNewMessage(JSONObject data) {
+//
+//            }
+//
+//            @Override
+//            public void onNewFriendRequest(JSONObject data) {
+//
+//            }
+//
+//            @Override
+//            public void onNewConversation(JSONObject data) {
+//
+//            }
+//
+//            @Override
+//            public void onNewFriend(JSONObject data) {
+//                try {
+//                    JSONObject j = data.getJSONObject("friend");
+//                    Friend f = new Friend(j.getString("_id"), j.getString("name"),
+//                            data.getString("nickname"), j.getString("avatarUrl"));
+//
+//                    f.idApi = manager.getFriend(manager.getAllUsers(), f._id).idApi;
+//
+//                    manager.addFriend(f);
+//                    friendsList.add(f);
+//                    adapter.notifyDataSetChanged();
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onConversationChange(JSONObject data) {
+//
+//            }
+//
+//            @Override
+//            public void onFriendActiveChange(JSONObject data) {
+//
+//            }
+//
+//            @Override
+//            public void onTyping(JSONObject data) {
+//
+//
+//            }
+//        });
     }
 
     public class ListFriendAdapter extends RecyclerView.Adapter {

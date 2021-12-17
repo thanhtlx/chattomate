@@ -48,7 +48,7 @@ public class FCMService extends FirebaseMessagingService {
             Log.d("DEBUG", "Start chat");
             QBUser qbUser = new QBUser(user.email, App.USER_DEFAULT_PASSWORD);
             qbUser.setId(Integer.parseInt(user.idApi));
-            LoginService.start(this, qbUser);
+            LoginService.start(this, qbUser,true);
         }
     }
 

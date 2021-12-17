@@ -19,13 +19,14 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.example.chattomate.App;
 import com.example.chattomate.R;
-import com.example.chattomate.call.db.QbUsersDbManager;
 import com.example.chattomate.call.utils.CollectionsUtils;
 import com.example.chattomate.call.utils.RingtonePlayer;
 import com.example.chattomate.call.utils.UiUtils;
 import com.example.chattomate.call.utils.UsersUtils;
 import com.example.chattomate.call.utils.WebRtcSessionManager;
+import com.example.chattomate.database.AppPreferenceManager;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.core.QBEntityCallback;
 import com.quickblox.core.exception.QBResponseException;
@@ -63,7 +64,6 @@ public class IncomeCallFragment extends Fragment implements Serializable, View.O
     private RingtonePlayer ringtonePlayer;
     private IncomeCallFragmentCallbackListener incomeCallFragmentCallbackListener;
     private QBRTCSession currentSession;
-    private QbUsersDbManager qbUserDbManager;
     private TextView alsoOnCallText;
 
     @Override
@@ -102,7 +102,6 @@ public class IncomeCallFragment extends Fragment implements Serializable, View.O
 
     private void initFields() {
         currentSession = WebRtcSessionManager.getInstance(getActivity()).getCurrentSession();
-        qbUserDbManager = QbUsersDbManager.getInstance(getActivity().getApplicationContext());
         if (currentSession != null) {
             opponentsIds = currentSession.getOpponents();
             conferenceType = currentSession.getConferenceType();
@@ -138,17 +137,11 @@ public class IncomeCallFragment extends Fragment implements Serializable, View.O
         alsoOnCallText = view.findViewById(R.id.text_also_on_call);
         rejectButton = view.findViewById(R.id.image_button_reject_call);
         takeButton = view.findViewById(R.id.image_button_accept_call);
-
+        AppPreferenceManager manager =new AppPreferenceManager(App.getInstance());
         if (currentSession != null) {
             callerAvatarImageView.setBackgroundDrawable(getBackgroundForCallerAvatar(currentSession.getCallerID()));
-
-            QBUser callerUser = qbUserDbManager.getUserById(currentSession.getCallerID());
-            if (callerUser != null && !TextUtils.isEmpty(callerUser.getFullName())) {
-                callerNameTextView.setText(callerUser.getFullName());
-            } else {
-                callerNameTextView.setText(String.valueOf(currentSession.getCallerID()));
-                updateUserFromServer();
-            }
+            int idApi = currentSession.getCallerID();
+            callerNameTextView.setText(manager.getNameFromIdApi(idApi));
 
             otherIncUsersTextView.setText(getOtherIncUsersNames());
             setVisibilityAlsoOnCallTextView();
@@ -162,7 +155,6 @@ public class IncomeCallFragment extends Fragment implements Serializable, View.O
             @Override
             public void onSuccess(QBUser qbUser, Bundle bundle) {
                 if (qbUser != null) {
-                    qbUserDbManager.saveUser(qbUser);
                     String callerName = TextUtils.isEmpty(qbUser.getFullName())? qbUser.getLogin() : qbUser.getFullName();
                     callerNameTextView.setText(callerName);
                 }
@@ -212,7 +204,7 @@ public class IncomeCallFragment extends Fragment implements Serializable, View.O
     }
 
     private String getOtherIncUsersNames() {
-        ArrayList<QBUser> usersFromDb = qbUserDbManager.getUsersByIds(opponentsIds);
+        ArrayList<QBUser> usersFromDb = new ArrayList<>();
         ArrayList<QBUser> opponents = new ArrayList<>();
         opponents.addAll(UsersUtils.getListAllUsersFromIds(usersFromDb, opponentsIds));
 

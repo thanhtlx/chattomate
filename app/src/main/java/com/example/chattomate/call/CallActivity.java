@@ -28,7 +28,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.chattomate.R;
 import com.example.chattomate.activities.PermissionsActivity;
-import com.example.chattomate.call.db.QbUsersDbManager;
 import com.example.chattomate.call.fragments.AudioConversationFragment;
 import com.example.chattomate.call.fragments.BaseConversationFragment;
 import com.example.chattomate.call.fragments.ConversationFragmentCallback;
@@ -79,7 +78,6 @@ public class CallActivity extends BaseActivity implements IncomeCallFragmentCall
     public static final int REQUEST_PERMISSION_SETTING = 545;
 
     private ArrayList<CurrentCallStateCallback> currentCallStateCallbackList = new ArrayList<>();
-    private QbUsersDbManager dbManager = QbUsersDbManager.getInstance(this);
     private Handler showIncomingCallWindowTaskHandler;
     private ConnectionListenerImpl connectionListener;
     private ServiceConnection callServiceConnection;
@@ -251,7 +249,7 @@ public class CallActivity extends BaseActivity implements IncomeCallFragmentCall
     }
 
     private void startLoadAbsentUsers() {
-        ArrayList<QBUser> usersFromDb = dbManager.getAllUsers();
+        ArrayList<QBUser> usersFromDb = new ArrayList<>();
         ArrayList<Integer> allParticipantsOfCall = new ArrayList<>();
 
         if (opponentsIdsList != null) {
@@ -270,7 +268,6 @@ public class CallActivity extends BaseActivity implements IncomeCallFragmentCall
             requestExecutor.loadUsersByIds(idsUsersNeedLoad, new QBEntityCallbackImpl<ArrayList<QBUser>>() {
                 @Override
                 public void onSuccess(ArrayList<QBUser> users, Bundle params) {
-                    dbManager.saveAllUsers(users, false);
                     notifyCallStateListenersNeedUpdateOpponentsList(users);
                 }
             });
@@ -451,8 +448,6 @@ public class CallActivity extends BaseActivity implements IncomeCallFragmentCall
                 hangUpCurrentSession();
                 Log.d(TAG, "Initiator hung up the call");
             }
-            QBUser participant = dbManager.getUserById(userID);
-            final String participantName = participant != null ? participant.getFullName() : String.valueOf(userID);
         }
     }
 

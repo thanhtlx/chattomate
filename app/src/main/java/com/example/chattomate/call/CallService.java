@@ -24,7 +24,6 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.chattomate.App;
 import com.example.chattomate.R;
-import com.example.chattomate.call.db.QbUsersDbManager;
 import com.example.chattomate.call.fragments.AudioConversationFragment;
 import com.example.chattomate.call.fragments.BaseConversationFragment;
 import com.example.chattomate.call.fragments.VideoConversationFragment;
@@ -154,6 +153,9 @@ public class CallService extends Service {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {
             notificationManager.cancelAll();
+        }
+        if (LoginService.isIsforeground()) {
+            LoginService.stop(getApplicationContext());
         }
         isRunning = false;
 
@@ -661,9 +663,6 @@ public class CallService extends Service {
                 if (userID.equals(session.getCallerID()) && currentSession != null) {
                     currentSession.hangUp(new HashMap<>());
                 }
-
-                QBUser participant = QbUsersDbManager.getInstance(getApplicationContext()).getUserById(userID);
-                String participantName = participant != null ? participant.getFullName() : userID.toString();
             }
         }
 

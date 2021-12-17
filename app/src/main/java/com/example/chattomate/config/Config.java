@@ -34,6 +34,8 @@ public class Config {
     public static int ID_NOTIFICATION_NEW_FRIEND = 113;
     public static String CHANNEL_NOTIFICATION_NEW_CONVERSATION = "NEW CONVERSATION";
     public static int ID_NOTIFICATION_NEW_CONVERSATION = 114;
+    public static String CHANNEL_NOTIFICATION_NEW_VOICE = "NEW VOICE CALL";
+    public static int ID_NOTIFICATION_NEW_VOICE = 115;
 
     public static int   REQUEST_PERMISTION_OPEN_CAMERA = 777;
     public static int  REQUEST_PERMISTION_MIC = 778;

@@ -2,7 +2,8 @@ package com.example.chattomate.call.utils;
 
 import android.content.Context;
 
-import com.example.chattomate.call.db.QbUsersDbManager;
+import com.example.chattomate.App;
+import com.example.chattomate.database.AppPreferenceManager;
 import com.quickblox.users.model.QBUser;
 
 import java.util.ArrayList;
@@ -12,7 +13,6 @@ import java.util.List;
 public class UsersUtils {
 
     private static SharedPrefsHelper sharedPrefsHelper;
-    private static QbUsersDbManager dbManager;
 
     public static ArrayList<QBUser> getListAllUsersFromIds(ArrayList<QBUser> existedUsers, List<Integer> allIds) {
         ArrayList<QBUser> qbUsers = new ArrayList<>();
@@ -28,8 +28,9 @@ public class UsersUtils {
     }
 
     private static QBUser createStubUserById(Integer userId) {
+        AppPreferenceManager manager = new AppPreferenceManager(App.getInstance());
         QBUser stubUser = new QBUser(userId);
-        stubUser.setFullName(String.valueOf(userId));
+        stubUser.setFullName(manager.getNameFromIdApi(userId));
         return stubUser;
     }
 
@@ -43,16 +44,5 @@ public class UsersUtils {
         }
 
         return idsNotLoadedUsers;
-    }
-
-    public static void removeUserData(Context context) {
-        if (sharedPrefsHelper == null) {
-            sharedPrefsHelper = SharedPrefsHelper.getInstance();
-        }
-        sharedPrefsHelper.clearAllData();
-        if (dbManager == null) {
-            dbManager = QbUsersDbManager.getInstance(context);
-        }
-        dbManager.clearDB();
     }
 }
