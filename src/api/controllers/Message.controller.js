@@ -1,6 +1,7 @@
 // import
 import sendMessageValidation from "../validations/message.validation";
 import MessageService from "../services/message.service";
+import NotifyService from "../services/notify.service";
 
 class MessageController {
   static async getMessages(req, res) {
@@ -64,6 +65,44 @@ class MessageController {
     return res
       .status(400)
       .send({ status: "error", message: "permission denied!" });
+  }
+
+  static async updateLocation(req, res) {
+    const messageID = req.params.messageID;
+    let message = await MessageService.findID(messageID);
+
+    if (!message) {
+      return res.status(400).send({ status: "error", message: "Not found!" });
+    }
+    if (message.type !== 7) {
+      return res.status(400).send({ status: "error", message: "Not found!" });
+    }
+    console.log(message.sendBy);
+    console.log(req.user._id);
+    if (message.sendBy.toString() !== req.user._id) {
+      return res.status(400).send({ status: "error", message: "Not found!" });
+    }
+    const lat = req.body.lat;
+    const long = req.body.long;
+    if (!lat || !long) {
+      return res.status(400).send({ status: "error", message: "Not found!" });
+    }
+    message.content = lat + "," + long;
+    await message.save();
+    // notification
+    NotifyService.notifyMapChange(message);
+    return res.send({ status: "success", data: message.content });
+  }
+  static async getLocation(req, res) {
+    const messageID = req.params.messageID;
+    const message = await MessageService.findID(messageID);
+    if (!message) {
+      return res.status(400).send({ status: "error", message: "Not found!" });
+    }
+    if (message.type !== 7) {
+      return res.status(400).send({ status: "error", message: "Not found!" });
+    }
+    return res.send({ status: "success", data: message.content });
   }
 }
 
