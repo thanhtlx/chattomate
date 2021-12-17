@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,15 +21,11 @@ import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.database.AppPreferenceManager;
-import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.ServiceAPI;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 

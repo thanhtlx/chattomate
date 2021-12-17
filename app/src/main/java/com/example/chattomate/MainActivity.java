@@ -37,18 +37,14 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.volley.Request;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.activities.CreateGroupChat;
-import com.example.chattomate.activities.ProfileFriend;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.fragments.ChatFragment;
 import com.example.chattomate.fragments.FriendMainFragment;
-import com.example.chattomate.fragments.FriendsFragment;
 import com.example.chattomate.fragments.UserFragment;
 import com.example.chattomate.interfaces.APICallBack;
-import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Conversation;
 import com.example.chattomate.models.Friend;
-import com.example.chattomate.models.Message;
 import com.example.chattomate.service.API;
 import com.example.chattomate.service.ServiceAPI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -59,7 +55,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

@@ -1,23 +1,17 @@
 package com.example.chattomate.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,26 +20,18 @@ import com.android.volley.Request;
 import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.adapter.ChatRoomThreadAdapter;
-import com.example.chattomate.call.CallActivity;
-import com.example.chattomate.call.utils.PushNotificationSender;
-import com.example.chattomate.call.utils.WebRtcSessionManager;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
+import com.example.chattomate.interfaces.OnNewMessageCallBack;
 import com.example.chattomate.interfaces.ScrollChat;
-import com.example.chattomate.interfaces.SocketCallBack;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
 import com.example.chattomate.service.Call;
 import com.example.chattomate.service.ServiceAPI;
-import com.quickblox.users.model.QBUser;
-import com.quickblox.videochat.webrtc.QBRTCClient;
-import com.quickblox.videochat.webrtc.QBRTCSession;
-import com.quickblox.videochat.webrtc.QBRTCTypes;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -209,8 +195,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
     @Override
     protected void onResume() {
         super.onResume();
-        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
-            @Override
+        App.getInstance().getSocket().setOnNewMessageCallBack(new OnNewMessageCallBack() {
             public void onNewMessage(JSONObject data) {
                 Log.d("debugChatNewMess", data.toString());
                 try {
@@ -246,36 +231,6 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                     e.printStackTrace();
                     Log.d("debugGXX", data.toString());
                 }
-            }
-
-            @Override
-            public void onNewFriendRequest(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewConversation(JSONObject data) {
-
-            }
-
-            @Override
-            public void onNewFriend(JSONObject data) {
-
-            }
-
-            @Override
-            public void onConversationChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onFriendActiveChange(JSONObject data) {
-
-            }
-
-            @Override
-            public void onTyping(JSONObject data) {
-
             }
         });
     }

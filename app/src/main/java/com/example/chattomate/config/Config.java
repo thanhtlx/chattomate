@@ -21,6 +21,7 @@ public class Config {
     public static String FRIEND_CHANGE  = "friend active change";
     public static String TYPING         = "typing";
     public static String DELETE_FRIEND  = "delete friend";
+    public static String MAP_CHANGE  = "map change";
 
     public static long TIME_TO_REFRESH = 10 * 1000;
     public static long TIME_TO_OFFLINE = 2 * 60 * 1000;
@@ -39,5 +40,6 @@ public class Config {
 
     public static int   REQUEST_PERMISTION_OPEN_CAMERA = 777;
     public static int  REQUEST_PERMISTION_MIC = 778;
+
 
 }
