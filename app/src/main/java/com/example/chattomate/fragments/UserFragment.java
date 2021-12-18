@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,8 +62,9 @@ public class UserFragment extends Fragment {
         active_point = view.findViewById(R.id.active_point);
         wait_message = view.findViewById(R.id.chat_waiting_text);
 
-        if(user.avatarUrl.length() > 0) avatarUser.setImageURI(Uri.parse(user.avatarUrl));
+//        if(user.avatarUrl.length() > 0) avatarUser.setImageURI(Uri.parse(user.avatarUrl));
         nameUser.setText(manager.getUser().name);
+        Log.d("debug", user.avatarUrl);
 
         turnoff_active.setChecked(manager.getStateActive());
         if(manager.getStateActive()) active_point.setVisibility(View.VISIBLE);
@@ -127,7 +129,7 @@ public class UserFragment extends Fragment {
         super.onResume();
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
 
-        if(user.avatarUrl.length() > 0) avatarUser.setImageURI(Uri.parse(user.avatarUrl));
+//        if(user.avatarUrl.length() > 0) avatarUser.setImageURI(Uri.parse(user.avatarUrl));
         nameUser.setText(manager.getUser().name);
     }
 

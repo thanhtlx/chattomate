@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="150dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_alignParentEnd="true"
+        android:id="@+id/imgContent"
+        android:layout_width="100dp"
+        android:maxWidth="190dp"
+        android:layout_margin="10dp"
+        android:layout_height="100dp"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"/>
+
+    <TextView
+        android:id="@+id/timeStamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgContent"
+        android:layout_alignRight="@id/imgContent"
+        android:textColor="@color/gray"
+        android:textSize="10dp" />
+
+</RelativeLayout>

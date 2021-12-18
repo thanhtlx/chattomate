@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatar_other"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@id/pgb_mic"
+        android:layout_marginStart="5dp"
+        android:src="@drawable/avatar" />
+
+    <ProgressBar
+        android:id="@+id/pgb_mic"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/textview_chat_other"
+        android:progressBackgroundTint="#BFE8CFFA"
+        android:progressBackgroundTintMode="src_atop" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgplay"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignStart="@+id/pgb_mic"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:drawable/ic_media_play"
+        android:backgroundTint="@color/pink3" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgpause"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_alignStart="@+id/pgb_mic"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:drawable/ic_media_pause"
+        android:backgroundTint="@color/pink3" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="27dp"
+        android:layout_toLeftOf="@id/txtTime_mic"
+        android:layout_toRightOf="@id/imgplay"
+        android:background="@color/pink3" />
+
+    <TextView
+        android:id="@+id/txtTime_mic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/pgb_mic"
+        android:layout_marginTop="18dp"
+        android:layout_marginRight="10dp"
+        android:padding="3dp"
+        android:text="02:03"
+        android:textColor="@color/black"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/timeStamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pgb_mic"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="40dp"
+        android:textColor="@color/gray"
+        android:textSize="10dp" />
+
+</RelativeLayout>

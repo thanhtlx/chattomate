@@ -4,6 +4,8 @@
     package="com.example.chattomate">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -22,6 +24,7 @@
         android:required="true" />
 
     <application
+        tools:replace="android:theme"
         android:name=".App"
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -29,6 +32,17 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/NoActionBar">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name=".activities.WaitingChatActivity"
             android:exported="false" />

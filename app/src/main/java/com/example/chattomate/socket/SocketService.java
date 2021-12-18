@@ -1,6 +1,5 @@
 package com.example.chattomate.socket;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -8,26 +7,20 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.example.chattomate.App;
 import com.example.chattomate.MainActivity;
 import com.example.chattomate.activities.ChatActivity;
-import com.example.chattomate.activities.LoginActivity;
-import com.example.chattomate.call.LoginService;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.SocketCallBack;
-import com.example.chattomate.models.User;
+import com.example.chattomate.models.Friend;
+import com.example.chattomate.models.Message;
 import com.example.chattomate.service.NotificationService;
-import com.quickblox.users.model.QBUser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -153,7 +146,27 @@ public class SocketService extends Service {
         public void call(final Object... args) {
             Log.d(TAG, Arrays.toString(args));
             socketCallBack.onNewMessage((JSONObject) args[0]);
-
+            try {
+                JSONObject data = (JSONObject) args[0];
+                JSONObject object = data.getJSONObject("sendBy");
+                String idConversation = data.getString("conversation");
+                String content = data.getString("content");
+                String contentUrl = data.getString("contentUrl");
+                String idSender = object.getString("_id");
+                Friend friend = manager.getFriend(manager.getFriends(), idSender);
+                if (friend == null) {
+                    friend = new Friend(object.getString("_id"),
+                            object.getString("name"), object.getString("avatarUrl"));
+                    friend.idApi = object.getString("idApi");
+                }
+                Message message = new Message(idConversation, data.getString("_id"),
+                        content, contentUrl,
+                        data.getString("createdAt"), null, friend, false,
+                        data.getString("type"));
+                manager.addMessage(message, idConversation);
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     };
     private final Emitter.Listener onNewFriendRequest = new Emitter.Listener() {
