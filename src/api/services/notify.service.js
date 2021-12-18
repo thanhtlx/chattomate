@@ -30,8 +30,26 @@ class NotifyService {
       var clientID = socket.getClientID(user.toString());
       if (clientID) {
         socket.emit(clientID, Config.CHANNEL_FIREND_ACTICE_CHANGE, {
-          message: message,
+          message: "typing",
           data: userTyping,
+        });
+        return;
+      }
+    }
+  }
+
+  static async notifyMapChange(message) {
+    const conversation = await ConversationService.findID(message.conversation);
+    console.log(conversation);
+    for (var user of conversation.members) {
+      var clientID = socket.getClientID(user.toString());
+      if (clientID) {
+        socket.emit(clientID, Config.CHANNEL_MAP_CHANGE, {
+          message: "map change",
+          data: {
+            messageID: message._id,
+            location: message.content,
+          },
         });
         return;
       }
