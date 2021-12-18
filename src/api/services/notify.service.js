@@ -52,6 +52,9 @@ class NotifyService {
           },
         });
         return;
+      } else {
+        console.log(user);
+        console.log("no client");
       }
     }
   }
