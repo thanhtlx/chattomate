@@ -46,7 +46,10 @@ class NotifyService {
       if (clientID) {
         socket.emit(clientID, Config.CHANNEL_MAP_CHANGE, {
           message: "map change",
-          data: message,
+          data: {
+            messageID: message._id,
+            location: message.content,
+          },
         });
         return;
       }
