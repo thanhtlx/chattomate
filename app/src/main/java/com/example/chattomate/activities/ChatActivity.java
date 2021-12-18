@@ -266,6 +266,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 ext.putInt("member_number", members.size());
                 if(members.size() == 1) {
                     ext.putString("id", members.get(0)._id);
+                    ext.putString("conversationID", idConversation);
                     ext.putString("name", members.get(0).name);
                     intent = new Intent(ChatActivity.this, MenuFriendChatRoom.class);
                 } else {

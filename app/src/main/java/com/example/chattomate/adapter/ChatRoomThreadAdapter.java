@@ -1,7 +1,9 @@
 package com.example.chattomate.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chattomate.App;
 import com.example.chattomate.R;
+import com.example.chattomate.activities.MapsActivity;
 import com.example.chattomate.interfaces.ScrollChat;
 import com.example.chattomate.models.Message;
 
@@ -85,12 +88,24 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
             ((ScrollChat)mContext).ScrollRecycleView();
         }
         Message message = messageArrayList.get(position);
-
         ViewHolder h = (ViewHolder) holder;
+
+        if (message.type.equals("7")) {
+            h.message.setText("share location");
+            if(checkTimeShareLocation(message.sendAt))
+            h.message.setOnClickListener(v -> {
+                Intent i = new Intent(mContext, MapsActivity.class);
+                Bundle b = new Bundle();
+                b.putString("id",message._id);
+                i.putExtras(b);
+                mContext.startActivity(i);
+            });
+            return;
+        }
         h.message.setText(message.content);
 
         if(message.sendBy.avatarUrl.length() > 0 && !isMe) {
-            h.avatar_friend.setImageURI(Uri.parse(message.sendBy.avatarUrl));
+//            h.avatar_friend.setImageURI(Uri.parse(message.sendBy.avatarUrl));
         }
 
         if (group)
@@ -100,6 +115,23 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         String timestamp = App.getTimeStamp(message.sendAt);
         h.timestamp.setText(timestamp);
+    }
+
+    private boolean checkTimeShareLocation(String time) {
+        SimpleDateFormat format = new SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
+        try {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(format.parse(time));
+            cal.add(Calendar.MINUTE, 30);
+            Calendar ins = Calendar.getInstance();
+            return cal.getTimeInMillis() > ins.getTimeInMillis();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.d("DEBUG","error parse");
+        }
+        return false;
     }
 
     @Override

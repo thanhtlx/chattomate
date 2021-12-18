@@ -35,7 +35,10 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/NoActionBar">
-
+        <service
+            android:name=".service.MapService"
+            android:enabled="true"
+            android:exported="true"></service>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

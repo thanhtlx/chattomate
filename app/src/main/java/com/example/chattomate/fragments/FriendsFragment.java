@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,56 +94,6 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        App.getInstance().getSocket().setSocketCallBack(new SocketCallBack() {
-//            @Override
-//            public void onNewMessage(JSONObject data) {
-//
-//            }
-//
-//            @Override
-//            public void onNewFriendRequest(JSONObject data) {
-//
-//            }
-//
-//            @Override
-//            public void onNewConversation(JSONObject data) {
-//
-//            }
-//
-//            @Override
-//            public void onNewFriend(JSONObject data) {
-//                try {
-//                    JSONObject j = data.getJSONObject("friend");
-//                    Friend f = new Friend(j.getString("_id"), j.getString("name"),
-//                            data.getString("nickname"), j.getString("avatarUrl"));
-//
-//                    f.idApi = manager.getFriend(manager.getAllUsers(), f._id).idApi;
-//
-//                    manager.addFriend(f);
-//                    friendsList.add(f);
-//                    adapter.notifyDataSetChanged();
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            @Override
-//            public void onConversationChange(JSONObject data) {
-//
-//            }
-//
-//            @Override
-//            public void onFriendActiveChange(JSONObject data) {
-//
-//            }
-//
-//            @Override
-//            public void onTyping(JSONObject data) {
-//
-//
-//            }
-//        });
     }
 
     public class ListFriendAdapter extends RecyclerView.Adapter {
@@ -169,7 +120,8 @@ public class FriendsFragment extends Fragment {
 
             if (friend.avatarUrl.length() > 0) {
                 Uri imageUri = Uri.parse(friend.avatarUrl);
-                ((ViewHolder) holder).avatar_friend.setImageURI(imageUri);
+                Log.d("DEBUG",String.valueOf(imageUri));
+//                ((ViewHolder) holder).avatar_friend.setImageURI(imageUri);
             }
             ((ViewHolder) holder).callVideo.setOnClickListener(v -> {
                 callService.startCall(true,friends.get(position).idApi,friends.get(position)._id);

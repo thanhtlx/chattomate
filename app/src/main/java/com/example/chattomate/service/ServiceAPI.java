@@ -769,7 +769,29 @@ public class ServiceAPI {
         });
     }
 
+    public void updateLocation(Double lat, Double log, String messageID) {
 
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("lat", lat);
+            jsonObject.put("long", log);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        API api = new API(context);
+        api.Call(Request.Method.PUT, URL_MESSAGE + "/location/" + messageID, jsonObject, token, new APICallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                Log.d("debug",result.toString());
+            }
+
+            @Override
+            public void onError(JSONObject result) {
+                Log.d("debug",String.valueOf(result));
+            }
+        });
+    }
 
 
 }

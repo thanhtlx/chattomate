@@ -138,7 +138,7 @@ public class ChatFragment extends Fragment {
                     if(friend != null) {
                         idApiFriend = friend.idApi;
                         if (friend.avatarUrl.length() > 0)
-                            h.avatar.setImageURI(Uri.parse(friend.avatarUrl));
+//                            h.avatar.setImageURI(Uri.parse(friend.avatarUrl));
                         nameConversation = friend.name;
                     } else nameConversation = c.name;
                 } else { //tro chuyen nhom
