@@ -14,7 +14,7 @@ router.get("/:conversation_id",MessageController.getMessages);
 router.post("/", MessageController.sendMessage);
 
 // update location 
-router.put("location/:messageID", MessageController.updateLocation);
+router.put("/location/:messageID", MessageController.updateLocation);
 // get location 
 router.get("/location/:messageID", MessageController.getLocation);
 
