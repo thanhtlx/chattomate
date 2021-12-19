@@ -26,14 +26,25 @@ class MessageController {
     }
     // coi nhu doan nay minh upload xong roi nhe, roi check may cai khac
 
-    if (req.body.files) {
+    if (req.body.file) {
       const name = "/public/uploads";
-      const file = req.files.file;
-      const pathfile = __dirname + name + file.name;
-      console.log(pathfile);
-      file.mv(pathfile);
+      const file = Date.now(); 
+      const pathfile = __dirname + name + file + ".png";
+      const data = req.body.file
       req.body.contentUrl = pathfile;
-      delete req.body["files"];
+      var myBuffer = new Buffer(data.length);
+      for (var i = 0; i < data.length; i++) {
+        myBuffer[i] = data[i];
+      }
+      fs.writeFile(pathfile, myBuffer, function (err) {
+        if (err) {
+          console.log(err);
+        } else {
+          req.body.contentUrl = pathfile;
+          console.log("The file was saved!");
+          delete req.body["file"];
+        }
+      });
     }
     const data = req.body;
     data.sendBy = userID;
