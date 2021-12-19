@@ -149,10 +149,10 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         ViewHolder h = (ViewHolder) holder;
 
         if(message.type.equals("1")) h.message.setText(message.content);
-        if(message.type.equals("5")) {
+        if(message.type.equals("5") && false) {
             Uri uri = Uri.parse(message.contentUrl);
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            mmr.setDataSource(mContext, uri);
+//            mmr.setDataSource(mContext, uri);
             String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             int millSecond = Math.round(Integer.parseInt(durationStr)/1000);
             int minus = Math.round(millSecond/60);
@@ -168,13 +168,13 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         }
 
-        if(type_message == 4) {
+        if(type_message == 4 && false) {
             h.imgContent.setImageURI(Uri.parse(message.contentUrl));
             Log.d("debug", message.contentUrl);
         }
 
         if(message.sendBy.avatarUrl.length() > 0 && !isMe) {
-            h.avatar_friend.setImageURI(Uri.parse(message.sendBy.avatarUrl));
+//            h.avatar_friend.setImageURI(Uri.parse(message.sendBy.avatarUrl));
         }
 
         if (group)

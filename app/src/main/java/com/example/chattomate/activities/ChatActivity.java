@@ -148,7 +148,6 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
             listMess = new ArrayList<>(listMess.subList(listMess.size()-50,listMess.size()));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
-//        layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -396,6 +395,15 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
     @Override
     protected void onResume() {
         super.onResume();
+        listMess = manager.getMessage(idConversation);
+        adapter = new ChatRoomThreadAdapter(this, listMess,(member_number > 2) , user._id);
+        adapter.setHasStableIds(true);
+        recyclerView.setAdapter(adapter);
+
+        if (adapter.getItemCount() > 1) {
+            // scrolling to bottom of the recycler view
+            recyclerView.getLayoutManager().smoothScrollToPosition(recyclerView, null, adapter.getItemCount() - 1);
+        }
         App.getInstance().getSocket().setOnNewMessageCallBack(new OnNewMessageCallBack() {
             public void onNewMessage(JSONObject data) {
                 Log.d("debugChatNewMess", data.toString());
