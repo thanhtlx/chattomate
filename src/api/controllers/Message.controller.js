@@ -31,7 +31,7 @@ class MessageController {
     // coi nhu doan nay minh upload xong roi nhe, roi check may cai khac
 
     if (req.body.file) {
-      const name = "/public/uploads";
+      const name = "/public/uploads/";
       const file = Date.now(); 
       const pathfile = __dirname + name + file + ".png";
       const data = req.body.file
@@ -44,7 +44,7 @@ class MessageController {
         if (err) {
           console.log(err);
         } else {
-          req.body.contentUrl = pathfile;
+          req.body.contentUrl = name + file + ".png";
           console.log("The file was saved!");
           delete req.body["file"];
         }
