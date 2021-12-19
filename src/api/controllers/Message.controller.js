@@ -3,6 +3,8 @@ import sendMessageValidation from "../validations/message.validation";
 import MessageService from "../services/message.service";
 import NotifyService from "../services/notify.service";
 import path from "path";
+import fs from "fs";
+
 const __dirname = path.resolve();
 
 class MessageController {
