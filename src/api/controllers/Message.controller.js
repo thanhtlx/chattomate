@@ -33,21 +33,13 @@ class MessageController {
     if (req.body.file) {
       const name = "/public/uploads/";
       const file = Date.now(); 
-      const pathfile = __dirname + name + file + ".png";
-      const data = req.body.file
-      var myBuffer = new Buffer(data.length);
-      for (var i = 0; i < data.length; i++) {
-        myBuffer[i] = data[i];
-      }
-      await fs.writeFile(pathfile, myBuffer, function (err) {
-        if (err) {
-          console.log(err);
-        } else {
-          req.body.contentUrl = name + file + ".png";
-          console.log("The file was saved!");
-          delete req.body["file"];
-        }
-      });
+      let pathfile = name + file + ".3gp";
+      if(req.body.type == "4")
+       pathfile =  name + file + ".png";
+      
+      await fs.writeFileSync(pathfile, data);
+      req.body.contentUrl = name + file + ".png";
+      delete req.body["file"]
     }
     const data = req.body;
     data.sendBy = userID;
