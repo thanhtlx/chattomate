@@ -27,20 +27,12 @@
         android:paddingLeft="10dp">
 
         <ImageButton
-            android:id="@+id/send_image"
+            android:id="@+id/send_file"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:background="@null"
             app:srcCompat="@drawable/image_message_icon" />
-
-        <ImageButton
-            android:id="@+id/send_voice"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:background="@null"
-            app:srcCompat="@drawable/voice_message_icon" />
 
         <EditText
             android:id="@+id/txt_message"
@@ -53,9 +45,26 @@
             android:paddingLeft="8dp"
             android:title="text_message" />
 
+        <com.devlomi.record_view.RecordView
+            android:id="@+id/recordView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
+            app:slide_to_cancel_arrow_color="@color/black"
+            app:slide_to_cancel_text="Slide to cancel" />
+
+        <com.devlomi.record_view.RecordButton
+            android:id="@+id/recordButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:scaleType="center"
+            app:mic_icon="@drawable/voice_message_icon" />
+
         <ImageButton
             android:id="@+id/btn_send"
-            android:layout_width="match_parent"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:background="@null"

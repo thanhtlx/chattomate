@@ -70,8 +70,7 @@ public class SetupProfileActivity extends AppCompatActivity {
         imageView = findViewById(R.id.image_avatar);
 
         if(user.avatarUrl.length() > 0) {
-            imageUri = Uri.parse(user.avatarUrl);
-            avatar.setImageURI(imageUri);
+//            avatar.setImageURI(Uri.parse(user.avatarUrl));
         }
         name.setText(user.name);
         if(user.phone.length() > 8) phone.setText(user.phone);
@@ -98,7 +97,7 @@ public class SetupProfileActivity extends AppCompatActivity {
         String cPhone = phone.getText().toString();
         String cAvatarUrl;
         if(imageUri != null) cAvatarUrl = imageUri.toString();
-        else cAvatarUrl = "";
+        else cAvatarUrl = user.avatarUrl;
 
         if(cName.length() < 2) name.setError("Tên quá ngắn");
         else if(cPhone.length() < 9 && cPhone.length() > 0) phone.setError("Số điện thoại phải có ít nhất 9 chữ số");
