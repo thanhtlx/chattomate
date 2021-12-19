@@ -33,6 +33,7 @@ class MessageController {
     if (req.body.file) {
       const name = "/public/uploads/";
       const file = Date.now(); 
+      const data = req.body.file
       let pathfile = name + file + ".3gp";
       if(req.body.type == "4")
        pathfile =  name + file + ".png";
