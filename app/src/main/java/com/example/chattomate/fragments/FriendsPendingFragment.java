@@ -115,7 +115,7 @@ public class FriendsPendingFragment extends Fragment {
             Friend friend = manager.getFriend(manager.getAllUsers(), friends.get(position)._id);
             ViewHolder h = (ViewHolder) holder;
             if(friend == null) return;
-            if(friend.avatarUrl.length() > 0) h.avatar_request.setImageURI(Uri.parse(friend.avatarUrl));
+            if(friend.avatarUrl.length() > 0) h.avatar_request.setImageURI(Uri.parse(Config.HOST +friend.avatarUrl));
             h.name_request.setText(friend.name);
             h.email_request.setText(friend.email);
 

@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.chattomate.R;
 import com.example.chattomate.activities.ProfileFriend;
+import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.service.ServiceAPI;
@@ -109,7 +110,7 @@ public class FriendsRequestFragment extends Fragment {
             Friend friend = manager.getFriend(manager.getAllUsers(), friends.get(position)._id);
             ViewHolder h = (ViewHolder) holder;
 
-            if(friend.avatarUrl.length() > 0) h.avatar_pending.setImageURI(Uri.parse(friend.avatarUrl));
+            if(friend.avatarUrl.length() > 0) h.avatar_pending.setImageURI(Uri.parse(Config.HOST +friend.avatarUrl));
             h.name_pending.setText(friend.name);
             h.email_pending.setText(friend.email);
         }

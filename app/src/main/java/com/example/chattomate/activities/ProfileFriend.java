@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.chattomate.R;
+import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.service.ServiceAPI;
@@ -59,7 +60,7 @@ public class ProfileFriend extends AppCompatActivity {
         del = findViewById(R.id.del_friend);
 
         textView.setText(nameConversation);
-        if(friend.avatarUrl.length() > 0) imageView.setImageURI(Uri.parse(friend.avatarUrl));
+        if(friend.avatarUrl.length() > 0) imageView.setImageURI(Uri.parse(Config.HOST +friend.avatarUrl));
 
         ib.setOnClickListener(new View.OnClickListener() {
             @Override

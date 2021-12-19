@@ -20,18 +20,13 @@ import com.example.chattomate.R;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
-import com.example.chattomate.models.Conversation;
-import com.example.chattomate.models.Message;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
 import com.example.chattomate.service.ServiceAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText edtEmail, edtPassWord;
@@ -112,7 +107,6 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 loginData.put(KEY_EMAIL, email);
                 loginData.put(KEY_PASSWORD, password);
-//                loginData.put(KEY_FB_TOKEN,manager.getFBToken());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -165,7 +159,6 @@ public class LoginActivity extends AppCompatActivity {
                 public void onError(JSONObject result) {
                     pDialog.dismiss();
                     Toast.makeText(LoginActivity.this, "Sai email hoặc mật khẩu", Toast.LENGTH_LONG).show();
-//                    Log.d("debug",result.toString());
                 }
             });
 
@@ -175,7 +168,6 @@ public class LoginActivity extends AppCompatActivity {
     public synchronized void getData() {
         serviceAPI = new ServiceAPI(this, manager);
         serviceAPI.getAll();
-
         serviceAPI.getFriends();
         serviceAPI.getAllConversation();
         serviceAPI.getAllFriendSendAdd();

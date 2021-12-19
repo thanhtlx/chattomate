@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.activities.MapsActivity;
+import com.example.chattomate.config.Config;
 import com.example.chattomate.interfaces.ScrollChat;
 import com.example.chattomate.models.Message;
 
@@ -150,9 +151,9 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         if(message.type.equals("1")) h.message.setText(message.content);
         if(message.type.equals("5") && false) {
-            Uri uri = Uri.parse(message.contentUrl);
+            Uri uri = Uri.parse(Config.HOST + message.contentUrl);
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-//            mmr.setDataSource(mContext, uri);
+            mmr.setDataSource(mContext, uri);
             String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             int millSecond = Math.round(Integer.parseInt(durationStr)/1000);
             int minus = Math.round(millSecond/60);
@@ -174,7 +175,7 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
 
         if(message.sendBy.avatarUrl.length() > 0 && !isMe) {
-//            h.avatar_friend.setImageURI(Uri.parse(message.sendBy.avatarUrl));
+            h.avatar_friend.setImageURI(Uri.parse(Config.HOST + message.sendBy.avatarUrl));
         }
 
         if (group)

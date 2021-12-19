@@ -21,10 +21,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.chattomate.R;
 import com.example.chattomate.activities.ChatActivity;
 import com.example.chattomate.config.Config;
-import com.example.chattomate.models.Friend;
 import com.example.chattomate.models.Message;
 
-import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
 public class NotificationService {
     private static final String KEY_TEXT_REPLY = "reply";

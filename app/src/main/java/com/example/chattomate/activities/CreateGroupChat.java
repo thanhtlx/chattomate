@@ -104,8 +104,6 @@ public class CreateGroupChat extends AppCompatActivity {
                         startActivity(intent);
 
                     } else { //tao cuoc tro chuyen moi
-//                        if(name_group.getText().toString().isEmpty())
-//                            Toast.makeText(CreateGroupChat.this, "Hãy đặt tên cho nhóm!", Toast.LENGTH_SHORT).show();
 
                         JSONArray jsonArray = new JSONArray();
                         for(Friend friend : members)
@@ -215,7 +213,7 @@ public class CreateGroupChat extends AppCompatActivity {
             Friend friend = manager.getFriend(manager.getAllUsers(), friends.get(position)._id);
             ViewHolder h = (ViewHolder) holder;
             h.id = friend._id;
-            if(friend.avatarUrl.length() > 0) h._avatar_friend.setImageURI(Uri.parse(friend.avatarUrl));
+            if(friend.avatarUrl.length() > 0) h._avatar_friend.setImageURI(Uri.parse(Config.HOST +friend.avatarUrl));
             h._name_friend.setText(friend.name);
             h._email_friend.setText(friend.email);
         }

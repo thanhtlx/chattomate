@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
             name_search.setText(friend.name);
             email_search.setText(friend.email);
 
-            if (friend.avatarUrl.length() > 0) imageView.setImageURI(Uri.parse(friend.avatarUrl));
+            if (friend.avatarUrl.length() > 0) imageView.setImageURI(Uri.parse(Config.HOST +friend.avatarUrl));
 
             if (manager.getFriend(manager.getFriends(), friend._id) != null) {
                 button.setText("Nhắn tin");

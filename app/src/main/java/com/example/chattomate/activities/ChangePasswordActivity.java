@@ -66,7 +66,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         name = findViewById(R.id.nameChangepwd);
 
         if(!user.avatarUrl.isEmpty()) {
-            Uri imageUri = Uri.parse(user.avatarUrl);
+            Uri imageUri = Uri.parse(Config.HOST +user.avatarUrl);
             avatar.setImageURI(imageUri);
         }
         name.setText(user.name);

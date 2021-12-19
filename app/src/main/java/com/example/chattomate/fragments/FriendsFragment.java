@@ -22,6 +22,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.chattomate.App;
 import com.example.chattomate.R;
 import com.example.chattomate.activities.ProfileFriend;
+import com.example.chattomate.config.Config;
 import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.models.Friend;
 import com.example.chattomate.service.Call;
@@ -119,7 +120,7 @@ public class FriendsFragment extends Fragment {
             ViewHolder h = (ViewHolder) holder;
 
             if (friend.avatarUrl.length() > 0) {
-                Uri imageUri = Uri.parse(friend.avatarUrl);
+                Uri imageUri = Uri.parse(Config.HOST +friend.avatarUrl);
                 Log.d("DEBUG",String.valueOf(imageUri));
 //                ((ViewHolder) holder).avatar_friend.setImageURI(imageUri);
             }
