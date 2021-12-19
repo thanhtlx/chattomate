@@ -29,17 +29,16 @@ class MessageController {
         .send({ status: "error", message: error.details[0].message });
     }
     // coi nhu doan nay minh upload xong roi nhe, roi check may cai khac
-
     if (req.body.file) {
       const name = "/public/uploads/";
       const file = Date.now(); 
       const data = req.body.file
+      const buffer = Buffer.from(data, "base64");
       let pathfile = name + file + ".3gp";
-      if(req.body.type == "4")
+      if(req.body.type === "4")
        pathfile =  name + file + ".png";
-      
-      await fs.writeFileSync(pathfile, data);
-      req.body.contentUrl = name + file + ".png";
+      await fs.writeFileSync(__dirname + pathfile, buffer);
+      req.body.contentUrl = pathfile;
       delete req.body["file"]
     }
     const data = req.body;
