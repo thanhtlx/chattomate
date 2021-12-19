@@ -35,12 +35,11 @@ class MessageController {
       const file = Date.now(); 
       const pathfile = __dirname + name + file + ".png";
       const data = req.body.file
-      req.body.contentUrl = pathfile;
       var myBuffer = new Buffer(data.length);
       for (var i = 0; i < data.length; i++) {
         myBuffer[i] = data[i];
       }
-      fs.writeFile(pathfile, myBuffer, function (err) {
+      await fs.writeFile(pathfile, myBuffer, function (err) {
         if (err) {
           console.log(err);
         } else {
