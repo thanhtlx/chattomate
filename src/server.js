@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import * as socketio from "socket.io";
 import mSocket from "./api/socket/socket";
 import jwt from "jsonwebtoken";
+import bodyParser from "body-parser";
 
 class Server {
   constructor() {
@@ -22,8 +23,12 @@ class Server {
 
   plugin() {
     this.application.use(cors());
-    this.application.use(express.urlencoded());
-    this.application.use(express.json());
+    this.application.use(express.urlencoded({ limit: "50mb" }));
+    this.application.use(express.json({ limit: "50mb" }));
+    this.application.use(bodyParser.json({ limit: "50mb" }));
+    this.application.use(
+      bodyParser.urlencoded({ limit: "50mb", extended: true })
+    );
     this.application.use(express.static("public"));
   }
 
