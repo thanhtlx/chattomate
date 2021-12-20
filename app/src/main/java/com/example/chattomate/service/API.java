@@ -29,6 +29,7 @@ public class API {
                     public void onResponse(JSONObject response) {
                         System.out.println(response);
                         callBack.onSuccess(response);
+                        Log.d("DEBUG",String.valueOf(response));
                     }
                 }, new Response.ErrorListener() {
             @Override

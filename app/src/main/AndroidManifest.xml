@@ -37,6 +37,7 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/NoActionBar"
+        android:requestLegacyExternalStorage="true"
         tools:replace="android:theme">
         <receiver
             android:name=".service.ReceiverInput"

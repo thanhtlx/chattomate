@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,7 +139,7 @@ public class ChatFragment extends Fragment {
                     if(friend != null) {
                         idApiFriend = friend.idApi;
                         if (friend.avatarUrl.length() > 0)
-//                            h.avatar.setImageURI(Uri.parse(friend.avatarUrl));
+                            h.avatar.setImageURI(Uri.parse(friend.avatarUrl));
                         nameConversation = friend.name;
                     } else nameConversation = c.name;
                 } else { //tro chuyen nhom
@@ -151,14 +152,14 @@ public class ChatFragment extends Fragment {
                     if(manager.getMessage(c._id).size() > 0) {
                         Message message = manager.getMessage(c._id).get(manager.getMessage(c._id).size() - 1);
                         if (message.sendBy._id.equals(manager.getUser()._id)) {
-                            if (message.content.length() > 0)
+                            if (message.type.equals("1"))
                                 h.message.setText("Bạn: " + message.content);
                             else h.message.setText("Bạn đã gửi file đính kèm");
                         } else {
                             Friend friend = manager.getFriend(manager.getFriends(), message.sendBy._id);
                             String name_friend = "Someone";
                             if(friend != null) name_friend = friend.name;
-                            if (message.content.length() > 0)
+                            if (message.type.equals("1"))
                                 h.message.setText(name_friend + ": " + message.content);
                             else h.message.setText(name_friend + " đã gửi file đính kèm");
 

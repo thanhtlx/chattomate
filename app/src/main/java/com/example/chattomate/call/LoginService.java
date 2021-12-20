@@ -115,7 +115,7 @@ public class LoginService extends Service {
         startSuitableActions();
         if(isforeground) {
             Notification notification = initNotification();
-            startForeground(Config.ID_NOTIFICATION_NEW_VOICE, notification);
+            startForeground(787, notification);
         }
         return START_REDELIVER_INTENT;
     }

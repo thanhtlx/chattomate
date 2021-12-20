@@ -94,7 +94,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:paddingLeft="10dp"
-            app:srcCompat="@drawable/turnoffactive" />
+            app:srcCompat="@drawable/ic_baseline_map_24" />
 
         <Button
             android:id="@+id/btnMap"
@@ -103,7 +103,7 @@
             android:layout_weight="1"
             android:paddingLeft="15dp"
             android:paddingRight="10dp"
-            android:text="Map"
+            android:text="Share Location"
             android:background="@android:color/transparent"
             android:textColor="@color/black80"
             android:textSize="16dp" />

@@ -29,6 +29,7 @@ import com.example.chattomate.activities.MapsActivity;
 import com.example.chattomate.config.Config;
 import com.example.chattomate.interfaces.ScrollChat;
 import com.example.chattomate.models.Message;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -124,13 +126,13 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (message.sendBy._id.equals(id) && message.type.equals("1")) {
             return SELF;
         }
-        if (message.sendBy._id.equals(id) && message.type.equals("4")) {
+        if (message.sendBy._id.equals(id) &&  (message.type.equals("4") || message.type.equals("7"))) {
             return SELF_IMAGE;
         }
         if (message.sendBy._id.equals(id) && message.type.equals("5")) {
             return SELF_RECORD;
         }
-        if (!message.sendBy._id.equals(id) && message.type.equals("4")) {
+        if (!message.sendBy._id.equals(id) && (message.type.equals("4") || message.type.equals("7"))) {
             return OTHER_IMAGE;
         }
         if (!message.sendBy._id.equals(id) && message.type.equals("5")) {
@@ -150,10 +152,12 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         ViewHolder h = (ViewHolder) holder;
 
         if(message.type.equals("1")) h.message.setText(message.content);
-        if(message.type.equals("5") && false) {
+        else if(message.type.equals("5")) {
             Uri uri = Uri.parse(Config.HOST + message.contentUrl);
+            Log.d("DEBUG",String.valueOf(uri));
             MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            mmr.setDataSource(mContext, uri);
+//            mmr.setDataSource(mContext, uri);
+            mmr.setDataSource(Config.HOST + message.contentUrl, new HashMap<String, String>());
             String durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             int millSecond = Math.round(Integer.parseInt(durationStr)/1000);
             int minus = Math.round(millSecond/60);
@@ -167,11 +171,24 @@ public class ChatRoomThreadAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                 }
             });
 
-        }
+        }else if (message.type.equals("7")) {
+            h.imgContent.setImageDrawable(mContext.getDrawable(R.drawable.map));
+            h.imgContent.setOnClickListener(v -> {
+                if (checkTimeShareLocation(message.sendAt)) {
+                    Intent intent = new Intent(mContext,MapsActivity.class);
+                    Bundle extras = new Bundle();
+                    extras.putString("id",message._id);
+                    intent.putExtras(extras);
+                    mContext.startActivity(intent);
+                }
 
-        if(type_message == 4 && false) {
-            h.imgContent.setImageURI(Uri.parse(message.contentUrl));
-            Log.d("debug", message.contentUrl);
+            });
+        }else if (message.type.equals("4")) {
+            Log.d("DEBUG" ,Config.HOST + message.contentUrl);
+            Picasso.get()
+                    .load(Config.HOST + message.contentUrl)
+                    .into(h.imgContent);
+//            h.imgContent.setImageURI(Uri.parse(Config.HOST + message.contentUrl));
         }
 
         if(message.sendBy.avatarUrl.length() > 0 && !isMe) {

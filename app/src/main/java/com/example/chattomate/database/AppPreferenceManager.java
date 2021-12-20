@@ -214,7 +214,9 @@ public class AppPreferenceManager {
     public Friend getFriend(ArrayList<Friend> friends, String id) {
         if(friends != null)
             for (Friend friend : friends) {
-                if (friend._id.equals(id)) return friend;
+                if (friend._id.equals(id) && friend.name != null) {
+                    return  friend;
+                }
             }
         return null;
     }
@@ -262,6 +264,7 @@ public class AppPreferenceManager {
     }
 
     public void storePendingFriends(ArrayList<Friend> friends) {
+        Log.d("DEBUG-P","STORE");
         Gson gson = new Gson();
         String str = gson.toJson(friends);
         editor.putString(PENDING_FRIEND, str).commit();

@@ -49,7 +49,8 @@ public class NotificationService {
                                  int notificationID,
                                  String title, String bigText,
                                  PendingIntent intent) {
-
+        if (bigText.equals("0,0"))
+            bigText = "sharing location";
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setContentTitle(title)

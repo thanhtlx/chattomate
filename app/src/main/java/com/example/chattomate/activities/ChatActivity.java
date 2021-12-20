@@ -107,6 +107,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         recordButton.setListenForRecord(false);
         txtContent = findViewById(R.id.txt_message);
         recyclerView = findViewById(R.id.recycler_view_chat);
+        recyclerView.setNestedScrollingEnabled(false);
 
         Bundle extras = getIntent().getExtras();
         idConversation = extras.getString("idConversation");
@@ -127,7 +128,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setItemViewCacheSize(600);
+//        recyclerView.setItemViewCacheSize(600);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         adapter = new ChatRoomThreadAdapter(this, listMess, (member_number > 2), user._id);
@@ -566,7 +567,7 @@ public class ChatActivity extends AppCompatActivity implements ScrollChat {
                 Intent intent;
                 Bundle ext = new Bundle();
                 ext.putInt("member_number", members.size());
-                if (members.size() == 1) {
+                if (members.size() <= 2) {
                     ext.putString("id", members.get(0)._id);
                     ext.putString("conversationID", idConversation);
                     ext.putString("name", members.get(0).name);

@@ -10,13 +10,18 @@
     <include layout="@layout/toolbar"
         android:id="@+id/toolbar_chat"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_chat"
-        android:nestedScrollingEnabled="true"
+    <LinearLayout
+        android:layout_below="@id/toolbar_chat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar_chat"
-        android:layout_above="@+id/la"/>
+        android:layout_above="@id/la"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_chat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/la"

@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             temp[1] = allUsers.get(i);
             cursor.addRow(temp);
         }
+        getData();
 
         searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = findViewById(R.id.search_view);
@@ -280,12 +281,13 @@ public class MainActivity extends AppCompatActivity {
                 button.setBackgroundColor(Color.parseColor("#EF1FF6"));
             }
 
-            String btn = button.getText().toString();
+            String text = button.getText().toString();
 
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(button.getText().toString().equals("Nhắn tin")) {
+                    Log.d("DEBUG","ONCLICK");
+                    if(text.equalsIgnoreCase("Nhắn tin")) {
                         Bundle extr = new Bundle();
                         String idConversation = manager.getIdConversation(friend._id);
 
@@ -347,7 +349,9 @@ public class MainActivity extends AppCompatActivity {
 
                         }
 
-                    } else if(button.getText().toString().equals("Kết bạn")) {
+                    }
+                    else if(text.equalsIgnoreCase("Kết bạn")) {
+                        Log.d("DEBUG","ONCLICK-ketban");
                         JSONObject newAddFriend = new JSONObject();
                         try {
                             newAddFriend.put("userId", friend._id);
@@ -380,8 +384,10 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("debug",result.toString());
                             }
                         });
-                    } else if(button.getText().toString().equals("Đồng ý kết bạn")) {
-                        String url = URL_FRIEND + "/:" + friend._id + "/accept";
+                    }
+                    else if(button.getText().toString().equals("Đồng ý\nkết bạn")) {
+                        Log.d("DEBUG","ACCEPT");
+                        String url = URL_FRIEND + "/" + friend._id + "/accept";
                         JSONObject newAddFriend = new JSONObject();
                         try {
                             newAddFriend.put("id", friend._id);
@@ -442,5 +448,13 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == REQUEST_PERMISTION_OPEN_CAMERA || requestCode == REQUEST_PERMISTION_MIC) {
             requirePermission();
         }
+    }
+    public synchronized void getData() {
+        serviceAPI = new ServiceAPI(this, manager);
+        serviceAPI.getAll();
+        serviceAPI.getFriends();
+        serviceAPI.getAllConversation();
+        serviceAPI.getAllFriendSendAdd();
+        serviceAPI.getAllSendAddFriend();
     }
 }

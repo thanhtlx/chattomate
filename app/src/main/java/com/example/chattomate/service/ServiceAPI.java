@@ -384,25 +384,20 @@ public class ServiceAPI {
             @Override
             public void onSuccess(JSONObject result) {
                 try {
-                    String status = result.getString("status");
-                    if(status.equals("success")) {
-                        ArrayList<Friend> list = new ArrayList<>();
-                        JSONArray friends = result.getJSONArray("data");
-                        for(int i = 0; i < friends.length(); i++) {
-                            JSONObject temp = friends.getJSONObject(i);
-                            JSONObject tmp = temp.getJSONObject("friend");
-                            Friend friend = new Friend(tmp.getString("_id"), temp.getString("nickName"),
-                                    tmp.getString("name"), tmp.getString("avatarUrl"));
-
-                            friend.idApi = tmp.getString("idApi");
-                            list.add(friend);
-                        }
-                        manager.storePendingFriends(list);
-
-                    } else {
-                        System.out.println("Error");
+                    Log.d("DEBUG-P",String.valueOf(result));
+                    ArrayList<Friend> list = new ArrayList<>();
+                    JSONArray friends = result.getJSONArray("data");
+                    for(int i = 0; i < friends.length(); i++) {
+                        JSONObject temp = friends.getJSONObject(i);
+                        JSONObject tmp = temp.getJSONObject("friend");
+                        Friend friend = new Friend(temp.getString("_id"), temp.getString("nickName"),
+                                tmp.getString("name"), tmp.getString("avatarUrl"));
+                        friend.idApi = tmp.getString("idApi");
+                        list.add(friend);
                     }
+                    manager.storePendingFriends(list);
                 } catch (JSONException e) {
+                    Log.d("DEBUG","ERRR PARSER JSON"+e.getMessage());
                     e.printStackTrace();
                 }
                 Log.d("debug",result.toString());
@@ -603,32 +598,26 @@ public class ServiceAPI {
             @Override
             public void onSuccess(JSONObject result) {
                 try {
-                    String status = result.getString("status");
-                    if(status.equals("success")) {
-                        JSONArray data = result.getJSONArray("data");
-                        ArrayList<Conversation> conversations = new ArrayList<>();
+                    JSONArray data = result.getJSONArray("data");
+                    ArrayList<Conversation> conversations = new ArrayList<>();
 
-                        for(int i = 0; i < data.length(); i++) {
-                            JSONObject json = data.getJSONObject(i);
-                            ArrayList<Friend> friends = new ArrayList<>();
-                            JSONArray member = json.getJSONArray("members");
-                            for(int j = 0; j < member.length(); j++) {
-                                Friend friend = new Friend(member.get(j).toString());
-                                friends.add(friend);
-                            }
-
-                            Conversation cv = new Conversation(json.getString("_id"),
-                                    json.getString("name"), json.getString("backgroundURI"),
-                                    json.getString("emoji"), friends);
-                            conversations.add(cv);
-
-                            getAllMessage(json.getString("_id"));
+                    for(int i = 0; i < data.length(); i++) {
+                        JSONObject json = data.getJSONObject(i);
+                        ArrayList<Friend> friends = new ArrayList<>();
+                        JSONArray member = json.getJSONArray("members");
+                        for(int j = 0; j < member.length(); j++) {
+                            Friend friend = new Friend(member.get(j).toString());
+                            friends.add(friend);
                         }
-                        manager.storeConversation(conversations);
 
-                    } else {
-                        System.out.println("Error");
+                        Conversation cv = new Conversation(json.getString("_id"),
+                                json.getString("name"), json.getString("backgroundURI"),
+                                json.getString("emoji"), friends);
+                        conversations.add(cv);
+
+                        getAllMessage(json.getString("_id"));
                     }
+                    manager.storeConversation(conversations);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
