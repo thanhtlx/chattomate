@@ -1,23 +1,26 @@
 package com.example.chattomate.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.android.volley.Request;
-import com.example.chattomate.MainActivity;
 import com.example.chattomate.R;
-import com.example.chattomate.helper.AppPreferenceManager;
+import com.example.chattomate.config.Config;
+import com.example.chattomate.database.AppPreferenceManager;
 import com.example.chattomate.interfaces.APICallBack;
 import com.example.chattomate.models.User;
 import com.example.chattomate.service.API;
@@ -25,35 +28,52 @@ import com.example.chattomate.service.API;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SetupProfileActivity extends AppCompatActivity {
     private AppPreferenceManager manager;
-    private Toolbar toolbar;
+    private User user;
     private EditText name, phone;
     private Button save;
+    private Toolbar toolbar;
+    ImageView imageView;
     private CircleImageView avatar;
     private Uri imageUri;
     private static final int REQUEST_CODE = 101;
+    private final String URL = Config.HOST + Config.UPDATE_PROFILE_URL;
     ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup_profile);
-        getSupportActionBar().hide();
-        manager = new AppPreferenceManager(getApplicationContext());
+        toolbar = findViewById(R.id.toolbar_setup);
+        setSupportActionBar(toolbar);
+        ActionBar bar = getSupportActionBar();
+        bar.setTitle("Cập nhật thông tin cá nhân");
+        bar.setDisplayHomeAsUpEnabled(true);
 
-        toolbar = findViewById(R.id.bar_setup);
-        toolbar.setTitle("Cập nhật thông tin cá nhân");
+        manager = new AppPreferenceManager(getApplicationContext());
+        user = manager.getUser();
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Đang cập nhật thông tin...");
         progressDialog.setCanceledOnTouchOutside(false);
 
+        avatar = findViewById(R.id.avatarChangepwd);
         name = findViewById(R.id.inputName);
         phone = findViewById(R.id.phone);
         save = findViewById(R.id.btn_save);
-        avatar = findViewById(R.id.profile_image);
+        imageView = findViewById(R.id.image_avatar);
+
+        if(user.avatarUrl.length() > 0) {
+//            avatar.setImageURI(Uri.parse(user.avatarUrl));
+        }
+        name.setText(user.name);
+        if(user.phone.length() > 8) phone.setText(user.phone);
 
         avatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,41 +95,51 @@ public class SetupProfileActivity extends AppCompatActivity {
     private void saveData() {
         String cName = name.getText().toString();
         String cPhone = phone.getText().toString();
-        String url = imageUri.toString();
-        User user = manager.getUser();
+        String cAvatarUrl;
+        if(imageUri != null) cAvatarUrl = imageUri.toString();
+        else cAvatarUrl = user.avatarUrl;
 
-        if(cName.length() < 2) name.setError("");
-        else if(cPhone.isEmpty()) phone.setError("");
+        if(cName.length() < 2) name.setError("Tên quá ngắn");
+        else if(cPhone.length() < 9 && cPhone.length() > 0) phone.setError("Số điện thoại phải có ít nhất 9 chữ số");
         else {
             progressDialog.show();
 
             JSONObject setupData = new JSONObject();
             try {
-                setupData.put("name", cName);
-                setupData.put("phone", cPhone);
+                if(!cName.equals(user.name)) setupData.put("name", cName);
+                if(!cPhone.equals(user.phone)) setupData.put("phone", cPhone);
+                if(!cAvatarUrl.equals(user.avatarUrl)) setupData.put("avatarUrl", cAvatarUrl);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             API api = new API(this);
-            api.Call(Request.Method.PUT, "", setupData, LoginActivity.AUTH_TOKEN,
-                    new APICallBack() {
+            Map<String, String> token = new HashMap<>();
+            token.put("auth-token", manager.getToken(this));
+
+            api.Call(Request.Method.PUT, URL, setupData, token, new APICallBack() {
                 @Override
                 public void onSuccess(JSONObject result) {
                     try {
-                        JSONObject jsonObject = result.getJSONObject("data").getJSONObject("user");
-                        manager.editor.putString("name",cName);
-                        manager.editor.putString("phone",cPhone);
+                        String status = result.getString("status");
+                        if (status.equals("success")) {
+                            user.name = cName;
+                            user.phone = cPhone;
+                            user.avatarUrl = cAvatarUrl;
+                            manager.storeUser(user);
 
-                        finish();
+                            Toast.makeText(SetupProfileActivity.this, "Đã chỉnh sửa thông tin", Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(),"Error (*)",Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                        }
                     } catch (JSONException e) {
-                        Toast.makeText(SetupProfileActivity.this, "error", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"Error (**)",Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
-
-                    Toast.makeText(SetupProfileActivity.this, "Đã chỉnh sửa thông tin", Toast.LENGTH_LONG).show();
                     Log.d("debug",result.toString());
-                    progressDialog.dismiss();
                 }
 
                 @Override
@@ -123,7 +153,6 @@ public class SetupProfileActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @NonNull Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
@@ -131,5 +160,19 @@ public class SetupProfileActivity extends AppCompatActivity {
             imageUri = data.getData();
             avatar.setImageURI(imageUri);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

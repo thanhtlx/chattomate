@@ -26,7 +26,7 @@
     <EditText
         android:id="@+id/email_regis"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/botron_edttext"
         android:drawableLeft="@drawable/email_icon"
@@ -34,7 +34,23 @@
         android:hint="@string/email"
         android:inputType="textPersonName"
         android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+    <EditText
+        android:id="@+id/inputPassword"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_weight="6"
+        android:background="@drawable/botron_edttext"
+        android:drawableLeft="@drawable/lock"
+        android:ems="10"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@+id/email_regis"
         tools:layout_editor_absoluteX="40dp" />
 
     <LinearLayout
@@ -47,17 +63,6 @@
         app:layout_constraintTop_toBottomOf="@+id/email_regis"
         tools:layout_editor_absoluteX="40dp">
 
-        <EditText
-            android:id="@+id/inputPassword"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:layout_weight="6"
-            android:background="@drawable/botron_edttext"
-            android:drawableLeft="@drawable/lock"
-            android:ems="10"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:textSize="14sp" />
     </LinearLayout>
 
     <TextView
@@ -71,7 +76,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/inputPassword" />
 
     <Button
         android:id="@+id/btnLogin"
@@ -80,7 +85,7 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/botron_button"
         android:text="@string/login"
-        android:textColor="@color/gray70"
+        android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

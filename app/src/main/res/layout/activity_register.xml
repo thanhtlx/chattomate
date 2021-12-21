@@ -27,7 +27,7 @@
     <EditText
         android:id="@+id/name_regis"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:background="@drawable/botron_edttext"
         android:ems="10"
         android:hint="@string/name"
@@ -40,7 +40,7 @@
     <EditText
         android:id="@+id/email_regis"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/botron_edttext"
         android:drawableLeft="@drawable/email_icon"
@@ -55,7 +55,7 @@
     <EditText
         android:id="@+id/passwd_regis"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:layout_weight="6"
         android:background="@drawable/botron_edttext"
@@ -71,7 +71,7 @@
     <EditText
         android:id="@+id/cfpasswd_regis"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:layout_weight="6"
         android:background="@drawable/botron_edttext"
@@ -91,7 +91,7 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/botron_button"
         android:text="@string/registration"
-        android:textColor="@color/gray70"
+        android:textColor="@color/white"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
